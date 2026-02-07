@@ -1,4 +1,7 @@
-﻿using DiGi.GIS.Classes;
+﻿using DiGi.Core.Classes;
+using DiGi.GIS.Classes;
+using DiGi.GIS.PostgreSQL.Classes;
+using DiGi.PostgreSQL.PartitionReference.Classes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,12 +13,12 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     [ApiController]
-    [Route("api/gis/[controller]")]
+    [Route("gis/[controller]")]
     public class GISModelController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private readonly PostgreSQL.Classes.GISModelPostgreSQLConverter gISModelPostgreSQLConverter;
+        private readonly GISModelPostgreSQLConverter gISModelPostgreSQLConverter;
 
-        public GISModelController(PostgreSQL.Classes.GISModelPostgreSQLConverter gISModelPostgreSQLConverter)
+        public GISModelController(GISModelPostgreSQLConverter gISModelPostgreSQLConverter)
         {
             this.gISModelPostgreSQLConverter = gISModelPostgreSQLConverter;
         }
@@ -23,28 +26,46 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("item")]
         public async Task<IActionResult> GetAsync([FromQuery(Name = "reference")] string? reference)
         {
+            if (gISModelPostgreSQLConverter is null)
+            {
+                return StatusCode(500);
+            }
+
             if (string.IsNullOrWhiteSpace(reference))
             {
                 return BadRequest();
             }
 
-            return Content(Core.Convert.ToSystem_String(new GISModel()) ?? string.Empty, "application/json");
+            GISModel? gISModel = await gISModelPostgreSQLConverter.GetSerializableObject<GISModel>(Create.PartitionReference_GISModel(reference));
+
+            return Content(Core.Convert.ToSystem_String(gISModel) ?? string.Empty, "application/json");
         }
 
         [HttpPost("items")]
         public async Task<IActionResult> GetAsync([FromBody] List<string>? references)
         {
+            if (gISModelPostgreSQLConverter is null)
+            {
+                return StatusCode(500);
+            }
+
             if (references == null || references.Count == 0)
             {
                 return BadRequest();
             }
 
-            List<GISModel> gISModels = [];
-
+            HashSet<PartitionReference> partitionReferences = [];
             foreach (string reference in references)
             {
-                gISModels.Add(new GISModel(reference, null as GISModel));
+                if (Create.PartitionReference_GISModel(reference) is not PartitionReference partitionReference)
+                {
+                    continue;
+                }
+
+                partitionReferences.Add(partitionReference);
             }
+
+            List<GISModel>? gISModels = await gISModelPostgreSQLConverter.GetSerializableObjects<GISModel>(partitionReferences);
 
             return Content(Core.Convert.ToSystem_String(gISModels) ?? string.Empty, "application/json");
         }
@@ -78,6 +99,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("update")]
         public async Task<IActionResult> UpdateAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "reference")] string? reference)
         {
+            if (gISModelPostgreSQLConverter is null)
+            {
+                return StatusCode(500);
+            }
+
             string tranceIdentifier = HttpContext.TraceIdentifier;
             if (string.IsNullOrWhiteSpace(tranceIdentifier))
             {
@@ -184,7 +210,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            return Ok();
+            PartitionReference? partitionReference = await gISModelPostgreSQLConverter.UpdateAsync(gISModel);
+
+            return Ok(partitionReference?.UniqueId);
         }
 
         private async Task<IActionResult> UpdateAsync(OrtoDatas? ortoDatas, string? reference)

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     [ApiController]
-    [Route("api/gis/[controller]")]
+    [Route("gis/[controller]")]
     public class Building2DController : DiGi.WebAPI.Classes.WebAPIController
     {
         private readonly PostgreSQL.Classes.GISModelPostgreSQLConverter gISModelPostgreSQLConverter;
