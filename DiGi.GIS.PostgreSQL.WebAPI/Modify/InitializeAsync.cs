@@ -9,22 +9,22 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
     {
         public static async Task InitializeAsync(this IServiceCollection serviceCollection)
         {
-            if(serviceCollection is null)
+            if (serviceCollection is null)
             {
                 return;
             }
 
             string? directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if(!string.IsNullOrWhiteSpace(directory))
+            if (!string.IsNullOrWhiteSpace(directory))
             {
                 string path;
 
                 path = System.IO.Path.Combine(directory!, "DiGi.GIS.PostgreSQL.WebAPI_Main.conf");
 
-                if(System.IO.File.Exists(path))
+                if (System.IO.File.Exists(path))
                 {
                     PostgreSQLConfigurationFile? postgreSQLConfigurationFile = DiGi.PostgreSQL.Create.PostgreSQLConfigurationFile(path);
-                    if(postgreSQLConfigurationFile is not null)
+                    if (postgreSQLConfigurationFile is not null)
                     {
                         await DiGi.PostgreSQL.Create.Database(postgreSQLConfigurationFile);
 
@@ -54,9 +54,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                         }
                     }
                 }
-
             }
-
         }
     }
 }

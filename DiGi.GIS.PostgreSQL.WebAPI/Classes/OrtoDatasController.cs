@@ -37,7 +37,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            OrtoDatas? ortoDatas = await ortoDatasPostgreSQLConverter.GetSerializableObject<OrtoDatas>(partitionReference);
+            OrtoDatas? ortoDatas = await ortoDatasPostgreSQLConverter.GetSerializableObjectAsync<OrtoDatas>(partitionReference);
 
             return Content(Core.Convert.ToSystem_String(ortoDatas as ISerializableObject) ?? string.Empty, "application/json");
         }
@@ -56,7 +56,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             HashSet<PartitionReference> partitionReferences = [];
-            foreach(string reference in references)
+            foreach (string reference in references)
             {
                 if (Create.PartitionReference(GIS.Create.GISModelAreal2DReference(reference)) is not PartitionReference partitionReference)
                 {
@@ -66,7 +66,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 partitionReferences.Add(partitionReference);
             }
 
-            List<OrtoDatas>? ortoDatasList = await ortoDatasPostgreSQLConverter.GetSerializableObjects<OrtoDatas>(partitionReferences);
+            List<OrtoDatas>? ortoDatasList = await ortoDatasPostgreSQLConverter.GetSerializableObjectsAsync<OrtoDatas>(partitionReferences);
 
             return Content(Core.Convert.ToSystem_String(ortoDatasList) ?? string.Empty, "application/json");
         }
@@ -74,7 +74,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("update")]
         public async Task<IActionResult> UpdateAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "reference")] string? reference)
         {
-            if(ortoDatasPostgreSQLConverter is null)
+            if (ortoDatasPostgreSQLConverter is null)
             {
                 return StatusCode(500);
             }
@@ -84,15 +84,15 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            if(string.IsNullOrEmpty(reference))
+            if (string.IsNullOrEmpty(reference))
             {
                 return BadRequest();
             }
 
             GISModelAreal2DReference? gISModelAreal2DReference = GIS.Create.GISModelAreal2DReference(reference);
-            if(gISModelAreal2DReference is null)
+            if (gISModelAreal2DReference is null)
             {
-                return BadRequest(); 
+                return BadRequest();
             }
 
             string? name = gISModelAreal2DReference.Areal2DReference ?? gISModelAreal2DReference.GISModelReference;
@@ -101,8 +101,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            OrtoDatas ? ortoDatas = Core.Create.SerializableObject<OrtoDatas>(jsonObject);
-            if(ortoDatas is null)
+            OrtoDatas? ortoDatas = Core.Create.SerializableObject<OrtoDatas>(jsonObject);
+            if (ortoDatas is null)
             {
                 return BadRequest();
             }

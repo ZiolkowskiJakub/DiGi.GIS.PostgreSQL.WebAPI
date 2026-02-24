@@ -1,10 +1,12 @@
-﻿using DiGi.Core.Classes;
-using DiGi.GIS.Classes;
+﻿using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.PostgreSQL.PartitionReference.Classes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text.Json.Nodes;
@@ -36,7 +38,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            GISModel? gISModel = await gISModelPostgreSQLConverter.GetSerializableObject<GISModel>(Create.PartitionReference_GISModel(reference));
+            GISModel? gISModel = await gISModelPostgreSQLConverter.GetSerializableObjectAsync<GISModel>(Create.PartitionReference_GISModel(reference));
 
             return Content(Core.Convert.ToSystem_String(gISModel) ?? string.Empty, "application/json");
         }
@@ -65,7 +67,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 partitionReferences.Add(partitionReference);
             }
 
-            List<GISModel>? gISModels = await gISModelPostgreSQLConverter.GetSerializableObjects<GISModel>(partitionReferences);
+            List<GISModel>? gISModels = await gISModelPostgreSQLConverter.GetSerializableObjectsAsync<GISModel>(partitionReferences);
 
             return Content(Core.Convert.ToSystem_String(gISModels) ?? string.Empty, "application/json");
         }
@@ -116,7 +118,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             {
                 return BadRequest();
             }
-
 
             string? fullTypeName = Core.Query.FullTypeName(jsonObject);
             if (string.IsNullOrWhiteSpace(fullTypeName))
@@ -176,6 +177,38 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return BadRequest();
+        }
+
+        [HttpPost("upload")]
+        [RequestSizeLimit(200 * 1024 * 1024)]
+        public async Task<IActionResult> UploadAsync(IFormFile gISModelFile)
+        {
+            if (gISModelPostgreSQLConverter is null)
+            {
+                return StatusCode(500);
+            }
+
+            string tranceIdentifier = HttpContext.TraceIdentifier;
+            if (string.IsNullOrWhiteSpace(tranceIdentifier))
+            {
+                return BadRequest();
+            }
+
+            IPAddress? iPAddress = HttpContext.Connection.RemoteIpAddress;
+            string? address = iPAddress?.ToString();
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                return BadRequest();
+            }
+
+            using (Stream zipStream = gISModelFile.OpenReadStream())
+            {
+                using (ZipArchive archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
+                {
+                }
+            }
+
+            return Ok();
         }
 
         private async Task<IActionResult> GetReferencesAsync_Building2D(IEnumerable<string>? references)

@@ -1,6 +1,5 @@
 ﻿using DiGi.GIS.Classes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
@@ -55,8 +54,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             {
                 return BadRequest();
             }
-
-
 
             return Ok();
         }
