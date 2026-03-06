@@ -26,34 +26,34 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                     PostgreSQLConfigurationFile? postgreSQLConfigurationFile = DiGi.PostgreSQL.Create.PostgreSQLConfigurationFile(path);
                     if (postgreSQLConfigurationFile is not null)
                     {
-                        await DiGi.PostgreSQL.Create.Database(postgreSQLConfigurationFile);
+                        await DiGi.PostgreSQL.Create.DatabaseAsync(postgreSQLConfigurationFile);
 
                         ConnectionData? connectionData = DiGi.PostgreSQL.Create.ConnectionData(postgreSQLConfigurationFile);
 
                         if (connectionData is not null)
                         {
-                            serviceCollection.AddScoped(serviceProvider => new PostgreSQL.Classes.GISModelPostgreSQLConverter(connectionData));
+                            serviceCollection.AddScoped(serviceProvider => new PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter(connectionData));
                         }
                     }
                 }
 
-                path = System.IO.Path.Combine(directory!, "DiGi.GIS.PostgreSQL.WebAPI_OrtoDatas.conf");
+                //path = System.IO.Path.Combine(directory!, "DiGi.GIS.PostgreSQL.WebAPI_OrtoDatas.conf");
 
-                if (System.IO.File.Exists(path))
-                {
-                    PostgreSQLConfigurationFile? postgreSQLConfigurationFile = DiGi.PostgreSQL.Create.PostgreSQLConfigurationFile(path);
-                    if (postgreSQLConfigurationFile is not null)
-                    {
-                        await DiGi.PostgreSQL.Create.Database(postgreSQLConfigurationFile);
+                //if (System.IO.File.Exists(path))
+                //{
+                //    PostgreSQLConfigurationFile? postgreSQLConfigurationFile = DiGi.PostgreSQL.Create.PostgreSQLConfigurationFile(path);
+                //    if (postgreSQLConfigurationFile is not null)
+                //    {
+                //        await DiGi.PostgreSQL.Create.DatabaseAsync(postgreSQLConfigurationFile);
 
-                        ConnectionData? connectionData = DiGi.PostgreSQL.Create.ConnectionData(postgreSQLConfigurationFile);
+                //        ConnectionData? connectionData = DiGi.PostgreSQL.Create.ConnectionData(postgreSQLConfigurationFile);
 
-                        if (connectionData is not null)
-                        {
-                            serviceCollection.AddScoped(serviceProvider => new PostgreSQL.Classes.OrtoDatasPostgreSQLConverter(connectionData));
-                        }
-                    }
-                }
+                //        if (connectionData is not null)
+                //        {
+                //            serviceCollection.AddScoped(serviceProvider => new PostgreSQL.Classes.OrtoDatasPostgreSQLConverter(connectionData));
+                //        }
+                //    }
+                //}
             }
         }
     }
