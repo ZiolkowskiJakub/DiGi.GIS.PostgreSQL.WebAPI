@@ -36,24 +36,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                         }
                     }
                 }
-
-                //path = System.IO.Path.Combine(directory!, "DiGi.GIS.PostgreSQL.WebAPI_OrtoDatas.conf");
-
-                //if (System.IO.File.Exists(path))
-                //{
-                //    PostgreSQLConfigurationFile? postgreSQLConfigurationFile = DiGi.PostgreSQL.Create.PostgreSQLConfigurationFile(path);
-                //    if (postgreSQLConfigurationFile is not null)
-                //    {
-                //        await DiGi.PostgreSQL.Create.DatabaseAsync(postgreSQLConfigurationFile);
-
-                //        ConnectionData? connectionData = DiGi.PostgreSQL.Create.ConnectionData(postgreSQLConfigurationFile);
-
-                //        if (connectionData is not null)
-                //        {
-                //            serviceCollection.AddScoped(serviceProvider => new PostgreSQL.Classes.OrtoDatasPostgreSQLConverter(connectionData));
-                //        }
-                //    }
-                //}
             }
         }
     }
