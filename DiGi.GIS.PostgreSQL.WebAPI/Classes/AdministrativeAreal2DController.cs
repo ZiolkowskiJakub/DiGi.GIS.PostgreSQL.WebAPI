@@ -1,5 +1,6 @@
 ﻿using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.Classes;
+using DiGi.PostgreSQL.UniqueReference;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
@@ -267,8 +268,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(jsonArray.ToJsonString() ?? string.Empty, "application/json");
         }
 
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateAsync([FromBody] JsonObject? jsonObject)
+        [HttpPost("updateitem")]
+        public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject)
         {
             if (jsonObject is null)
             {
@@ -288,6 +289,42 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             await administrativeAreal2DPostgreSQLConverter.UpdateAsync([administrativeAreal2D_PostgreSQL]);
+
+            return Ok();
+        }
+
+        [HttpPost("updateitems")]
+        public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray)
+        {
+            if (jsonArray is null || jsonArray.Count == 0)
+            {
+                return NoContent();
+            }
+
+            List<AdministrativeAreal2D>? administrativeAreal2Ds = Core.Create.SerializableObjects<AdministrativeAreal2D>(jsonArray);
+            if (administrativeAreal2Ds is null)
+            {
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.AdministrativeAreal2D> administrativeAreal2Ds_PostgreSQL = [];
+            foreach (AdministrativeAreal2D administrativeAreal2D in administrativeAreal2Ds)
+            {
+                PostgreSQL.Classes.AdministrativeAreal2D? administrativeAreal2D_PostgreSQL = administrativeAreal2D.ToPostgreSQL();
+                if (administrativeAreal2D_PostgreSQL is null)
+                {
+                    continue;
+                }
+
+                administrativeAreal2Ds_PostgreSQL.Add(administrativeAreal2D_PostgreSQL);
+            }
+
+            if(administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
+            {
+                return NoContent();
+            }
+
+            await administrativeAreal2DPostgreSQLConverter.UpdateAsync(administrativeAreal2Ds_PostgreSQL);
 
             return Ok();
         }
