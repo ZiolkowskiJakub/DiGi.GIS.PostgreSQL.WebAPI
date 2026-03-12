@@ -1,6 +1,4 @@
-﻿using DiGi.PostgreSQL.Classes;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI
@@ -14,27 +12,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return;
             }
 
-            string? directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (!string.IsNullOrWhiteSpace(directory))
+            PostgreSQL.Classes.GISPostgreSQLConverterManager? gISPostgreSQLConverterManager = Create.GISPostgreSQLConverterManager();
+            if(gISPostgreSQLConverterManager is not null)
             {
-                string path;
-
-                path = System.IO.Path.Combine(directory!, "DiGi.GIS.PostgreSQL.WebAPI_Main.conf");
-
-                if (System.IO.File.Exists(path))
+                if(gISPostgreSQLConverterManager.GetPostgreSQLConverter<PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter>() is PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
                 {
-                    PostgreSQLConfigurationFile? postgreSQLConfigurationFile = DiGi.PostgreSQL.Create.PostgreSQLConfigurationFile(path);
-                    if (postgreSQLConfigurationFile is not null)
-                    {
-                        await DiGi.PostgreSQL.Create.DatabaseAsync(postgreSQLConfigurationFile);
-
-                        ConnectionData? connectionData = DiGi.PostgreSQL.Create.ConnectionData(postgreSQLConfigurationFile);
-
-                        if (connectionData is not null)
-                        {
-                            serviceCollection.AddScoped(serviceProvider => new PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter(connectionData));
-                        }
-                    }
+                    serviceCollection.AddScoped(serviceProvider => administrativeAreal2DPostgreSQLConverter);
                 }
             }
         }
