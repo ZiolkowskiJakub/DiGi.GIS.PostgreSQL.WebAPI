@@ -11,10 +11,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class Building2DController : DiGi.WebAPI.Classes.WebAPIController
     {
+        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter;
 
-        public Building2DController(PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter)
+        public Building2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter)
         {
+            this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
             this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
         }
 
@@ -28,7 +30,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constants.Tolerance.MacroDistance;
+                tolerance = Core.Constans.Tolerance.MacroDistance;
             }
 
             PostgreSQL.Classes.Building2D? building2D_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DbyPoint2DAsync(new Point2D(x, y), tolerance.Value);
@@ -55,7 +57,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constants.Tolerance.MacroDistance;
+                tolerance = Core.Constans.Tolerance.MacroDistance;
             }
 
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBoundingBox2DAsync(new BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), tolerance.Value);
@@ -118,7 +120,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constants.Tolerance.MacroDistance;
+                tolerance = Core.Constans.Tolerance.MacroDistance;
             }
 
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByCircle2DAsync(new Circle2D(new Point2D(x, y), radius_Temp), tolerance.Value);
@@ -150,6 +152,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitem")]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "code")] string? code)
         {
+            if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateBuilding2D)
+            {
+                return BadRequest();
+            }
+
             if (jsonObject is null)
             {
                 return NoContent();
@@ -175,6 +182,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitems")]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string? code)
         {
+            if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateBuilding2D)
+            {
+                return BadRequest();
+            }
+
             if (jsonArray is null || jsonArray.Count == 0)
             {
                 return NoContent();

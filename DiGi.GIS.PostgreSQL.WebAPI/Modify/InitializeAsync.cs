@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DiGi.GIS.PostgreSQL.Classes;
+using DiGi.GIS.PostgreSQL.WebAPI.Classes;
+using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI
@@ -12,12 +14,20 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return;
             }
 
-            PostgreSQL.Classes.GISPostgreSQLConverterManager? gISPostgreSQLConverterManager = Create.GISPostgreSQLConverterManager();
-            if(gISPostgreSQLConverterManager is not null)
+            GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher = Create.GISPostgreSQLWebAPIConfigurationFileWatcher();
+            if (gISPostgreSQLWebAPIConfigurationFileWatcher is not null)
             {
-                if(gISPostgreSQLConverterManager.GetPostgreSQLConverter<PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter>() is PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
+                serviceCollection.AddSingleton(gISPostgreSQLWebAPIConfigurationFileWatcher);
+            }
+
+            GISPostgreSQLConverterManager? gISPostgreSQLConverterManager = PostgreSQL.Create.GISPostgreSQLConverterManager();
+            if (gISPostgreSQLConverterManager is not null)
+            {
+                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<AdministrativeAreal2DPostgreSQLConverter>() is AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
                 {
-                    serviceCollection.AddScoped(serviceProvider => administrativeAreal2DPostgreSQLConverter);
+                    serviceCollection.AddSingleton(administrativeAreal2DPostgreSQLConverter);
+
+                    //serviceCollection.AddScoped(serviceProvider => administrativeAreal2DPostgreSQLConverter);
                 }
             }
         }

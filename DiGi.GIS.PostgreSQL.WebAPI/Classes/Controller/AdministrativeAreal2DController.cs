@@ -1,6 +1,5 @@
 ﻿using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.Classes;
-using DiGi.PostgreSQL.UniqueReference;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
@@ -12,10 +11,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class AdministrativeAreal2DController : DiGi.WebAPI.Classes.WebAPIController
     {
+        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
 
-        public AdministrativeAreal2DController(PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
+        public AdministrativeAreal2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
+            this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
         }
 
@@ -66,16 +67,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constants.Tolerance.MacroDistance;
+                tolerance = Core.Constans.Tolerance.MacroDistance;
             }
 
-            List<PostgreSQL.Enums.AdministrativeArealType>? administrativeArealTypes = null;
-            if (!string.IsNullOrWhiteSpace(type) && Core.Query.TryGetEnum(type, out PostgreSQL.Enums.AdministrativeArealType administrativeArealType) && administrativeArealType != PostgreSQL.Enums.AdministrativeArealType.Undefined)
+            List<Enums.AdministrativeArealType>? administrativeArealTypes = null;
+            if (!string.IsNullOrWhiteSpace(type) && Core.Query.TryGetEnum(type, out Enums.AdministrativeArealType administrativeArealType) && administrativeArealType != PostgreSQL.Enums.AdministrativeArealType.Undefined)
             {
                 administrativeArealTypes = [administrativeArealType];
             }
 
-            List<PostgreSQL.Classes.AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByBoundingBox2DAsync(new Geometry.Planar.Classes.BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), administrativeArealTypes, tolerance.Value);
+            List<PostgreSQL.Classes.AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByBoundingBox2DAsync(new BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), administrativeArealTypes, tolerance.Value);
             if (administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
             {
                 return NoContent();
@@ -135,11 +136,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constants.Tolerance.MacroDistance;
+                tolerance = Core.Constans.Tolerance.MacroDistance;
             }
 
-            List<PostgreSQL.Enums.AdministrativeArealType>? administrativeArealTypes = null;
-            if (!string.IsNullOrWhiteSpace(type) && Core.Query.TryGetEnum(type, out PostgreSQL.Enums.AdministrativeArealType administrativeArealType) && administrativeArealType != PostgreSQL.Enums.AdministrativeArealType.Undefined)
+            List<Enums.AdministrativeArealType>? administrativeArealTypes = null;
+            if (!string.IsNullOrWhiteSpace(type) && Core.Query.TryGetEnum(type, out Enums.AdministrativeArealType administrativeArealType) && administrativeArealType != PostgreSQL.Enums.AdministrativeArealType.Undefined)
             {
                 administrativeArealTypes = [administrativeArealType];
             }
@@ -214,16 +215,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constants.Tolerance.MacroDistance;
+                tolerance = Core.Constans.Tolerance.MacroDistance;
             }
 
-            List<PostgreSQL.Enums.AdministrativeArealType>? administrativeArealTypes = null;
-            if (!string.IsNullOrWhiteSpace(type) && Core.Query.TryGetEnum(type, out PostgreSQL.Enums.AdministrativeArealType administrativeArealType) && administrativeArealType != PostgreSQL.Enums.AdministrativeArealType.Undefined)
+            List<Enums.AdministrativeArealType>? administrativeArealTypes = null;
+            if (!string.IsNullOrWhiteSpace(type) && Core.Query.TryGetEnum(type, out Enums.AdministrativeArealType administrativeArealType) && administrativeArealType != PostgreSQL.Enums.AdministrativeArealType.Undefined)
             {
                 administrativeArealTypes = [administrativeArealType];
             }
 
-            List<PostgreSQL.Classes.AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByPoint2DAsync(new Geometry.Planar.Classes.Point2D(x, y), administrativeArealTypes, tolerance.Value);
+            List<PostgreSQL.Classes.AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByPoint2DAsync(new Point2D(x, y), administrativeArealTypes, tolerance.Value);
             if (administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
             {
                 return NoContent();
@@ -271,6 +272,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitem")]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject)
         {
+            if(!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
+            {
+                return ValidationProblem();
+            }
+
             if (jsonObject is null)
             {
                 return NoContent();
@@ -288,7 +294,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            await administrativeAreal2DPostgreSQLConverter.UpdateAsync([administrativeAreal2D_PostgreSQL]);
+            HashSet<int>? ids = await administrativeAreal2DPostgreSQLConverter.UpdateAsync([administrativeAreal2D_PostgreSQL]);
+            if (ids is null || ids.Count == 0)
+            {
+                return BadRequest();
+            }
 
             return Ok();
         }
@@ -296,6 +306,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitems")]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray)
         {
+            if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
+            {
+                return BadRequest();
+            }
+
             if (jsonArray is null || jsonArray.Count == 0)
             {
                 return NoContent();
@@ -319,12 +334,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 administrativeAreal2Ds_PostgreSQL.Add(administrativeAreal2D_PostgreSQL);
             }
 
-            if(administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
+            if (administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
             {
                 return NoContent();
             }
 
-            await administrativeAreal2DPostgreSQLConverter.UpdateAsync(administrativeAreal2Ds_PostgreSQL);
+            HashSet<int>? ids = await administrativeAreal2DPostgreSQLConverter.UpdateAsync(administrativeAreal2Ds_PostgreSQL);
+            if(ids is null || ids.Count == 0)
+            {
+                return BadRequest();
+            }
 
             return Ok();
         }
