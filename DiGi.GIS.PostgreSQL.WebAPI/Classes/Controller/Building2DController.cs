@@ -11,8 +11,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class Building2DController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter;
+        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
         public Building2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter)
         {

@@ -55,12 +55,6 @@
 		<Reference Include="DiGi.PostgreSQL">
 		  <HintPath>..\..\DiGi.PostgreSQL\bin\DiGi.PostgreSQL.dll</HintPath>
 		</Reference>
-		<Reference Include="DiGi.PostgreSQL.PartitionReference">
-		  <HintPath>..\..\DiGi.PostgreSQL\bin\DiGi.PostgreSQL.PartitionReference.dll</HintPath>
-		</Reference>
-		<Reference Include="DiGi.PostgreSQL.UniqueReference">
-		  <HintPath>..\..\DiGi.PostgreSQL\bin\DiGi.PostgreSQL.UniqueReference.dll</HintPath>
-		</Reference>
 		<Reference Include="DiGi.WebAPI">
 			<HintPath>..\..\DiGi.WebAPI\bin\DiGi.WebAPI.dll</HintPath>
 		</Reference>

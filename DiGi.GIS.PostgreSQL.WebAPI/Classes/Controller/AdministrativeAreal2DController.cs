@@ -272,7 +272,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitem")]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject)
         {
-            if(!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
+            if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
             {
                 return ValidationProblem();
             }
@@ -340,7 +340,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             HashSet<int>? ids = await administrativeAreal2DPostgreSQLConverter.UpdateAsync(administrativeAreal2Ds_PostgreSQL);
-            if(ids is null || ids.Count == 0)
+            if (ids is null || ids.Count == 0)
             {
                 return BadRequest();
             }
