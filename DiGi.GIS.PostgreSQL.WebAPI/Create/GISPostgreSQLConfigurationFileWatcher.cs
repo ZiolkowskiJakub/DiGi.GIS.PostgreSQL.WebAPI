@@ -7,7 +7,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
     {
         public static GISPostgreSQLWebAPIConfigurationFileWatcher GISPostgreSQLWebAPIConfigurationFileWatcher()
         {
-            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, Constans.FileName.GISPostgreSQLWebAPIConfigurationFile);
+            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, Constants.FileName.GISPostgreSQLWebAPIConfigurationFile);
 
             return new GISPostgreSQLWebAPIConfigurationFileWatcher(path);
         }

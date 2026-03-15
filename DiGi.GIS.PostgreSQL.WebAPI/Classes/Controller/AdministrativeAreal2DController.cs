@@ -67,7 +67,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constans.Tolerance.MacroDistance;
+                tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
             List<Enums.AdministrativeArealType>? administrativeArealTypes = null;
@@ -136,7 +136,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constans.Tolerance.MacroDistance;
+                tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
             List<Enums.AdministrativeArealType>? administrativeArealTypes = null;
@@ -215,7 +215,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constans.Tolerance.MacroDistance;
+                tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
             List<Enums.AdministrativeArealType>? administrativeArealTypes = null;

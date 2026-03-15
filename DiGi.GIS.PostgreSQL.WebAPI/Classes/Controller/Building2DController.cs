@@ -21,7 +21,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         [HttpPost("itembypoint")]
-        public async Task<IActionResult> GetItemByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
+        public async Task<IActionResult> GetItemByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance)
         {
             if (double.IsNaN(x) || double.IsNaN(y))
             {
@@ -30,7 +30,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constans.Tolerance.MacroDistance;
+                tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
             PostgreSQL.Classes.Building2D? building2D_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DbyPoint2DAsync(new Point2D(x, y), tolerance.Value);
@@ -48,7 +48,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         [HttpPost("itemsbyboundingbox")]
-        public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
+        public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance)
         {
             if (double.IsNaN(x_1) || double.IsNaN(y_1) || double.IsNaN(x_2) || double.IsNaN(y_2))
             {
@@ -57,7 +57,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constans.Tolerance.MacroDistance;
+                tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBoundingBox2DAsync(new BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), tolerance.Value);
@@ -87,7 +87,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         [HttpPost("itemsbycircle")]
-        public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
+        public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance)
         {
             if (double.IsNaN(x) || double.IsNaN(y))
             {
@@ -120,7 +120,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (tolerance is null || double.IsNaN(tolerance.Value))
             {
-                tolerance = Core.Constans.Tolerance.MacroDistance;
+                tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByCircle2DAsync(new Circle2D(new Point2D(x, y), radius_Temp), tolerance.Value);
