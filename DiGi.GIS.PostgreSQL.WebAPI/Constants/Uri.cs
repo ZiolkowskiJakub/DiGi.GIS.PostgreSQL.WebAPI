@@ -2,6 +2,6 @@
 {
     public static class Uri
     {
-        public static System.Uri BaseAddress = new("https://api.digiproject.uk/gis/");
+        public static System.Uri BaseAddress = new("https://api.digiproject.uk/");
     }
 }

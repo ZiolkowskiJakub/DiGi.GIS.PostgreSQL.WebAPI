@@ -95,22 +95,18 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 // Optional: If you want to know WHY it failed (e.g. 401 Unauthorized vs 500 Internal Error)
                 // if (!response.IsSuccessStatusCode) { /* Log response.StatusCode */ }
 
-                return response.IsSuccessStatusCode;
+                bool result = response.IsSuccessStatusCode;
+                if(!result)
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+
+                return result;
             }
             catch (OperationCanceledException)
             {
                 // This catches both TaskCanceledException and manual cancellation via cts.Token
                 // Log: "Request timed out or was cancelled."
-                return false;
-            }
-            catch (HttpRequestException)
-            {
-                // Log: "Network error or DNS failure."
-                return false;
-            }
-            catch (Exception)
-            {
-                // Log: "Unexpected error during POST."
                 return false;
             }
         }
