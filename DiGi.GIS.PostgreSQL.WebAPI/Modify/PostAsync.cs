@@ -1,5 +1,6 @@
 ﻿using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.WebAPI.Classes;
+using DiGi.WebAPI.Classes;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -43,7 +44,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2D));
         }
 
-        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<Building2D>? building2Ds)
+        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<Building2D>? building2Ds, string? code = null)
         {
             if (gISPostgreSQLWebAPIManager is null || building2Ds is null)
             {
@@ -56,10 +57,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(building2Ds));
+            UrlBuilder urlBuilder = new (path);
+            urlBuilder.AddParameter("code", code);
+
+            return await PostAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2Ds));
         }
 
-        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, Building2D? building2D)
+        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, Building2D? building2D, string? code = null)
         {
             if (gISPostgreSQLWebAPIManager is null || building2D is null)
             {
@@ -72,10 +76,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(building2D));
+            UrlBuilder urlBuilder = new(path);
+            urlBuilder.AddParameter("code", code);
+
+            return await PostAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2D));
         }
 
-        public static async Task<bool> PostAsync(this HttpClient httpClient, string requestUri, string? json)
+        public static async Task<bool> PostAsync(this HttpClient httpClient, string? requestUri, string? json)
         {
             if (httpClient is null || string.IsNullOrWhiteSpace(requestUri) || json is null)
             {
