@@ -20,33 +20,29 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public IEnumerable<Building2D>? Building2Ds { get; set; }
 
         public string? Code { get; set; }
-        
+
         protected override async Task<bool> ExecuteAsync()
         {
-            if(Building2Ds is null || !Building2Ds.Any())
+            if (Building2Ds is null || !Building2Ds.Any())
             {
                 return false;
             }
 
-            List<Building2D> building2Ds = [.. Building2Ds];
+            List<Building2D>? building2Ds;
 
             bool result = true;
 
-            while (building2Ds.Count > 0)
+            MemorySizeSplitter<Building2D> memorySizeSplitter = new(Building2Ds);
+            while ((building2Ds = memorySizeSplitter.Next(10 * 1024 * 1024)) is not null)
             {
-                int count = Math.Min(building2Ds.Count, 1000);
-
-                result = await gISPostgreSQLWebAPIManager.PostAsync(building2Ds.GetRange(0, count), Code);
-                if(!result)
+                result = await gISPostgreSQLWebAPIManager.PostAsync(building2Ds, Code);
+                if (!result)
                 {
                     break;
                 }
-
-                building2Ds.RemoveRange(0, count);
             }
 
             return result;
         }
-
     }
 }

@@ -29,7 +29,21 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
-            return await gISPostgreSQLWebAPIManager.PostAsync(AdministrativeAreal2Ds);
+            List<AdministrativeAreal2D>? administrativeAreal2Ds;
+
+            bool result = true;
+
+            MemorySizeSplitter<AdministrativeAreal2D> memorySizeSplitter = new(AdministrativeAreal2Ds);
+            while ((administrativeAreal2Ds = memorySizeSplitter.Next(10 * 1024 * 1024)) is not null)
+            {
+                result = await gISPostgreSQLWebAPIManager.PostAsync(administrativeAreal2Ds);
+                if (!result)
+                {
+                    break;
+                }
+            }
+
+            return result;
         }
 
     }
