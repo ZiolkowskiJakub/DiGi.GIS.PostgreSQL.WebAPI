@@ -12,7 +12,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 {
     public static partial class Modify
     {
-        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<AdministrativeAreal2D>? administrativeAreal2Ds)
+        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<AdministrativeAreal2D>? administrativeAreal2Ds, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || administrativeAreal2Ds is null)
             {
@@ -25,10 +25,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2Ds));
+            return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2Ds), postOptions);
         }
 
-        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, AdministrativeAreal2D? administrativeAreal2D)
+        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, AdministrativeAreal2D? administrativeAreal2D, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || administrativeAreal2D is null)
             {
@@ -41,10 +41,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2D));
+            return await PostAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2D), postOptions);
         }
 
-        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<Building2D>? building2Ds, string? code = null)
+        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<Building2D>? building2Ds, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || building2Ds is null)
             {
@@ -57,13 +57,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            UrlBuilder urlBuilder = new (path);
+            UrlBuilder urlBuilder = new(path);
             urlBuilder.AddParameter("code", code);
 
-            return await PostAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2Ds));
+            return await PostAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2Ds), postOptions);
         }
 
-        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, Building2D? building2D, string? code = null)
+        public static async Task<bool> PostAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, Building2D? building2D, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || building2D is null)
             {
@@ -79,18 +79,23 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             UrlBuilder urlBuilder = new(path);
             urlBuilder.AddParameter("code", code);
 
-            return await PostAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2D));
+            return await PostAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2D), postOptions);
         }
 
-        public static async Task<bool> PostAsync(this HttpClient httpClient, string? requestUri, string? json)
+        public static async Task<bool> PostAsync(this HttpClient httpClient, string? requestUri, string? json, PostOptions? postOptions = null)
         {
             if (httpClient is null || string.IsNullOrWhiteSpace(requestUri) || json is null)
             {
                 return false;
             }
 
+            if (postOptions is null)
+            {
+                postOptions = new PostOptions();
+            }
+
             // Using a single, clean timeout management
-            using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(10));
+            using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
 
             try
             {
@@ -103,7 +108,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 // if (!response.IsSuccessStatusCode) { /* Log response.StatusCode */ }
 
                 bool result = response.IsSuccessStatusCode;
-                if(!result)
+                if (!result)
                 {
                     throw new Exception(response.ReasonPhrase);
                 }

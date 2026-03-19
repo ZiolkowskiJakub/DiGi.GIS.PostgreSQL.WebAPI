@@ -29,6 +29,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
                     //serviceCollection.AddScoped(serviceProvider => administrativeAreal2DPostgreSQLConverter);
                 }
+
+                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<Building2DPostgreSQLConverter>() is Building2DPostgreSQLConverter building2DPostgreSQLConverter)
+                {
+                    serviceCollection.AddSingleton(building2DPostgreSQLConverter);
+
+                    //serviceCollection.AddScoped(serviceProvider => building2DPostgreSQLConverter);
+                }
             }
         }
     }

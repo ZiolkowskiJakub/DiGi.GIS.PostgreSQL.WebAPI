@@ -182,6 +182,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitems")]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string? code)
         {
+
             if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateBuilding2D)
             {
                 return BadRequest();
@@ -215,7 +216,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            await building2DPostgreSQLConverter.UpdateAsync(building2Ds_PostgreSQL);
+            HashSet<long>? ids = await building2DPostgreSQLConverter.UpdateAsync(building2Ds_PostgreSQL);
 
             return Ok();
         }
