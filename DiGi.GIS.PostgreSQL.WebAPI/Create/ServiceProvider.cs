@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Net.Http;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI
 {
@@ -9,12 +10,17 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
         {
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            // Rejestracja nazwanego klienta
             serviceCollection.AddHttpClient(Constants.Name.Client, httpClient =>
             {
                 httpClient.BaseAddress = Constants.Uri.BaseAddress;
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-                httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+                httpClient.Timeout = TimeSpan.FromSeconds(60);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                MaxConnectionsPerServer = 100,
+                PooledConnectionLifetime = TimeSpan.FromMinutes(5)
             });
 
             return serviceCollection.BuildServiceProvider();

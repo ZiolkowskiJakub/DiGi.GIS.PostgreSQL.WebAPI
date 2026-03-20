@@ -3,6 +3,8 @@ using DiGi.GIS.PostgreSQL.WebAPI.Classes;
 using DiGi.WebAPI.Classes;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -94,32 +96,50 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 postOptions = new PostOptions();
             }
 
-            // Using a single, clean timeout management
             using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
 
             try
             {
-                StringContent stringContent = new(json, Encoding.UTF8, "application/json");
-
-                // PostAsync returns Task<HttpResponseMessage>
-                HttpResponseMessage response = await httpClient.PostAsync(requestUri, stringContent, cancellationTokenSource.Token).ConfigureAwait(false);
-
-                // Optional: If you want to know WHY it failed (e.g. 401 Unauthorized vs 500 Internal Error)
-                // if (!response.IsSuccessStatusCode) { /* Log response.StatusCode */ }
-
-                bool result = response.IsSuccessStatusCode;
-                if (!result)
+                HttpContent? httpContent = await Create.HttpContent(json, cancellationTokenSource.Token);
+                if(httpContent is null)
                 {
-                    throw new Exception(response.ReasonPhrase);
+                    Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Content could not be created.");
+                    return false;
                 }
 
-                return result;
+                // Execute request
+                using (httpContent)
+                {
+                    HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUri, httpContent, cancellationTokenSource.Token).ConfigureAwait(false);
+
+                    if (!httpResponseMessage.IsSuccessStatusCode)
+                    {
+                        string errorContent = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Exception exception = new($"Server returned {httpResponseMessage.StatusCode}: {httpResponseMessage.ReasonPhrase}. Details: {errorContent}");
+
+                        Serilog.Modify.Log(exception, "Post request completed, but server could not process it.");
+                        throw exception;
+                    }
+                }
+
+                return true;
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException operationCanceledException)
             {
-                // This catches both TaskCanceledException and manual cancellation via cts.Token
-                // Log: "Request timed out or was cancelled."
-                return false;
+                if (cancellationTokenSource.IsCancellationRequested)
+                {
+                    Serilog.Modify.Log(operationCanceledException, "Timeout: Manual {Delay}s limit reached.", postOptions.Delay.TotalSeconds);
+                }
+                else
+                {
+                    Serilog.Modify.Log(operationCanceledException, "Request cancelled by HttpClient (potential internal timeout or connection reset)");
+                }
+                throw;
+            }
+            catch (Exception exception)
+            {
+                Serilog.Modify.Log(exception, "Post request could not be completed.");
+                throw;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.Classes;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -182,22 +183,29 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitems")]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string? code)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(UpdateItemAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
 
             if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateBuilding2D)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Building2D update not allowed");
                 return BadRequest();
             }
 
             if (jsonArray is null || jsonArray.Count == 0)
             {
+                Serilog.Modify.Log("No Building2Ds to update");
                 return NoContent();
             }
 
             List<Building2D>? building2Ds = Core.Create.SerializableObjects<Building2D>(jsonArray);
             if (building2Ds is null)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2Ds could not be converted from json");
                 return BadRequest();
             }
+
+            Serilog.Modify.Log("Building2Ds conversion to PostgreSQL started. Building2Ds count: {Count}", building2Ds.Count);
 
             List<PostgreSQL.Classes.Building2D> building2Ds_PostgreSQL = [];
             foreach (Building2D building2D in building2Ds)
@@ -213,10 +221,32 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
+                Serilog.Modify.Log("No Building2Ds PostgreSQL to update");
                 return NoContent();
             }
 
-            HashSet<long>? ids = await building2DPostgreSQLConverter.UpdateAsync(building2Ds_PostgreSQL);
+            Serilog.Modify.Log("Building2Ds conversion to PostgreSQL ended. Building2Ds converted: {After}/{Before}", building2Ds_PostgreSQL.Count, building2Ds.Count);
+
+            Serilog.Modify.Log("Updating to database starting");
+
+            HashSet<long>? ids = null;
+            try
+            {
+                ids = await building2DPostgreSQLConverter.UpdateAsync(building2Ds_PostgreSQL);
+            }
+            catch(Exception exception)
+            {
+                Serilog.Modify.Log(exception, "Database could not be updated");
+            }
+
+            if(ids is null || ids.Count == 0)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Updating to database ended but no Building2Ds have been updated");
+            }
+            else
+            {
+                Serilog.Modify.Log("Updating to database ended. Updated Building2Ds: {After}/{Before}", ids?.Count ?? 0, building2Ds_PostgreSQL.Count);
+            }
 
             return Ok();
         }

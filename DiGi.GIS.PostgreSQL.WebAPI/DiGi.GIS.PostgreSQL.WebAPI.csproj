@@ -13,6 +13,7 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Npgsql" Version="10.0.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	</ItemGroup>
 
 	<Target Name="CopyUserFiles" AfterTargets="Build">
@@ -44,6 +45,9 @@
 		</Reference>
 		<Reference Include="DiGi.PostgreSQL">
 		  <HintPath>..\..\DiGi.PostgreSQL\bin\DiGi.PostgreSQL.dll</HintPath>
+		</Reference>
+		<Reference Include="DiGi.Serilog">
+		  <HintPath>..\..\DiGi.Serilog\bin\DiGi.Serilog.dll</HintPath>
 		</Reference>
 		<Reference Include="DiGi.WebAPI">
 			<HintPath>..\..\DiGi.WebAPI\bin\DiGi.WebAPI.dll</HintPath>
