@@ -53,7 +53,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCode(code, Enums.AdministrativeArealType.County);
+            int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, Enums.AdministrativeArealType.County);
             if (countyId is null)
             {
                 return BadRequest();

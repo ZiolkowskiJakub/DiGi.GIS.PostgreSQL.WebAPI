@@ -11,9 +11,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class AdministrativeAreal2DController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
-
+        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         public AdministrativeAreal2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
@@ -32,6 +31,29 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             JsonArray jsonArray = [.. codes];
 
             return Content(jsonArray.ToJsonString() ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("idbycode")]
+        public async Task<IActionResult> GetIdByCodeAsync([FromQuery(Name = "code")] string? code, string? administrativeArealType)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return BadRequest();
+            }
+
+            Enums.AdministrativeArealType? administrativeArealType_Temp = null;
+            if (!string.IsNullOrWhiteSpace(administrativeArealType) && Core.Query.TryGetEnum(administrativeArealType, out Enums.AdministrativeArealType administrativeArealType_Temp_1))
+            {
+                administrativeArealType_Temp = administrativeArealType_Temp_1;
+            }
+
+            int? id = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, administrativeArealType_Temp);
+            if (id is null || !id.HasValue)
+            {
+                return NotFound();
+            }
+
+            return Ok(id.Value);
         }
 
         [HttpGet("itembycode")]
@@ -56,7 +78,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(administrativeAreal2D) ?? string.Empty, "application/json");
         }
-
+        
         [HttpPost("itemsbyboundingbox")]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
         {
