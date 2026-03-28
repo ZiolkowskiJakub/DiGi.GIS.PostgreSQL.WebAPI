@@ -11,7 +11,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
     {
         public static async Task<HttpContent?> HttpContent(this string json, CancellationToken cancellationToken)
         {
-            if(string.IsNullOrWhiteSpace(json))
+            if (string.IsNullOrWhiteSpace(json))
             {
                 return null;
             }
@@ -33,7 +33,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
             //Decide if we want to use Gzip (optional: you could add a threshold here, e.g., if jsonBytes.Length > 1024)
             MemoryStream memoryStream = new();
-            
+
             using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal, leaveOpen: true))
             {
                 await gzipStream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);

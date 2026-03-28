@@ -36,6 +36,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
                     //serviceCollection.AddScoped(serviceProvider => building2DPostgreSQLConverter);
                 }
+
+                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<OrtoDatasPostgreSQLConverter>() is OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter)
+                {
+                    serviceCollection.AddSingleton(ortoDatasPostgreSQLConverter);
+
+                    //serviceCollection.AddScoped(serviceProvider => building2DPostgreSQLConverter);
+                }
             }
         }
     }

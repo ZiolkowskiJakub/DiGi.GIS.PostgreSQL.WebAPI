@@ -29,7 +29,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             MemorySizeSplitter<Building2D> memorySizeSplitter = new(Values);
             while ((building2Ds = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                result = await GISPostgreSQLWebAPIManager.PostAsync(building2Ds, Code, SerializableObjectsPostOptions);
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(building2Ds, Code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;

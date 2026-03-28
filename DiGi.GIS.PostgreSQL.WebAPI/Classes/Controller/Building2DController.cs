@@ -183,7 +183,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("updateitems")]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string? code)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(UpdateItemAsync));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(UpdateItemsAsync));
             Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
 
             if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateBuilding2D)
@@ -234,12 +234,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             {
                 ids = await building2DPostgreSQLConverter.UpdateAsync(building2Ds_PostgreSQL);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 Serilog.Modify.Log(exception, "Database could not be updated");
             }
 
-            if(ids is null || ids.Count == 0)
+            if (ids is null || ids.Count == 0)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Updating to database ended but no Building2Ds have been updated");
             }

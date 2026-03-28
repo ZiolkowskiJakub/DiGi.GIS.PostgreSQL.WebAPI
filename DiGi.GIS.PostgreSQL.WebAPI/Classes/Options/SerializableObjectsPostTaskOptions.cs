@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
-    public class SerializableObjectsPostOptions : PostOptions
+    public class SerializableObjectsPostOptions : DiGi.WebAPI.Classes.PostOptions
     {
         public SerializableObjectsPostOptions()
         {

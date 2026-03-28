@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
-    public class AdministrativeAreal2DsPostTask : SerializableObjectsPostTask<AdministrativeAreal2D>
+    public class OrtoDatasPostTask : SerializableObjectsPostTask<OrtoDatas>
     {
-        public AdministrativeAreal2DsPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
+        public OrtoDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
             : base(gISPostgreSQLWebAPIManager)
         {
         }
+
+        public string? Code { get; set; }
 
         protected override async Task<bool> ExecuteAsync()
         {
@@ -20,14 +22,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
-            List<AdministrativeAreal2D>? administrativeAreal2Ds;
+            List<OrtoDatas>? ortoDatas;
 
             bool result = true;
 
-            MemorySizeSplitter<AdministrativeAreal2D> memorySizeSplitter = new(Values);
-            while ((administrativeAreal2Ds = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            MemorySizeSplitter<OrtoDatas> memorySizeSplitter = new(Values);
+            while ((ortoDatas = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(administrativeAreal2Ds, SerializableObjectsPostOptions);
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatas, Code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;

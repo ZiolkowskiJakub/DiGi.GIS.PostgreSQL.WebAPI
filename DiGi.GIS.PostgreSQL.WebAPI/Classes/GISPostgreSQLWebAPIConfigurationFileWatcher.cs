@@ -22,5 +22,13 @@
                 return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateAdministrativeAreal2D));
             }
         }
+
+        public bool AllowUpdateOrtoDatas
+        {
+            get
+            {
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateOrtoDatas));
+            }
+        }
     }
 }
