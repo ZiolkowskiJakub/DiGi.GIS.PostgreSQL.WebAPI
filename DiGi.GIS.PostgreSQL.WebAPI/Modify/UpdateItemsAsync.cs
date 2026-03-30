@@ -69,7 +69,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.UpdateItemsAsync), out string? path);
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.UpdateItemsByCodeAsync), out string? path);
             if (httpClient is null || string.IsNullOrWhiteSpace(path))
             {
                 return false;
@@ -77,6 +77,25 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
             UrlBuilder urlBuilder = new(path);
             urlBuilder.AddParameter("code", code);
+
+            return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(ortoDatas), postOptions);
+        }
+
+        public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<OrtoDatas>? ortoDatas, int countyId, PostOptions? postOptions = null)
+        {
+            if (gISPostgreSQLWebAPIManager is null || ortoDatas is null)
+            {
+                return false;
+            }
+
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.UpdateItemsByCodeAsync), out string? path);
+            if (httpClient is null || string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            UrlBuilder urlBuilder = new(path);
+            urlBuilder.AddParameter("countyid", countyId);
 
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(ortoDatas), postOptions);
         }

@@ -150,6 +150,50 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
 
+
+        [HttpPost("itemsbylocationreferences")]
+        public async Task<IActionResult> GetItemsByLocationReferences([FromBody] JsonArray? jsonArray)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByLocationReferences));
+
+            if (jsonArray is null || jsonArray.Count == 0)
+            {
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.LocationReference>? locationReferences = Core.Create.SerializableObjects<PostgreSQL.Classes.LocationReference>(jsonArray);
+            if (locationReferences is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "LocationReferences could not be converted from json");
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByLocationReferences(locationReferences);
+            if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
+            {
+                return NoContent();
+            }
+
+            List<Building2D> building2Ds = [];
+            foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
+            {
+                Building2D? building2D = building2D_PostgreSQL.ToDiGi<Building2D>();
+                if (building2D is null)
+                {
+                    continue;
+                }
+
+                building2Ds.Add(building2D);
+            }
+
+            if (building2Ds is null || building2Ds.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
+        }
+
         [HttpPost("updateitem")]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "code")] string? code)
         {

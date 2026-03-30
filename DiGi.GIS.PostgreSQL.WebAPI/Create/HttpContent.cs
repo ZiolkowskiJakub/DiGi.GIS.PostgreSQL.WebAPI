@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using DiGi.Core.Interfaces;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
@@ -9,6 +11,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 {
     public static partial class Create
     {
+        public static async Task<HttpContent?> HttpContent<TSerializableObject>(this IEnumerable<TSerializableObject> serializableObjects, CancellationToken cancellationToken) where TSerializableObject : ISerializableObject
+        {
+            string? json = Core.Convert.ToSystem_String(serializableObjects);
+
+            return await HttpContent(json ?? string.Empty, cancellationToken);
+        }
+
         public static async Task<HttpContent?> HttpContent(this string json, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(json))

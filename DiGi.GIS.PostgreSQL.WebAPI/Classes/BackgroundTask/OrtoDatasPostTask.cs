@@ -15,21 +15,20 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         public string? Code { get; set; }
 
-        protected override async Task<bool> ExecuteAsync()
+        protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, string? code)
         {
-            if (Values is null || !Values.Any())
+            if (values is null || !values.Any())
             {
                 return false;
             }
 
-            List<OrtoDatas>? ortoDatas;
-
+            List<OrtoDatas>? ortoDatasBatch;
             bool result = true;
 
-            MemorySizeSplitter<OrtoDatas> memorySizeSplitter = new(Values);
-            while ((ortoDatas = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            MemorySizeSplitter<OrtoDatas> memorySizeSplitter = new(values);
+            while ((ortoDatasBatch = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatas, Code, SerializableObjectsPostOptions);
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasBatch, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;
@@ -37,6 +36,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return result;
+        }
+
+        protected override async Task<bool> ExecuteAsync()
+        {
+            return await ExecuteAsync(Values, Code);
         }
     }
 }
