@@ -150,7 +150,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
 
-
         [HttpPost("itemsbylocationreferences")]
         public async Task<IActionResult> GetItemsByLocationReferences([FromBody] JsonArray? jsonArray)
         {

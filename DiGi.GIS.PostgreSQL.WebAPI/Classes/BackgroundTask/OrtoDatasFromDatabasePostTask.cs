@@ -38,21 +38,21 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
 
             PostResponse<List<LocationReference>?> postResponse_LocationReferences = await DiGi.WebAPI.Modify.PostAsync<List<LocationReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
-            if(postResponse_LocationReferences is null || !postResponse_LocationReferences.Succeeded)
+            if (postResponse_LocationReferences is null || !postResponse_LocationReferences.Succeeded)
             {
                 return false;
             }
 
             while (postResponse_LocationReferences is not null && postResponse_LocationReferences.Succeeded && postResponse_LocationReferences.Result is List<LocationReference> locationReferences && locationReferences.Count > 0)
             {
-                while(locationReferences.Count > 0)
+                while (locationReferences.Count > 0)
                 {
                     int? countyId = locationReferences[0].CountyId;
 
                     Core.Query.Filter(locationReferences, x => x?.CountyId == countyId, out List<LocationReference>? locationReferences_In, out List<LocationReference>? locationReferences_Out);
                     locationReferences = locationReferences_Out ?? [];
 
-                    if(locationReferences_In != null && locationReferences_In.Count != 0 && countyId is not null && countyId.HasValue)
+                    if (locationReferences_In != null && locationReferences_In.Count != 0 && countyId is not null && countyId.HasValue)
                     {
                         HttpContent? httpContent = await Create.HttpContent(locationReferences_In, cancellationTokenSource.Token);
                         if (httpContent is null)
@@ -80,7 +80,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                             ortoDatasList.Add(ortoDatas);
                         }
 
-                        bool succeeded = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId.Value, postOptions);
+                        bool succeeded = await ExecuteAsync(ortoDatasList, countyId.Value); //await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId.Value, postOptions);
                         if (!succeeded)
                         {
                             return false;

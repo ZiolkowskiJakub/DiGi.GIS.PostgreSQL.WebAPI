@@ -38,6 +38,29 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return result;
         }
 
+        protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, int countyId)
+        {
+            if (values is null || !values.Any())
+            {
+                return false;
+            }
+
+            List<OrtoDatas>? ortoDatasBatch;
+            bool result = true;
+
+            MemorySizeSplitter<OrtoDatas> memorySizeSplitter = new(values);
+            while ((ortoDatasBatch = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            {
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasBatch, countyId, SerializableObjectsPostOptions);
+                if (!result)
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         protected override async Task<bool> ExecuteAsync()
         {
             return await ExecuteAsync(Values, Code);

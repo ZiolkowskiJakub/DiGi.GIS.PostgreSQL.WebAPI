@@ -15,9 +15,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         public string? Code { get; set; }
 
-        protected override async Task<bool> ExecuteAsync()
+        protected async Task<bool> ExecuteAsync(IEnumerable<Building2D>? values, string? code)
         {
-            if (Values is null || !Values.Any())
+            if (values is null || !values.Any())
             {
                 return false;
             }
@@ -26,10 +26,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             bool result = true;
 
-            MemorySizeSplitter<Building2D> memorySizeSplitter = new(Values);
+            MemorySizeSplitter<Building2D> memorySizeSplitter = new(values);
             while ((building2Ds = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(building2Ds, Code, SerializableObjectsPostOptions);
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(building2Ds, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;
@@ -37,6 +37,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return result;
+        }
+
+        protected override async Task<bool> ExecuteAsync()
+        {
+            return await ExecuteAsync(Values, Code);
         }
     }
 }
