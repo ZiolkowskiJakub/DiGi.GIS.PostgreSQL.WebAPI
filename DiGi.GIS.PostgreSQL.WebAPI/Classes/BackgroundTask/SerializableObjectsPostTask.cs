@@ -3,11 +3,10 @@ using DiGi.GIS.Interfaces;
 using DiGi.GIS.PostgreSQL.WebAPI.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
-    public abstract class SerializableObjectsPostTask<T> : BackgroundTask, IGISPostgreSQLWebAPIObject where T : IGISSerializableObject
+    public abstract class SerializableObjectsPostTask<T> : ReportableBackgroundTask<long>, IGISPostgreSQLWebAPIObject where T : IGISSerializableObject
     {
         protected readonly GISPostgreSQLWebAPIManager GISPostgreSQLWebAPIManager;
 
@@ -19,7 +18,5 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public SerializableObjectsPostOptions SerializableObjectsPostOptions { get; set; } = new();
 
         public IEnumerable<T>? Values { get; set; }
-
-        protected abstract override Task<bool> ExecuteAsync();
     }
 }

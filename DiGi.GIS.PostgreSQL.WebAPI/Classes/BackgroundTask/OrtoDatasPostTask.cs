@@ -1,7 +1,9 @@
 ﻿using DiGi.Core.Classes;
 using DiGi.GIS.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
@@ -15,20 +17,24 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         public string? Code { get; set; }
 
-        protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, string? code)
+        protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
         {
             if (values is null || !values.Any())
             {
                 return false;
             }
 
-            List<OrtoDatas>? ortoDatasBatch;
+            List<OrtoDatas>? ortoDatasList;
             bool result = true;
 
             MemorySizeSplitter<OrtoDatas> memorySizeSplitter = new(values);
-            while ((ortoDatasBatch = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            while ((ortoDatasList = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasBatch, code, SerializableObjectsPostOptions);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                longProgressWrapper?.Increment(ortoDatasList.Count);
+
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;
@@ -38,20 +44,24 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return result;
         }
 
-        protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, int countyId)
+        protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, int countyId, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
         {
             if (values is null || !values.Any())
             {
                 return false;
             }
 
-            List<OrtoDatas>? ortoDatasBatch;
+            List<OrtoDatas>? ortoDatasList;
             bool result = true;
 
             MemorySizeSplitter<OrtoDatas> memorySizeSplitter = new(values);
-            while ((ortoDatasBatch = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            while ((ortoDatasList = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasBatch, countyId, SerializableObjectsPostOptions);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                longProgressWrapper?.Increment(ortoDatasList.Count);
+
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;
@@ -61,9 +71,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return result;
         }
 
-        protected override async Task<bool> ExecuteAsync()
+        protected override async Task<bool> ExecuteAsync(IProgress<long> progress, CancellationToken cancellationToken)
         {
-            return await ExecuteAsync(Values, Code);
+            return await ExecuteAsync(Values, Code, Core.Create.LongProgressWrapper(progress), cancellationToken);
         }
     }
 }

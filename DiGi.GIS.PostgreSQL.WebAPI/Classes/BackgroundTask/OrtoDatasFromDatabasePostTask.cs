@@ -1,6 +1,8 @@
-﻿using DiGi.GIS.Classes;
+﻿using DiGi.Core.Classes;
+using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.WebAPI.Classes;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
@@ -15,7 +17,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         {
         }
 
-        protected override async Task<bool> ExecuteAsync()
+        protected override async Task<bool> ExecuteAsync(IProgress<long> progress, CancellationToken cancellationToken)
         {
             HttpClient? httpClient_OrtoDatas = GISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.NextLocationReferences), out string? path_OrtoDatas);
             if (httpClient_OrtoDatas is null || string.IsNullOrWhiteSpace(path_OrtoDatas))
@@ -43,10 +45,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
+            LongProgressWrapper? longProgressWrapper = Core.Create.LongProgressWrapper(progress);
+
             while (postResponse_LocationReferences is not null && postResponse_LocationReferences.Succeeded && postResponse_LocationReferences.Result is List<LocationReference> locationReferences && locationReferences.Count > 0)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 while (locationReferences.Count > 0)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     int? countyId = locationReferences[0].CountyId;
 
                     Core.Query.Filter(locationReferences, x => x?.CountyId == countyId, out List<LocationReference>? locationReferences_In, out List<LocationReference>? locationReferences_Out);
@@ -71,6 +79,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                         List<GIS.Classes.OrtoDatas> ortoDatasList = [];
                         foreach (GIS.Classes.Building2D building2D in building2Ds)
                         {
+                            cancellationToken.ThrowIfCancellationRequested();
+
                             GIS.Classes.OrtoDatas? ortoDatas = await GIS.Create.OrtoDatas(building2D, ortoDatasBuilding2DOptions.Years, ortoDatasBuilding2DOptions.Offset, ortoDatasBuilding2DOptions.Width, ortoDatasBuilding2DOptions.Reduce, squared: true);
                             if (ortoDatas is null)
                             {
@@ -80,7 +90,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                             ortoDatasList.Add(ortoDatas);
                         }
 
-                        bool succeeded = await ExecuteAsync(ortoDatasList, countyId.Value); //await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId.Value, postOptions);
+                        bool succeeded = await ExecuteAsync(ortoDatasList, countyId.Value, longProgressWrapper, cancellationToken); //await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId.Value, postOptions);
                         if (!succeeded)
                         {
                             return false;

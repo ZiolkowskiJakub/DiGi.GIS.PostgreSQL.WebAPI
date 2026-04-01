@@ -81,6 +81,25 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(ortoDatas), postOptions);
         }
 
+        public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<YearBuiltData>? yearBuiltData, string? code = null, PostOptions? postOptions = null)
+        {
+            if (gISPostgreSQLWebAPIManager is null || yearBuiltData is null)
+            {
+                return false;
+            }
+
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<YearBuiltController>(nameof(YearBuiltController.UpdateItemsByYearBuiltDatasAsync), out string? path);
+            if (httpClient is null || string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            UrlBuilder urlBuilder = new(path);
+            urlBuilder.AddParameter("code", code);
+
+            return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(yearBuiltData), postOptions);
+        }
+
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<OrtoDatas>? ortoDatas, int countyId, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || ortoDatas is null)

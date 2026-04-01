@@ -43,6 +43,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
                     //serviceCollection.AddScoped(serviceProvider => building2DPostgreSQLConverter);
                 }
+
+                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<YearBuiltPostgreSQLConverter>() is YearBuiltPostgreSQLConverter yearBuiltPostgreSQLConverter)
+                {
+                    serviceCollection.AddSingleton(yearBuiltPostgreSQLConverter);
+
+                    //serviceCollection.AddScoped(serviceProvider => yearBuiltDataPostgreSQLConverter);
+                }
             }
         }
     }

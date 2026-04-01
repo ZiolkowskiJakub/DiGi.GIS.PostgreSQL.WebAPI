@@ -8,34 +8,34 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
-    public class Building2DsPostTask : SerializableObjectsPostTask<Building2D>
+    public class YearBuiltDatasPostTask : SerializableObjectsPostTask<YearBuiltData>
     {
-        public Building2DsPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
+        public YearBuiltDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
             : base(gISPostgreSQLWebAPIManager)
         {
         }
 
         public string? Code { get; set; }
 
-        protected async Task<bool> ExecuteAsync(IEnumerable<Building2D>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
+        protected async Task<bool> ExecuteAsync(IEnumerable<YearBuiltData>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
         {
             if (values is null || !values.Any())
             {
                 return false;
             }
 
-            List<Building2D>? building2Ds;
+            List<YearBuiltData>? yearBuiltData;
 
             bool result = true;
 
-            MemorySizeSplitter<Building2D> memorySizeSplitter = new(values);
-            while ((building2Ds = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            MemorySizeSplitter<YearBuiltData> memorySizeSplitter = new(values);
+            while ((yearBuiltData = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                longProgressWrapper?.Increment(building2Ds.Count);
+                longProgressWrapper?.Increment(yearBuiltData.Count);
 
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(building2Ds, code, SerializableObjectsPostOptions);
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(yearBuiltData, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;

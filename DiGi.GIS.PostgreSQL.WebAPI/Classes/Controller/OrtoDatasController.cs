@@ -52,7 +52,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             {
                 HashSet<string>? referencesExisting = await ortoDatasPostgreSQLConverter.ContainsByReferencesAsync(uniqueReferences, countyId, inverted ?? false);
 
-                referencesExisting = referencesExisting ?? [];
+                referencesExisting ??= [];
 
                 return Ok(referencesExisting);
             }
@@ -181,7 +181,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
             else
             {
-                Serilog.Modify.Log("Updating to database ended. Updated OrtoDatasOrtoDatas: {After}/{Before}", ids?.Count ?? 0, ortoDatas_PostgreSQL.Count);
+                Serilog.Modify.Log("Updating to database ended. Updated OrtoDatas: {After}/{Before}", ids?.Count ?? 0, ortoDatas_PostgreSQL.Count);
             }
 
             return Ok();

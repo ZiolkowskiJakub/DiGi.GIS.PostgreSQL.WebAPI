@@ -30,5 +30,13 @@
                 return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateOrtoDatas));
             }
         }
+
+        public bool AllowUpdateYearBuilt
+        {
+            get
+            {
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateYearBuilt));
+            }
+        }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using DiGi.Core.Classes;
 using DiGi.GIS.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
@@ -13,9 +15,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         {
         }
 
-        protected override async Task<bool> ExecuteAsync()
+        protected async Task<bool> ExecuteAsync(IEnumerable<AdministrativeAreal2D>? values, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
         {
-            if (Values is null || !Values.Any())
+            if (values is null || !values.Any())
             {
                 return false;
             }
@@ -24,10 +26,15 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             bool result = true;
 
-            MemorySizeSplitter<AdministrativeAreal2D> memorySizeSplitter = new(Values);
+            MemorySizeSplitter<AdministrativeAreal2D> memorySizeSplitter = new(values);
             while ((administrativeAreal2Ds = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(administrativeAreal2Ds, SerializableObjectsPostOptions);
+
+                longProgressWrapper?.Increment(administrativeAreal2Ds.Count);
+
                 if (!result)
                 {
                     break;
@@ -35,6 +42,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return result;
+        }
+
+        protected override async Task<bool> ExecuteAsync(IProgress<long> progress, CancellationToken cancellationToken)
+        {
+            return await ExecuteAsync(Values, Core.Create.LongProgressWrapper(progress), cancellationToken);
         }
     }
 }
