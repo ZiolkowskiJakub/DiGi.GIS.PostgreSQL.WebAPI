@@ -1,5 +1,4 @@
-﻿using DiGi.Core;
-using DiGi.GIS.PostgreSQL.Classes;
+﻿using DiGi.GIS.PostgreSQL.Classes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -56,7 +55,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (jsonArray is null || jsonArray.Count == 0)
             {
-                Serilog.Modify.Log("No YearBuilt to update");
+                Serilog.Modify.Log("No YearBuilts to update");
                 return NoContent();
             }
 
@@ -66,7 +65,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            List< GIS.Interfaces.IYearBuilt>? yearBuilts_GIS = Core.Create.SerializableObjects<GIS.Interfaces.IYearBuilt>(jsonArray);
+            List<GIS.Interfaces.IYearBuilt>? yearBuilts_GIS = Core.Create.SerializableObjects<GIS.Interfaces.IYearBuilt>(jsonArray);
             if (yearBuilts_GIS is null)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "YearBuilts could not be converted from json");
@@ -131,7 +130,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-
             if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateYearBuilt)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "YearBuilt update not allowed");
@@ -170,9 +168,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<YearBuilt> yearBuilts_PostgreSQL = [];
             foreach (GIS.Classes.YearBuiltData yearBuiltData_GIS in yearBuiltDatas_GIS)
             {
-                if(yearBuiltData_GIS.YearBuilts is IEnumerable<GIS.Interfaces.IYearBuilt> yearBuilts)
+                if (yearBuiltData_GIS.YearBuilts is IEnumerable<GIS.Interfaces.IYearBuilt> yearBuilts)
                 {
-                    foreach(GIS.Interfaces.IYearBuilt yearBuilt in yearBuilts)
+                    foreach (GIS.Interfaces.IYearBuilt yearBuilt in yearBuilts)
                     {
                         count++;
 
@@ -256,13 +254,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            List<YearBuilt>? yearBuilts_PostgreSQL = await yearBuiltPostgreSQLConverter.GetYearBuiltsByLocationReferenceAsync([new LocationReference() 
+            List<YearBuilt>? yearBuilts_PostgreSQL = await yearBuiltPostgreSQLConverter.GetYearBuiltsByLocationReferenceAsync([new LocationReference()
             {
                 CountyId = countyId,
                 Reference = reference
             }]);
 
-            if(yearBuilts_PostgreSQL is null || yearBuilts_PostgreSQL.Count == 0)
+            if (yearBuilts_PostgreSQL is null || yearBuilts_PostgreSQL.Count == 0)
             {
                 Serilog.Modify.Log("No YearBuilts found for provided reference");
                 return NoContent();
