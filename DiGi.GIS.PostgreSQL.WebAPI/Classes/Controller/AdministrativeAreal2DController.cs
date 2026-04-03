@@ -35,7 +35,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         [HttpGet("idbycode")]
-        public async Task<IActionResult> GetIdByCodeAsync([FromQuery(Name = "code")] string? code, string? administrativeArealType)
+        public async Task<IActionResult> GetIdByCodeAsync([FromQuery(Name = "code")] string? code, [FromQuery(Name = "administrativearealtype")] string? administrativeArealType)
         {
             if (string.IsNullOrWhiteSpace(code))
             {
@@ -78,6 +78,45 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return Content(Core.Convert.ToSystem_String(administrativeAreal2D) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("itemsbyadministrativearealtype")]
+        public async Task<IActionResult> GetItemsByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] string? administrativeArealType)
+        {
+            if (string.IsNullOrWhiteSpace(administrativeArealType))
+            {
+                return BadRequest();
+            }
+
+            if(!Core.Query.TryGetEnum(administrativeArealType, out Enums.AdministrativeArealType administrativeArealType_Temp) || administrativeArealType_Temp == Enums.AdministrativeArealType.Undefined)
+            {
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByAdministrativeArealTypeAsync(administrativeArealType_Temp);
+            if (administrativeAreal2Ds_PostgreSQL is null)
+            {
+                return NoContent();
+            }
+
+            List<AdministrativeAreal2D> administrativeAreal2Ds = [];
+            foreach (PostgreSQL.Classes.AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
+            {
+                AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+                if (administrativeAreal2D is null)
+                {
+                    continue;
+                }
+
+                administrativeAreal2Ds.Add(administrativeAreal2D);
+            }
+
+            if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2Ds) ?? string.Empty, "application/json");
         }
 
         [HttpPost("itemsbyboundingbox")]
