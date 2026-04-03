@@ -254,7 +254,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            List<YearBuilt>? yearBuilts_PostgreSQL = await yearBuiltPostgreSQLConverter.GetYearBuiltsByLocationReferenceAsync([new LocationReference()
+            List<YearBuilt>? yearBuilts_PostgreSQL = await yearBuiltPostgreSQLConverter.GetYearBuiltsByBuilding2DReferencesAsync([new Building2DReference()
             {
                 CountyId = countyId,
                 Reference = reference

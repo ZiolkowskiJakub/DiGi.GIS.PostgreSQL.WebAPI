@@ -19,7 +19,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         protected override async Task<bool> ExecuteAsync(IProgress<long> progress, CancellationToken cancellationToken)
         {
-            HttpClient? httpClient_OrtoDatas = GISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.NextLocationReferences), out string? path_OrtoDatas);
+            HttpClient? httpClient_OrtoDatas = GISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.NextBuilding2DReferences), out string? path_OrtoDatas);
             if (httpClient_OrtoDatas is null || string.IsNullOrWhiteSpace(path_OrtoDatas))
             {
                 return false;
@@ -27,7 +27,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             string requestUri_OrtoDatas = new UrlBuilder(path_OrtoDatas).AddParameter("count", 100).ToString();
 
-            HttpClient? httpClient_Building2D = GISPostgreSQLWebAPIManager.CreateHttpClient<Building2DController>(nameof(Building2DController.GetItemsByLocationReferences), out string? path_Building2D);
+            HttpClient? httpClient_Building2D = GISPostgreSQLWebAPIManager.CreateHttpClient<Building2DController>(nameof(Building2DController.GetItemsByBuilding2DReferences), out string? path_Building2D);
             if (httpClient_Building2D is null || string.IsNullOrWhiteSpace(path_Building2D))
             {
                 return false;
@@ -39,30 +39,30 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
 
-            PostResponse<List<LocationReference>?> postResponse_LocationReferences = await DiGi.WebAPI.Modify.PostAsync<List<LocationReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
-            if (postResponse_LocationReferences is null || !postResponse_LocationReferences.Succeeded)
+            PostResponse<List<Building2DReference>?> postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
+            if (postResponse_Building2DReferences is null || !postResponse_Building2DReferences.Succeeded)
             {
                 return false;
             }
 
             LongProgressWrapper? longProgressWrapper = Core.Create.LongProgressWrapper(progress);
 
-            while (postResponse_LocationReferences is not null && postResponse_LocationReferences.Succeeded && postResponse_LocationReferences.Result is List<LocationReference> locationReferences && locationReferences.Count > 0)
+            while (postResponse_Building2DReferences is not null && postResponse_Building2DReferences.Succeeded && postResponse_Building2DReferences.Result is List<Building2DReference> building2DReferences && building2DReferences.Count > 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                while (locationReferences.Count > 0)
+                while (building2DReferences.Count > 0)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    int? countyId = locationReferences[0].CountyId;
+                    int? countyId = building2DReferences[0].CountyId;
 
-                    Core.Query.Filter(locationReferences, x => x?.CountyId == countyId, out List<LocationReference>? locationReferences_In, out List<LocationReference>? locationReferences_Out);
-                    locationReferences = locationReferences_Out ?? [];
+                    Core.Query.Filter(building2DReferences, x => x?.CountyId == countyId, out List<Building2DReference>? building2DReference_In, out List<Building2DReference>? building2DReferences_Out);
+                    building2DReferences = building2DReferences_Out ?? [];
 
-                    if (locationReferences_In != null && locationReferences_In.Count != 0 && countyId is not null && countyId.HasValue)
+                    if (building2DReference_In != null && building2DReference_In.Count != 0 && countyId is not null && countyId.HasValue)
                     {
-                        HttpContent? httpContent = await Create.HttpContent(locationReferences_In, cancellationTokenSource.Token);
+                        HttpContent? httpContent = await Create.HttpContent(building2DReference_In, cancellationTokenSource.Token);
                         if (httpContent is null)
                         {
                             return false;
@@ -98,7 +98,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                     }
                 }
 
-                postResponse_LocationReferences = await DiGi.WebAPI.Modify.PostAsync<List<LocationReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
+                postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
             }
 
             return true;

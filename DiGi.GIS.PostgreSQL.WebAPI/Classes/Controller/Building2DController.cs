@@ -150,24 +150,24 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbylocationreferences")]
-        public async Task<IActionResult> GetItemsByLocationReferences([FromBody] JsonArray? jsonArray)
+        [HttpPost("itemsbybuilding2Dreferences")]
+        public async Task<IActionResult> GetItemsByBuilding2DReferences([FromBody] JsonArray? jsonArray)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByLocationReferences));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBuilding2DReferences));
 
             if (jsonArray is null || jsonArray.Count == 0)
             {
                 return BadRequest();
             }
 
-            List<PostgreSQL.Classes.LocationReference>? locationReferences = Core.Create.SerializableObjects<PostgreSQL.Classes.LocationReference>(jsonArray);
-            if (locationReferences is null)
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = Core.Create.SerializableObjects<PostgreSQL.Classes.Building2DReference>(jsonArray);
+            if (building2DReferences is null)
             {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "LocationReferences could not be converted from json");
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2DReferences could not be converted from json");
                 return BadRequest();
             }
 
-            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByLocationReferences(locationReferences);
+            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBuilding2DReferences(building2DReferences);
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
                 return NoContent();

@@ -63,10 +63,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
         }
 
-        [HttpPost("nextlocationreferences")]
-        public async Task<IActionResult> NextLocationReferences([FromQuery(Name = "count")] int count = 100)
+        [HttpPost("nextbuilding2Dreferences")]
+        public async Task<IActionResult> NextBuilding2DReferences([FromQuery(Name = "count")] int count = 100)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(NextLocationReferences));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(NextBuilding2DReferences));
             Serilog.Modify.Log("Count provided: {Count}", count);
 
             if (count <= 0)
@@ -83,19 +83,19 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             Serilog.Modify.Log("Extracting data starting");
 
-            List<PostgreSQL.Classes.LocationReference>? locationReferences = await ortoDatasPostgreSQLConverter.GetNextLocationReferencesAsync(count);
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = await ortoDatasPostgreSQLConverter.GetNextBuilding2DReferencesAsync(count);
 
             Serilog.Modify.Log("Extracting data ended");
 
-            if (locationReferences is null || locationReferences.Count == 0)
+            if (building2DReferences is null || building2DReferences.Count == 0)
             {
                 Serilog.Modify.Log("No content extracted");
                 return NoContent();
             }
 
-            Serilog.Modify.Log("{Count} items extracted", locationReferences.Count);
+            Serilog.Modify.Log("{Count} items extracted", building2DReferences.Count);
 
-            return Content(Core.Convert.ToSystem_String(locationReferences) ?? string.Empty, "application/json");
+            return Content(Core.Convert.ToSystem_String(building2DReferences) ?? string.Empty, "application/json");
         }
 
         [HttpPost("updateitemsbycode")]
