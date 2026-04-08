@@ -21,7 +21,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
         }
 
-        [HttpPost("itembypoint")]
+        [HttpGet("itembypoint")]
         public async Task<IActionResult> GetItemByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance)
         {
             if (double.IsNaN(x) || double.IsNaN(y))
@@ -34,7 +34,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 tolerance = Core.Constants.Tolerance.MacroDistance;
             }
 
-            PostgreSQL.Classes.Building2D? building2D_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DbyPoint2DAsync(new Point2D(x, y), tolerance.Value);
+            PostgreSQL.Classes.Building2D? building2D_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DByPoint2DAsync(new Point2D(x, y), tolerance.Value);
             if (building2D_PostgreSQL is null)
             {
                 return NoContent();
@@ -48,7 +48,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2D) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbyboundingbox")]
+        [HttpGet("itemsbyboundingbox")]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance)
         {
             if (double.IsNaN(x_1) || double.IsNaN(y_1) || double.IsNaN(x_2) || double.IsNaN(y_2))
@@ -87,7 +87,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbycircle")]
+        [HttpGet("itemsbycircle")]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance)
         {
             if (double.IsNaN(x) || double.IsNaN(y))
@@ -150,10 +150,50 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbybuilding2Dreferences")]
-        public async Task<IActionResult> GetItemsByBuilding2DReferences([FromBody] JsonArray? jsonArray)
+        [HttpGet("building2Dreferencesbyadministrativeareal2Did")]
+        public async Task<IActionResult> GetBuilding2DReferencesByAdministrativeAreal2DIdAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBuilding2DReferences));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferencesByAdministrativeAreal2DIdAsync));
+
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = await building2DPostgreSQLConverter.GetBuilding2DReferencesByAdministrativeAreal2DIdsAsync([administrativeAreal2DId]);
+            if (building2DReferences is null || building2DReferences.Count == 0)
+            {
+                return NoContent();
+            }
+
+            if (building2DReferences is null || building2DReferences.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2DReferences) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("itembyid")]
+        public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByIdAsync));
+
+            PostgreSQL.Classes.Building2D? building2D = await building2DPostgreSQLConverter.GetBuilding2DByIdAsync(id, countyId);
+            if (building2D is null)
+            {
+                return NoContent();
+            }
+
+            Building2D? building2D_DiGi = building2D.ToDiGi<Building2D>();
+            if (building2D_DiGi is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2D_DiGi) ?? string.Empty, "application/json");
+        }
+
+
+        [HttpGet("itemsbybuilding2Dreferences")]
+        public async Task<IActionResult> GetItemsByBuilding2DReferencesAsync([FromBody] JsonArray? jsonArray)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBuilding2DReferencesAsync));
 
             if (jsonArray is null || jsonArray.Count == 0)
             {

@@ -74,10 +74,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             Serilog.Modify.Log("YearBuilts conversion to PostgreSQL started. YearBuilts count: {Count}", yearBuilts_GIS.Count);
 
-            List<PostgreSQL.Classes.YearBuilt> yearBuilts_PostgreSQL = [];
+            List<YearBuilt> yearBuilts_PostgreSQL = [];
             foreach (GIS.Interfaces.IYearBuilt yearBuilt_GIS in yearBuilts_GIS)
             {
-                PostgreSQL.Classes.YearBuilt? yearBuilt_PostgreSQL = yearBuilt_GIS.ToPostgreSQL(countyId, reference);
+                YearBuilt? yearBuilt_PostgreSQL = yearBuilt_GIS.ToPostgreSQL(countyId, reference);
                 if (yearBuilt_PostgreSQL is null)
                 {
                     continue;

@@ -27,7 +27,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             string requestUri_OrtoDatas = new UrlBuilder(path_OrtoDatas).AddParameter("count", 100).ToString();
 
-            HttpClient? httpClient_Building2D = GISPostgreSQLWebAPIManager.CreateHttpClient<Building2DController>(nameof(Building2DController.GetItemsByBuilding2DReferences), out string? path_Building2D);
+            HttpClient? httpClient_Building2D = GISPostgreSQLWebAPIManager.CreateHttpClient<Building2DController>(nameof(Building2DController.GetItemsByBuilding2DReferencesAsync), out string? path_Building2D);
             if (httpClient_Building2D is null || string.IsNullOrWhiteSpace(path_Building2D))
             {
                 return false;

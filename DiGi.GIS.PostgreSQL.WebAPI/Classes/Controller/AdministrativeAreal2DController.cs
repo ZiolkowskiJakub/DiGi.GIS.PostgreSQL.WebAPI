@@ -1,5 +1,7 @@
 ﻿using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.Classes;
+using DiGi.GIS.PostgreSQL.Classes;
+using DiGi.GIS.PostgreSQL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
@@ -11,13 +13,102 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class AdministrativeAreal2DController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private readonly PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
+        private readonly AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
-        public AdministrativeAreal2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
+        public AdministrativeAreal2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
+        }
+
+        [HttpGet("administrativeareal2Dreferencesbyadministrativearealtype")]
+        public async Task<IActionResult> GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] string? administrativeArealType, [FromQuery(Name = "parentId")] int? parentId, [FromQuery(Name = "uniquecode")] bool? uniqueCode)
+        {
+            if (string.IsNullOrWhiteSpace(administrativeArealType))
+            {
+                return BadRequest();
+            }
+
+            if (!Core.Query.TryGetEnum(administrativeArealType, out Enums.AdministrativeArealType administrativeArealType_Temp) || administrativeArealType_Temp == Enums.AdministrativeArealType.Undefined)
+            {
+                return BadRequest();
+            }
+
+            List<AdministrativeAreal2DReference>? administrativeAreal2DReferences = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync(administrativeArealType_Temp, parentId, uniqueCode ?? false);
+            if (administrativeAreal2DReferences is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2DReferences) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("administrativeareal2Dreferencesbycode")]
+        public async Task<IActionResult> GetAdministrativeAreal2DReferencesByCodeAsync([FromQuery(Name = "code")] string? code, [FromQuery(Name = "administrativearealtype")] string? administrativeArealType)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferencesByCodeAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
+            Serilog.Modify.Log("AdministrativeArealType provided: {AdministrativeArealType}", administrativeArealType ?? string.Empty);
+
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Invalid code provided");
+                return BadRequest();
+            }
+
+            List<AdministrativeAreal2DReference>? administrativeAreal2DReferences = null;
+
+            if (!string.IsNullOrWhiteSpace(administrativeArealType) && Core.Query.TryGetEnum(administrativeArealType, out AdministrativeArealType administrativeArealType_Temp))
+            {
+                administrativeAreal2DReferences = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByCodeAsync(code, administrativeArealType_Temp);
+            }
+            else
+            {
+                administrativeAreal2DReferences = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByCodeAsync(code);
+            }
+
+            if (administrativeAreal2DReferences is null)
+            {
+                Serilog.Modify.Log("No content found");
+                return NoContent();
+            }
+
+            Serilog.Modify.Log("Number of AdministrativeAreal2DReferences to be returned: {Count}", administrativeAreal2DReferences.Count);
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2DReferences) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("administrativeareal2Dreferencebycode")]
+        public async Task<IActionResult> GetAdministrativeAreal2DReferenceByCodeAsync([FromQuery(Name = "code")] string? code, [FromQuery(Name = "administrativearealtype")] string? administrativeArealType)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
+            Serilog.Modify.Log("AdministrativeArealType provided: {AdministrativeArealType}", administrativeArealType ?? string.Empty);
+
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Invalid code provided");
+                return BadRequest();
+            }
+
+            AdministrativeArealType? administrativeArealType_Temp = null;
+            if (!string.IsNullOrWhiteSpace(administrativeArealType))
+            {
+                if(Core.Query.TryGetEnum(administrativeArealType, out AdministrativeArealType administrativeArealType_Temp_Temp))
+                {
+                    administrativeArealType_Temp = administrativeArealType_Temp_Temp;
+                }
+            }
+
+            AdministrativeAreal2DReference? administrativeAreal2DReference = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferenceByCodeAsync(code, administrativeArealType_Temp);
+
+            if (administrativeAreal2DReference is null)
+            {
+                Serilog.Modify.Log("No content found");
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2DReference) ?? string.Empty, "application/json");
         }
 
         [HttpGet("codes")]
@@ -71,7 +162,37 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+            GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
+            if (administrativeAreal2D is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2D) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("administrativeareal2Dreferencepathbyid")]
+        public async Task<IActionResult> GetAdministrativeAreal2DReferencePathByIdAsync([FromQuery(Name = "id")] int id)
+        {
+            AdministrativeAreal2DReferencePath? administrativeAreal2DReferencePath = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencePathAsync(id);
+            if (administrativeAreal2DReferencePath is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2DReferencePath) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("itembyid")]
+        public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] int id)
+        {
+            PostgreSQL.Classes.AdministrativeAreal2D? administrativeAreal2D_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DByIdAsync(id);
+            if (administrativeAreal2D_PostgreSQL is null)
+            {
+                return NoContent();
+            }
+
+            GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
             if (administrativeAreal2D is null)
             {
                 return NoContent();
@@ -99,10 +220,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<AdministrativeAreal2D> administrativeAreal2Ds = [];
+            List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
             foreach (PostgreSQL.Classes.AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
             {
-                AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+                GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
                 if (administrativeAreal2D is null)
                 {
                     continue;
@@ -118,8 +239,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(administrativeAreal2Ds) ?? string.Empty, "application/json");
         }
-
-        [HttpPost("itemsbyboundingbox")]
+        
+        [HttpGet("itemsbyboundingbox")]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
         {
             if (double.IsNaN(x_1) || double.IsNaN(y_1) || double.IsNaN(x_2) || double.IsNaN(y_2))
@@ -144,10 +265,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<AdministrativeAreal2D> administrativeAreal2Ds = [];
+            List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
             foreach (PostgreSQL.Classes.AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
             {
-                AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+                GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
                 if (administrativeAreal2D is null)
                 {
                     continue;
@@ -164,7 +285,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(administrativeAreal2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbycircle")]
+        [HttpGet("itemsbycircle")]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
         {
             if (double.IsNaN(x) || double.IsNaN(y))
@@ -213,10 +334,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<AdministrativeAreal2D> administrativeAreal2Ds = [];
+            List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
             foreach (PostgreSQL.Classes.AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
             {
-                AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+                GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
                 if (administrativeAreal2D is null)
                 {
                     continue;
@@ -233,7 +354,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(administrativeAreal2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbycodes")]
+        [HttpGet("itemsbycodes")]
         public async Task<IActionResult> GetItemsByCodesAsync([FromBody] List<string>? codes)
         {
             if (codes == null || codes.Count == 0)
@@ -247,10 +368,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<AdministrativeAreal2D> administrativeAreal2Ds = [];
+            List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
             foreach (PostgreSQL.Classes.AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
             {
-                AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+                GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
                 if (administrativeAreal2D is null)
                 {
                     continue;
@@ -267,7 +388,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(administrativeAreal2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpPost("itemsbypoint")]
+        [HttpGet("itemsbypoint")]
         public async Task<IActionResult> GetItemsByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] string? type)
         {
             if (double.IsNaN(x) || double.IsNaN(y))
@@ -292,10 +413,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<AdministrativeAreal2D> administrativeAreal2Ds = [];
+            List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
             foreach (PostgreSQL.Classes.AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
             {
-                AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<AdministrativeAreal2D>();
+                GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi<GIS.Classes.AdministrativeAreal2D>();
                 if (administrativeAreal2D is null)
                 {
                     continue;
@@ -344,7 +465,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            AdministrativeAreal2D? administrativeAreal2D = Core.Create.SerializableObject<AdministrativeAreal2D>(jsonObject);
+            GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = Core.Create.SerializableObject<GIS.Classes.AdministrativeAreal2D>(jsonObject);
             if (administrativeAreal2D is null)
             {
                 return BadRequest();
@@ -378,14 +499,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<AdministrativeAreal2D>? administrativeAreal2Ds = Core.Create.SerializableObjects<AdministrativeAreal2D>(jsonArray);
+            List<GIS.Classes.AdministrativeAreal2D>? administrativeAreal2Ds = Core.Create.SerializableObjects<GIS.Classes.AdministrativeAreal2D>(jsonArray);
             if (administrativeAreal2Ds is null)
             {
                 return BadRequest();
             }
 
             List<PostgreSQL.Classes.AdministrativeAreal2D> administrativeAreal2Ds_PostgreSQL = [];
-            foreach (AdministrativeAreal2D administrativeAreal2D in administrativeAreal2Ds)
+            foreach (GIS.Classes.AdministrativeAreal2D administrativeAreal2D in administrativeAreal2Ds)
             {
                 PostgreSQL.Classes.AdministrativeAreal2D? administrativeAreal2D_PostgreSQL = administrativeAreal2D.ToPostgreSQL();
                 if (administrativeAreal2D_PostgreSQL is null)
