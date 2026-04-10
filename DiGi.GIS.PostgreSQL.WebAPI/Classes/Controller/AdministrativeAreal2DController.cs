@@ -111,6 +111,24 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(administrativeAreal2DReference) ?? string.Empty, "application/json");
         }
 
+        [HttpGet("administrativeareal2Dreferencebyid")]
+        public async Task<IActionResult> GetAdministrativeAreal2DReferenceByIdAsync([FromQuery(Name = "id")] int id)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
+            Serilog.Modify.Log("Id provided: {Id}", id);
+
+
+            AdministrativeAreal2DReference? administrativeAreal2DReference = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferenceByIdAsync(id);
+
+            if (administrativeAreal2DReference is null)
+            {
+                Serilog.Modify.Log("No content found");
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(administrativeAreal2DReference) ?? string.Empty, "application/json");
+        }
+
         [HttpGet("codes")]
         public async Task<IActionResult> GetCodesAsync()
         {

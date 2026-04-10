@@ -1,4 +1,5 @@
 ﻿using DiGi.GIS.Classes;
+using DiGi.GIS.PostgreSQL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,35 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 Serilog.Modify.Log(exception, "Database could not be queried");
                 return StatusCode(500, "Internal server error during database query");
             }
+        }
+
+        [HttpGet("itembyreference")]
+        public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetItemByReferenceAsync));
+            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
+            Serilog.Modify.Log("Countyid provided: {CountyId}", countyId?.ToString() ?? string.Empty);
+
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or whitespace");
+                return BadRequest("Reference cannot be null or whitespace.");
+            }
+
+
+            PostgreSQL.Classes.OrtoDatas? ortoDatas = await ortoDatasPostgreSQLConverter.GetOrtoDataByReferenceAsync(reference, countyId);
+            if (ortoDatas is null)
+            {
+                return NoContent();
+            }
+
+            OrtoDatas? ortoDatas_DiGi = ortoDatas.ToDiGi();
+            if (ortoDatas_DiGi is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String((Core.Interfaces.ISerializableObject)ortoDatas_DiGi) ?? string.Empty, "application/json");
         }
 
         [HttpPost("nextbuilding2Dreferences")]
@@ -131,6 +161,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, Enums.AdministrativeArealType.County);
             if (countyId is null)
             {
+                Serilog.Modify.Log("County with given code not found");
                 return BadRequest();
             }
 
