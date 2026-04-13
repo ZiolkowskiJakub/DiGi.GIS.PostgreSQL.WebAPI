@@ -77,8 +77,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest("Reference cannot be null or whitespace.");
             }
 
-
-            PostgreSQL.Classes.OrtoDatas? ortoDatas = await ortoDatasPostgreSQLConverter.GetOrtoDataByReferenceAsync(reference, countyId);
+            PostgreSQL.Classes.OrtoDatas? ortoDatas = await ortoDatasPostgreSQLConverter.GetOrtoDatasByReferenceAsync(reference, countyId);
             if (ortoDatas is null)
             {
                 return NoContent();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
@@ -217,18 +218,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
-        [HttpPost("itemsbyreference")]
-        public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "code")] string code)
+        [HttpGet("itemsbyreference")]
+        public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(YearBuiltController), nameof(GetItemsByReferenceAsync));
-            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
-            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
 
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Code cannot be null or empty");
-                return BadRequest();
-            }
+            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
 
             if (string.IsNullOrWhiteSpace(reference))
             {
@@ -239,18 +235,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             if (yearBuiltPostgreSQLConverter is null)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "YearBuiltDataPostgreSQLConverter is null");
-                return BadRequest();
-            }
-
-            if (administrativeAreal2DPostgreSQLConverter is null)
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "AdministrativeAreal2DPostgreSQLConverter is null");
-                return BadRequest();
-            }
-
-            int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, Enums.AdministrativeArealType.County);
-            if (countyId is null)
-            {
                 return BadRequest();
             }
 
