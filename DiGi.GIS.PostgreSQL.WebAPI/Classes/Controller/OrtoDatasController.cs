@@ -157,7 +157,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, Enums.AdministrativeArealType.County);
+            int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, AdministrativeArealType.County);
             if (countyId is null)
             {
                 Serilog.Modify.Log("County with given code not found");

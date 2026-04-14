@@ -25,6 +25,9 @@
 	</Target>
 
 	<ItemGroup>
+		<Reference Include="DiGi.BDL">
+		  <HintPath>..\..\DiGi.BDL\bin\DiGi.BDL.dll</HintPath>
+		</Reference>
 		<Reference Include="DiGi.Core">
 			<HintPath>..\..\DiGi.Core\bin\DiGi.Core.dll</HintPath>
 		</Reference>
@@ -42,6 +45,9 @@
 		</Reference>
 		<Reference Include="DiGi.GIS.PostgreSQL">
 		  <HintPath>..\..\DiGi.GIS.PostgreSQL\bin\DiGi.GIS.PostgreSQL.dll</HintPath>
+		</Reference>
+		<Reference Include="DiGi.GML">
+		  <HintPath>..\..\DiGi.GML\bin\DiGi.GML.dll</HintPath>
 		</Reference>
 		<Reference Include="DiGi.PostgreSQL">
 		  <HintPath>..\..\DiGi.PostgreSQL\bin\DiGi.PostgreSQL.dll</HintPath>

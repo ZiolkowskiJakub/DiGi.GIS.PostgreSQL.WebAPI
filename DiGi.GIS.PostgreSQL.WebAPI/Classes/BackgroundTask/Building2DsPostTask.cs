@@ -17,7 +17,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         public string? Code { get; set; }
 
-        protected async Task<bool> ExecuteAsync(IEnumerable<Building2D>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
+        protected async Task<bool> ExecuteAsync(IEnumerable<Building2D>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken? cancellationToken = default)
         {
             if (values is null || !values.Any())
             {
@@ -31,7 +31,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             MemorySizeSplitter<Building2D> memorySizeSplitter = new(values);
             while ((building2Ds = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                cancellationToken?.ThrowIfCancellationRequested();
 
                 longProgressWrapper?.Increment(building2Ds.Count);
 

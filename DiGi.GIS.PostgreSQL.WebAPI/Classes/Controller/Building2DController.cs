@@ -40,7 +40,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            if (building2D_PostgreSQL.ToDiGi<Building2D>() is not Building2D building2D)
+            if (building2D_PostgreSQL.ToDiGi() is not Building2D building2D)
             {
                 return NoContent();
             }
@@ -70,7 +70,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<Building2D> building2Ds = [];
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
-                Building2D? building2D = building2D_PostgreSQL.ToDiGi<Building2D>();
+                Building2D? building2D = building2D_PostgreSQL.ToDiGi();
                 if (building2D is null)
                 {
                     continue;
@@ -133,7 +133,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<Building2D> building2Ds = [];
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
-                Building2D? building2D = building2D_PostgreSQL.ToDiGi<Building2D>();
+                Building2D? building2D = building2D_PostgreSQL.ToDiGi();
                 if (building2D is null)
                 {
                     continue;
@@ -180,7 +180,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            Building2D? building2D_DiGi = building2D.ToDiGi<Building2D>();
+            Building2D? building2D_DiGi = building2D.ToDiGi();
             if (building2D_DiGi is null)
             {
                 return NoContent();
@@ -243,7 +243,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<Building2D> building2Ds = [];
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
-                Building2D? building2D = building2D_PostgreSQL.ToDiGi<Building2D>();
+                Building2D? building2D = building2D_PostgreSQL.ToDiGi();
                 if (building2D is null)
                 {
                     continue;
@@ -316,6 +316,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             Serilog.Modify.Log("Building2Ds conversion to PostgreSQL started. Building2Ds count: {Count}", building2Ds.Count);
+
+
+
+
+
+
 
             List<PostgreSQL.Classes.Building2D> building2Ds_PostgreSQL = [];
             foreach (Building2D building2D in building2Ds)
