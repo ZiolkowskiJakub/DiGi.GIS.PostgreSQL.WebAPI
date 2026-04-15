@@ -1,6 +1,7 @@
 ﻿using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.GIS.PostgreSQL.WebAPI.Classes;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI
@@ -23,32 +24,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             GISPostgreSQLConverterManager? gISPostgreSQLConverterManager = PostgreSQL.Create.GISPostgreSQLConverterManager();
             if (gISPostgreSQLConverterManager is not null)
             {
-                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<AdministrativeAreal2DPostgreSQLConverter>() is AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
+                List<PostgreSQL.Interfaces.IGISPostgreSQLConverter> gISPostgreSQLConverters = gISPostgreSQLConverterManager.GetPostgreSQLConverters<PostgreSQL.Interfaces.IGISPostgreSQLConverter>();
+                if(gISPostgreSQLConverters is not null)
                 {
-                    serviceCollection.AddSingleton(administrativeAreal2DPostgreSQLConverter);
-
-                    //serviceCollection.AddScoped(serviceProvider => administrativeAreal2DPostgreSQLConverter);
-                }
-
-                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<Building2DPostgreSQLConverter>() is Building2DPostgreSQLConverter building2DPostgreSQLConverter)
-                {
-                    serviceCollection.AddSingleton(building2DPostgreSQLConverter);
-
-                    //serviceCollection.AddScoped(serviceProvider => building2DPostgreSQLConverter);
-                }
-
-                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<OrtoDatasPostgreSQLConverter>() is OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter)
-                {
-                    serviceCollection.AddSingleton(ortoDatasPostgreSQLConverter);
-
-                    //serviceCollection.AddScoped(serviceProvider => building2DPostgreSQLConverter);
-                }
-
-                if (gISPostgreSQLConverterManager.GetPostgreSQLConverter<YearBuiltPostgreSQLConverter>() is YearBuiltPostgreSQLConverter yearBuiltPostgreSQLConverter)
-                {
-                    serviceCollection.AddSingleton(yearBuiltPostgreSQLConverter);
-
-                    //serviceCollection.AddScoped(serviceProvider => yearBuiltDataPostgreSQLConverter);
+                    foreach(PostgreSQL.Interfaces.IGISPostgreSQLConverter gISPostgreSQLConverter in gISPostgreSQLConverters)
+                    {
+                        serviceCollection.AddSingleton(gISPostgreSQLConverter.GetType(), gISPostgreSQLConverter);
+                    }
                 }
             }
         }

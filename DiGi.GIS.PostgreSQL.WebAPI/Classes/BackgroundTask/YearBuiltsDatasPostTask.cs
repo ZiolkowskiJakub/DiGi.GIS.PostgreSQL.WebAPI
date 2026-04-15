@@ -24,18 +24,18 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
-            List<YearBuiltData>? yearBuiltData;
+            List<YearBuiltData>? yearBuiltDatas;
 
             bool result = true;
 
             MemorySizeSplitter<YearBuiltData> memorySizeSplitter = new(values);
-            while ((yearBuiltData = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            while ((yearBuiltDatas = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                longProgressWrapper?.Increment(yearBuiltData.Count);
+                longProgressWrapper?.Increment(yearBuiltDatas.Count);
 
-                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(yearBuiltData, code, SerializableObjectsPostOptions);
+                result = await GISPostgreSQLWebAPIManager.UpdateItemsAsync(yearBuiltDatas, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;
