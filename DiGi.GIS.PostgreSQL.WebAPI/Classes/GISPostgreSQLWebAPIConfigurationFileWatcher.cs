@@ -31,11 +31,11 @@
             }
         }
 
-        public bool AllowUpdateYearBuilt
+        public bool AllowUpdateYearBuiltData
         {
             get
             {
-                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateYearBuilt));
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateYearBuiltData));
             }
         }
     }

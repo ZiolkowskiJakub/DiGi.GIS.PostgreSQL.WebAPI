@@ -21,6 +21,73 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
         }
 
+        [HttpGet("building2Dreferencebyid")]
+        public async Task<IActionResult> GetBuilding2DReferenceByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferenceByIdAsync));
+
+            PostgreSQL.Classes.Building2DReference? building2DReference = await building2DPostgreSQLConverter.GetBuilding2DReferenceByIdAsync(id, countyId);
+            if (building2DReference is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2DReference) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("building2Dreferencebyreference")]
+        public async Task<IActionResult> GetBuilding2DReferenceByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferenceByReferenceAsync));
+
+            PostgreSQL.Classes.Building2DReference? building2DReference = await building2DPostgreSQLConverter.GetBuilding2DReferenceByReferenceAsync(reference, countyId);
+            if (building2DReference is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2DReference) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("building2Dreferencesbyadministrativeareal2Did")]
+        public async Task<IActionResult> GetBuilding2DReferencesByAdministrativeAreal2DIdAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferencesByAdministrativeAreal2DIdAsync));
+
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = await building2DPostgreSQLConverter.GetBuilding2DReferencesByAdministrativeAreal2DIdsAsync([administrativeAreal2DId]);
+            if (building2DReferences is null || building2DReferences.Count == 0)
+            {
+                return NoContent();
+            }
+
+            if (building2DReferences is null || building2DReferences.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2DReferences) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("itembyid")]
+        public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByIdAsync));
+
+            PostgreSQL.Classes.Building2D? building2D = await building2DPostgreSQLConverter.GetBuilding2DByIdAsync(id, countyId);
+            if (building2D is null)
+            {
+                return NoContent();
+            }
+
+            Building2D? building2D_DiGi = building2D.ToDiGi();
+            if (building2D_DiGi is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2D_DiGi) ?? string.Empty, "application/json");
+        }
+
         [HttpGet("itembypoint")]
         public async Task<IActionResult> GetItemByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance)
         {
@@ -62,6 +129,49 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBoundingBox2DAsync(new BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), tolerance.Value);
+            if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
+            {
+                return NoContent();
+            }
+
+            List<Building2D> building2Ds = [];
+            foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
+            {
+                Building2D? building2D = building2D_PostgreSQL.ToDiGi();
+                if (building2D is null)
+                {
+                    continue;
+                }
+
+                building2Ds.Add(building2D);
+            }
+
+            if (building2Ds is null || building2Ds.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("itemsbybuilding2Dreferences")]
+        public async Task<IActionResult> GetItemsByBuilding2DReferencesAsync([FromBody] JsonArray? jsonArray)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBuilding2DReferencesAsync));
+
+            if (jsonArray is null || jsonArray.Count == 0)
+            {
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = Core.Create.SerializableObjects<PostgreSQL.Classes.Building2DReference>(jsonArray);
+            if (building2DReferences is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2DReferences could not be converted from json");
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBuilding2DReferences(building2DReferences);
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
                 return NoContent();
@@ -149,117 +259,21 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
-
-        [HttpGet("building2Dreferencesbyadministrativeareal2Did")]
-        public async Task<IActionResult> GetBuilding2DReferencesByAdministrativeAreal2DIdAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
+        
+        [HttpGet("point2dsbyreferences")]
+        public async Task<IActionResult> GetPoint2DsByReferencesAsync([FromBody] IEnumerable<string> references, [FromQuery(Name = "countyid")] int? countyId)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferencesByAdministrativeAreal2DIdAsync));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetPoint2DsByReferencesAsync));
 
-            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = await building2DPostgreSQLConverter.GetBuilding2DReferencesByAdministrativeAreal2DIdsAsync([administrativeAreal2DId]);
-            if (building2DReferences is null || building2DReferences.Count == 0)
+            List<Point2D>? point2Ds = await building2DPostgreSQLConverter.GetPoint2DsByReferences(references, countyId);
+            if (point2Ds is null)
             {
                 return NoContent();
             }
 
-            if (building2DReferences is null || building2DReferences.Count == 0)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(building2DReferences) ?? string.Empty, "application/json");
+            return Content(Core.Convert.ToSystem_String(point2Ds) ?? string.Empty, "application/json");
         }
-
-        [HttpGet("itembyid")]
-        public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByIdAsync));
-
-            PostgreSQL.Classes.Building2D? building2D = await building2DPostgreSQLConverter.GetBuilding2DByIdAsync(id, countyId);
-            if (building2D is null)
-            {
-                return NoContent();
-            }
-
-            Building2D? building2D_DiGi = building2D.ToDiGi();
-            if (building2D_DiGi is null)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(building2D_DiGi) ?? string.Empty, "application/json");
-        }
-
-        [HttpGet("building2Dreferencebyreference")]
-        public async Task<IActionResult> GetBuilding2DReferenceByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferenceByReferenceAsync));
-
-            PostgreSQL.Classes.Building2DReference? building2DReference = await building2DPostgreSQLConverter.GetBuilding2DReferenceByReferenceAsync(reference, countyId);
-            if (building2DReference is null)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(building2DReference) ?? string.Empty, "application/json");
-        }
-
-        [HttpGet("building2Dreferencebyid")]
-        public async Task<IActionResult> GetBuilding2DReferenceByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferenceByIdAsync));
-
-            PostgreSQL.Classes.Building2DReference? building2DReference = await building2DPostgreSQLConverter.GetBuilding2DReferenceByIdAsync(id, countyId);
-            if (building2DReference is null)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(building2DReference) ?? string.Empty, "application/json");
-        }
-
-        [HttpGet("itemsbybuilding2Dreferences")]
-        public async Task<IActionResult> GetItemsByBuilding2DReferencesAsync([FromBody] JsonArray? jsonArray)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBuilding2DReferencesAsync));
-
-            if (jsonArray is null || jsonArray.Count == 0)
-            {
-                return BadRequest();
-            }
-
-            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = Core.Create.SerializableObjects<PostgreSQL.Classes.Building2DReference>(jsonArray);
-            if (building2DReferences is null)
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2DReferences could not be converted from json");
-                return BadRequest();
-            }
-
-            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBuilding2DReferences(building2DReferences);
-            if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
-            {
-                return NoContent();
-            }
-
-            List<Building2D> building2Ds = [];
-            foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
-            {
-                Building2D? building2D = building2D_PostgreSQL.ToDiGi();
-                if (building2D is null)
-                {
-                    continue;
-                }
-
-                building2Ds.Add(building2D);
-            }
-
-            if (building2Ds is null || building2Ds.Count == 0)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
-        }
-
+        
         [HttpPost("updateitem")]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "code")] string? code)
         {

@@ -91,7 +91,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<YearBuiltController>(nameof(YearBuiltController.UpdateItemsByYearBuiltDatasAsync), out string? path);
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<YearBuiltDataController>(nameof(YearBuiltDataController.UpdateItemsAsync), out string? path);
             if (httpClient is null || string.IsNullOrWhiteSpace(path))
             {
                 return false;
@@ -176,85 +176,81 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
             // Using statement ensures ZipArchive and the underlying FileStream are closed 
             // even if OperationCanceledException is thrown.
-            using (ZipArchive zipArchive = ZipFile.OpenRead(path))
+            using ZipArchive zipArchive = ZipFile.OpenRead(path);
+
+            foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
             {
-                foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
+                // Check for cancellation at the start of each major iteration
+                cancellationToken_Temp.ThrowIfCancellationRequested();
+
+                using Stream entryStream = zipArchiveEntry.Open();
+
+                if (entryStream is not DeflateStream deflateStream)
                 {
-                    // Check for cancellation at the start of each major iteration
+                    continue;
+                }
+
+                using ZipArchive zipArchive_ZipArchieve = new(deflateStream);
+
+                foreach (ZipArchiveEntry zipArchiveEntry_Zip in zipArchive_ZipArchieve.Entries)
+                {
                     cancellationToken_Temp.ThrowIfCancellationRequested();
 
-                    using (Stream entryStream = zipArchiveEntry.Open())
+                    using Stream nestedEntryStream = zipArchiveEntry_Zip.Open();
+
+                    if (nestedEntryStream is not DeflateStream deflateStream_Zip)
                     {
-                        if (entryStream is not DeflateStream deflateStream)
+                        continue;
+                    }
+
+                    // Added 'using' here to ensure nested ZipArchive is disposed correctly
+                    using ZipArchive zipArchive_Files = new(deflateStream_Zip);
+
+                    GISModel gISModel = new(System.IO.Path.GetFileNameWithoutExtension(zipArchiveEntry_Zip.Name), new DirectorySource(zipArchiveEntry_Zip.FullName));
+
+                    foreach (ZipArchiveEntry zipArchiveEntry_File in zipArchive_Files.Entries)
+                    {
+                        if (sufixes.FindIndex(zipArchiveEntry_File.Name.EndsWith) != -1)
                         {
-                            continue;
+                            // Ensure the stream from Open() is disposed or handled by AddRange
+                            using Stream fileStream = zipArchiveEntry_File.Open();
+
+                            GIS.Modify.AddRange(gISModel, fileStream);
+                        }
+                    }
+
+                    List<AdministrativeAreal2D>? administrativeAreal2Ds = gISModel.GetObjects<AdministrativeAreal2D>();
+                    if (administrativeAreal2Ds is not null && administrativeAreal2Ds.Count > 0)
+                    {
+                        cancellationToken_Temp.ThrowIfCancellationRequested();
+
+                        // Passing the cancellationToken to the nested async call
+                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, administrativeAreal2Ds, postOptions))
+                        {
+                            longProgressWrapper.Increment(administrativeAreal2Ds.Count);
+                        }
+                    }
+
+                    List<Building2D>? building2Ds = gISModel.GetObjects<Building2D>();
+                    if (building2Ds is not null && building2Ds.Count > 0)
+                    {
+                        cancellationToken_Temp.ThrowIfCancellationRequested();
+
+                        string? code = gISModel!.Reference;
+                        if (!string.IsNullOrWhiteSpace(code))
+                        {
+                            code = code.ToUpper();
+                            int index = code.IndexOf('_');
+                            if (index != -1)
+                            {
+                                code = code[..index];
+                            }
                         }
 
-                        using ZipArchive zipArchive_ZipArchieve = new (deflateStream);
-
-                        foreach (ZipArchiveEntry zipArchiveEntry_Zip in zipArchive_ZipArchieve.Entries)
+                        // Passing the cancellationToken to the nested async call
+                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, building2Ds, code, postOptions))
                         {
-                            cancellationToken_Temp.ThrowIfCancellationRequested();
-
-                            using (Stream nestedEntryStream = zipArchiveEntry_Zip.Open())
-                            {
-                                if (nestedEntryStream is not DeflateStream deflateStream_Zip)
-                                {
-                                    continue;
-                                }
-
-                                // Added 'using' here to ensure nested ZipArchive is disposed correctly
-                                using (ZipArchive zipArchive_Files = new (deflateStream_Zip))
-                                {
-                                    GISModel gISModel = new (System.IO.Path.GetFileNameWithoutExtension(zipArchiveEntry_Zip.Name), new DirectorySource(zipArchiveEntry_Zip.FullName));
-
-                                    foreach (ZipArchiveEntry zipArchiveEntry_File in zipArchive_Files.Entries)
-                                    {
-                                        if (sufixes.FindIndex(zipArchiveEntry_File.Name.EndsWith) != -1)
-                                        {
-                                            // Ensure the stream from Open() is disposed or handled by AddRange
-                                            using Stream fileStream = zipArchiveEntry_File.Open();
-
-                                            GIS.Modify.AddRange(gISModel, fileStream);
-                                        }
-                                    }
-
-                                    List<AdministrativeAreal2D>? administrativeAreal2Ds = gISModel.GetObjects<AdministrativeAreal2D>();
-                                    if (administrativeAreal2Ds is not null && administrativeAreal2Ds.Count > 0)
-                                    {
-                                        cancellationToken_Temp.ThrowIfCancellationRequested();
-
-                                        // Passing the cancellationToken to the nested async call
-                                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, administrativeAreal2Ds, postOptions))
-                                        {
-                                            longProgressWrapper.Increment(administrativeAreal2Ds.Count);
-                                        }
-                                    }
-
-                                    List<Building2D>? building2Ds = gISModel.GetObjects<Building2D>();
-                                    if (building2Ds is not null && building2Ds.Count > 0)
-                                    {
-                                        cancellationToken_Temp.ThrowIfCancellationRequested();
-
-                                        string? code = gISModel!.Reference;
-                                        if (!string.IsNullOrWhiteSpace(code))
-                                        {
-                                            code = code.ToUpper();
-                                            int index = code.IndexOf('_');
-                                            if (index != -1)
-                                            {
-                                                code = code[..index];
-                                            }
-                                        }
-
-                                        // Passing the cancellationToken to the nested async call
-                                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, building2Ds, code, postOptions))
-                                        {
-                                            longProgressWrapper.Increment(building2Ds.Count);
-                                        }
-                                    }
-                                }
-                            }
+                            longProgressWrapper.Increment(building2Ds.Count);
                         }
                     }
                 }
@@ -298,7 +294,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             {
                 if (cancellationTokenSource.IsCancellationRequested)
                 {
-                    Serilog.Modify.Log(operationCanceledException, "Timeout: Manual {Delay}s limit reached.", postOptions.Delay.TotalSeconds);
+                    Serilog.Modify.Log(operationCanceledException, string.Format("Timeout: Manual {0}s limit reached.", postOptions.Delay.TotalSeconds));
                 }
                 else
                 {
