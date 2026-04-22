@@ -154,30 +154,35 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
 
-        [HttpGet("itemsbybuilding2Dreferences")]
+        [HttpPost("itemsbybuilding2Dreferences")]
         public async Task<IActionResult> GetItemsByBuilding2DReferencesAsync([FromBody] JsonArray? jsonArray)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBuilding2DReferencesAsync));
 
             if (jsonArray is null || jsonArray.Count == 0)
             {
-                return BadRequest();
+                return BadRequest("The provided JSON array is null or empty.");
             }
 
-            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = Core.Create.SerializableObjects<PostgreSQL.Classes.Building2DReference>(jsonArray);
+            // Explicit typing instead of 'var' as requested
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences =
+                Core.Create.SerializableObjects<PostgreSQL.Classes.Building2DReference>(jsonArray);
+
             if (building2DReferences is null)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2DReferences could not be converted from json");
-                return BadRequest();
+                return BadRequest("Building2DReferences could not be converted from JSON.");
             }
 
-            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBuilding2DReferences(building2DReferences);
+            List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL =
+                await building2DPostgreSQLConverter.GetBuilding2DsByBuilding2DReferences(building2DReferences);
+
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
                 return NoContent();
             }
 
-            List<Building2D> building2Ds = [];
+            List<Building2D> building2Ds = new List<Building2D>();
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
                 Building2D? building2D = building2D_PostgreSQL.ToDiGi();
@@ -189,12 +194,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 building2Ds.Add(building2D);
             }
 
-            if (building2Ds is null || building2Ds.Count == 0)
+            if (building2Ds.Count == 0)
             {
                 return NoContent();
             }
 
-            return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
+            // Returning OK (200) with the serialized string
+            string? jsonResponse = Core.Convert.ToSystem_String(building2Ds);
+            return Content(jsonResponse ?? "[]", "application/json");
         }
 
         [HttpGet("itemsbycircle")]

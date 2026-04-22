@@ -14,14 +14,15 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class OrtoDatasController : DiGi.WebAPI.Classes.WebAPIController
     {
         private readonly PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
+        private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter;
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter;
-
-        public OrtoDatasController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
+        public OrtoDatasController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
             this.ortoDatasPostgreSQLConverter = ortoDatasPostgreSQLConverter;
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
+            this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
         }
 
         [HttpPost("containsbyreferences")]
@@ -62,6 +63,282 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 Serilog.Modify.Log(exception, "Database could not be queried");
                 return StatusCode(500, "Internal server error during database query");
             }
+        }
+
+        [HttpGet("estimatedcoveragefactor")]
+        public async Task<IActionResult> GetEstimatedCoverageFactorAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetEstimatedCoverageFactorAsync));
+            Serilog.Modify.Log("AdministrativeAeral2D Id provided: {Id}", administrativeAreal2DId.ToString() ?? string.Empty);
+
+            if (administrativeAreal2DPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "AdministrativeAreal2DPostgreSQLConverter cannot be null");
+                return BadRequest();
+            }
+
+            if (ortoDatasPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "OrtoDatasPostgreSQLConverter cannot be null");
+                return BadRequest();
+            }
+
+            if (building2DPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2DPostgreSQLConverter cannot be null");
+                return BadRequest();
+            }
+
+            PostgreSQL.Classes.AdministrativeAreal2DReference? administrativeAreal2DReference = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferenceByIdAsync(administrativeAreal2DId);
+            if (administrativeAreal2DReference is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Could not find given AdministrativeAreal2D");
+                return BadRequest();
+            }
+
+            Serilog.Modify.Log("AdministrativeAeral2D found: {Name}, type: {AdministrativeArealType}", administrativeAreal2DReference.Name ?? "???", administrativeAreal2DReference.AdministrativeArealType.ToString());
+
+            long count_Building2D = -1;
+            long count_OrtoDatas = -1;
+
+            switch (administrativeAreal2DReference.AdministrativeArealType)
+            {
+                case AdministrativeArealType.Subdivison:
+                case AdministrativeArealType.Municipality:
+                    Serilog.Modify.Log("Calculating estimated count for {Id}", administrativeAreal2DReference.CountyId?.ToString() ?? "???");
+                    count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.CountyId);
+                    count_OrtoDatas = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.CountyId);
+                    break;
+                case AdministrativeArealType.County:
+                    Serilog.Modify.Log("Calculating estimated count for {Id}", administrativeAreal2DReference.Id.ToString() ?? "???");
+                    count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.Id);
+                    count_OrtoDatas = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.Id);
+                    break;
+
+                case AdministrativeArealType.Voivodeship:
+                case AdministrativeArealType.Country:
+
+                    if (administrativeAreal2DReference.Code is null)
+                    {
+                        Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Could not get Code for given AdministrativeAreal2D");
+                        return BadRequest();
+                    }
+
+                    Serilog.Modify.Log("Calculating estimated count for {Code}", administrativeAreal2DReference.Code);
+
+                    List<int>? countyIds = (await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByCodeAsync(administrativeAreal2DReference.Code, AdministrativeArealType.County))?.ConvertAll(x => x.Id);
+                    if (countyIds is null || countyIds.Count == 0)
+                    {
+                        Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Could not find given County AdministrativeAreal2Ds for given Id");
+                        return BadRequest();
+                    }
+
+                    Serilog.Modify.Log("Calculating estimated count for {Ids}", string.Join(",", countyIds));
+
+                    count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(countyIds);
+                    count_OrtoDatas = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(countyIds);
+                    break;
+            }
+
+            double result = 0;
+            if (count_Building2D != -1 && count_OrtoDatas != -1)
+            {
+                result = Math.Clamp(count_OrtoDatas == 0 ? 0.0 : (double)count_OrtoDatas / (double)count_Building2D, 0.0, 1.0);
+            }
+            else
+            {
+                if(count_Building2D == -1)
+                {
+                    Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Building2D count could not be calculated");
+                }
+
+                if (count_OrtoDatas == -1)
+                {
+                    Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "OrtoDatas count could not be calculated");
+                }
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("estimatedcoveragefactors")]
+        public async Task<IActionResult> GetEstimatedCoverageFactorsAsync([FromBody] IEnumerable<int> administrativeAreal2DIds, bool? analyze)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetEstimatedCoverageFactorsAsync));
+            Serilog.Modify.Log("AdministrativeAeral2D Ids provided: {Ids}", string.Join(",", administrativeAreal2DIds ?? []));
+            Serilog.Modify.Log("AdministrativeAeral2Ds data type:", administrativeAreal2DIds?.GetType()?.FullName ?? "???");
+
+            if (administrativeAreal2DIds is null || !administrativeAreal2DIds.Any())
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "administrativeAreal2DIds have not been provided");
+                return BadRequest();
+            }
+
+            List<int> administrativeAreal2DIds_Temp = [.. administrativeAreal2DIds];
+
+            if (ortoDatasPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "OrtoDatasPostgreSQLConverter cannot be null");
+                return BadRequest();
+            }
+
+            if (administrativeAreal2DPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "AdministrativeAreal2DPostgreSQLConverter cannot be null");
+                return BadRequest();
+            }
+
+            if (building2DPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building2DPostgreSQLConverter cannot be null");
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.AdministrativeAreal2DReference>? administrativeAreal2DReferences = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByIdsAsync(administrativeAreal2DIds_Temp);
+            if (administrativeAreal2DReferences is null || administrativeAreal2DReferences.Count == 0)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "AdministrativeAreal2Ds could not be found in database");
+                return BadRequest();
+            }
+
+            List<PostgreSQL.Classes.AdministrativeAreal2DReference> administrativeAreal2DReferences_SubdivisonMunicipality = [];
+            List<PostgreSQL.Classes.AdministrativeAreal2DReference> administrativeAreal2DReferences_County = [];
+            List<PostgreSQL.Classes.AdministrativeAreal2DReference> administrativeAreal2DReferences_VoivodeshipCountry = [];
+
+            foreach (PostgreSQL.Classes.AdministrativeAreal2DReference administrativeAreal2DReference in administrativeAreal2DReferences)
+            {
+                if (administrativeAreal2DReference?.AdministrativeArealType is not AdministrativeArealType administrativeArealType || administrativeArealType == AdministrativeArealType.Undefined)
+                {
+                    Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "AdministrativeAreal2D is null or has invalid AdministrativeArealType: {AdministrativeArealType}", administrativeAreal2DReference?.AdministrativeArealType.ToString() ?? "???");
+                    continue;
+                }
+
+                switch (administrativeArealType)
+                {
+                    case AdministrativeArealType.Subdivison:
+                    case AdministrativeArealType.Municipality:
+                        administrativeAreal2DReferences_SubdivisonMunicipality.Add(administrativeAreal2DReference);
+                        break;
+
+                    case AdministrativeArealType.County:
+                        administrativeAreal2DReferences_County.Add(administrativeAreal2DReference);
+                        break;
+
+                    case AdministrativeArealType.Voivodeship:
+                    case AdministrativeArealType.Country:
+                        administrativeAreal2DReferences_VoivodeshipCountry.Add(administrativeAreal2DReference);
+                        break;
+                }
+            }
+
+            Dictionary<int, (long Count_Building2D, long Count_OrtoDatas)> dictionary = [];
+
+            foreach (PostgreSQL.Classes.AdministrativeAreal2DReference administrativeAreal2DReference in administrativeAreal2DReferences_County)
+            {
+                long count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.Id, analyze ?? false);
+                long count_OrtoDatas = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.Id, analyze ?? false);
+
+                dictionary[administrativeAreal2DReference.Id] = (count_Building2D, count_OrtoDatas);
+            }
+
+            foreach (PostgreSQL.Classes.AdministrativeAreal2DReference administrativeAreal2DReference in administrativeAreal2DReferences_SubdivisonMunicipality)
+            {
+                if (administrativeAreal2DReference?.CountyId is not int countyId)
+                {
+                    continue;
+                }
+
+                if (!dictionary.TryGetValue(countyId, out (long, long) value))
+                {
+                    long count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(countyId, analyze ?? false);
+                    long count_OrtoDatas = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(countyId, analyze ?? false);
+
+                    value = (count_Building2D, count_OrtoDatas);
+
+                    dictionary[countyId] = value;
+                }
+
+                dictionary[administrativeAreal2DReference.Id] = value;
+            }
+
+            foreach (PostgreSQL.Classes.AdministrativeAreal2DReference administrativeAreal2DReference in administrativeAreal2DReferences_VoivodeshipCountry)
+            {
+                if (administrativeAreal2DReference.Code is not string code || string.IsNullOrWhiteSpace(code))
+                {
+                    continue;
+                }
+
+                List<int>? countyIds_AdministrativeAreal2DReference = (await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByCodeAsync(administrativeAreal2DReference.Code, AdministrativeArealType.County))?.ConvertAll(x => x.Id);
+                if (countyIds_AdministrativeAreal2DReference is null || countyIds_AdministrativeAreal2DReference.Count == 0)
+                {
+                    dictionary[administrativeAreal2DReference.Id] = (-1, -1);
+                    continue;
+                }
+
+                long count_Building2D = 0;
+                long count_OrtoDatas = 0;
+
+                foreach (int countyId_AdministrativeAreal2DReference in countyIds_AdministrativeAreal2DReference)
+                {
+                    if (!dictionary.TryGetValue(countyId_AdministrativeAreal2DReference, out (long Count_Building2D, long Count_OrtoDatas) value))
+                    {
+                        long count_Building2D_County = await building2DPostgreSQLConverter.GetEstimatedCountAsync(countyId_AdministrativeAreal2DReference, analyze ?? false);
+                        long count_OrtoDatas_County = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(countyId_AdministrativeAreal2DReference, analyze ?? false);
+
+                        value = (count_Building2D_County, count_OrtoDatas_County);
+
+                        dictionary[countyId_AdministrativeAreal2DReference] = value;
+                    }
+
+                    if (value.Count_Building2D > 0)
+                    {
+                        count_Building2D += value.Count_Building2D;
+                    }
+
+                    if (value.Count_OrtoDatas > 0)
+                    {
+                        count_OrtoDatas += value.Count_OrtoDatas;
+                    }
+                }
+
+                dictionary[administrativeAreal2DReference.Id] = (count_Building2D, count_OrtoDatas);
+            }
+
+            Func<long, long, double> estimatedCoverageFactor = new((count_Building2D, count_OrtoDatas) =>
+            {
+                if (count_Building2D < 0 || count_OrtoDatas < 0)
+                {
+                    return double.NaN;
+                }
+
+                if (count_Building2D == 0 || count_OrtoDatas == 0)
+                {
+                    return 0;
+                }
+
+                return Math.Clamp(count_OrtoDatas == 0 ? 0.0 : (double)count_OrtoDatas / (double)count_Building2D, 0.0, 1.0);
+            });
+
+            Serilog.Modify.Log("Counts calculated: {Count}", dictionary.Count);
+
+            List<double> result = [];
+            foreach (int id in administrativeAreal2DIds_Temp)
+            {
+                Serilog.Modify.Log("AdministrativeAreal2D calculation started Id: {Id}", id);
+                if (!dictionary.TryGetValue(id, out (long Count_Building2D, long Count_OrtoDatas) value))
+                {
+                    Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "AdministrativeAreal2Ds has no data. Id: {Id}", id);
+                    result.Add(0);
+                    continue;
+                }
+
+                double factor = estimatedCoverageFactor(value.Count_Building2D, value.Count_OrtoDatas);
+                Serilog.Modify.Log("Factor calculated: {Factor}", factor);
+
+                result.Add(double.IsNaN(factor) ? 0 : factor);
+            }
+
+            return Ok(result);
         }
 
         [HttpGet("itembyreference")]

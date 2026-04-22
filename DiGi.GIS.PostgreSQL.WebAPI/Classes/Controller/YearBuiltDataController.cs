@@ -132,7 +132,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return BadRequest();
             }
 
-            List<YearBuiltData>? yearBuiltDatas_PostgreSQL = await yearBuiltDataPostgreSQLConverter.GetItemsByReferenceAsync(reference, countyId, cancellationToken);
+            List<YearBuiltData>? yearBuiltDatas_PostgreSQL = await yearBuiltDataPostgreSQLConverter.GetItemsByReferenceAsync(reference, countyId, null, cancellationToken);
 
             if (yearBuiltDatas_PostgreSQL is null || yearBuiltDatas_PostgreSQL.Count == 0)
             {

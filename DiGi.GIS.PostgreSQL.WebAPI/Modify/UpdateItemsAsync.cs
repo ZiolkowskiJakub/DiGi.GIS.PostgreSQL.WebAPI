@@ -110,7 +110,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.UpdateItemsByCodeAsync), out string? path);
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OrtoDatasController>(nameof(OrtoDatasController.UpdateItemsByCountyIdAsync), out string? path);
             if (httpClient is null || string.IsNullOrWhiteSpace(path))
             {
                 return false;
@@ -141,7 +141,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2D), postOptions);
         }
 
-        public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, string? path, bool oT_ADJA_A = true, bool oT_ADMS_A = true, bool oT_BUBD_A = true, PostOptions? postOptions = null, IProgress<long>? progress = default, CancellationToken? cancellationToken = default)
+        public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, string? path, bool oT_ADJA_A = true, bool oT_ADMS_A = true, bool oT_BUBD_A = true, SerializableObjectsPostOptions? serializableObjectsPostOptions = null, IProgress<long>? progress = default, CancellationToken? cancellationToken = default)
         {
             // Use the provided cancellationToken or a default one to avoid null checks later
             CancellationToken cancellationToken_Temp = cancellationToken ?? CancellationToken.None;
@@ -171,6 +171,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             {
                 return false;
             }
+
+            serializableObjectsPostOptions ??= new SerializableObjectsPostOptions();
 
             LongProgressWrapper longProgressWrapper = new (progress);
 
@@ -225,7 +227,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                         cancellationToken_Temp.ThrowIfCancellationRequested();
 
                         // Passing the cancellationToken to the nested async call
-                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, administrativeAreal2Ds, postOptions))
+                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, administrativeAreal2Ds, serializableObjectsPostOptions))
                         {
                             longProgressWrapper.Increment(administrativeAreal2Ds.Count);
                         }
@@ -247,10 +249,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                             }
                         }
 
-                        // Passing the cancellationToken to the nested async call
-                        if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, building2Ds, code, postOptions))
+                        MemorySizeSplitter<Building2D> memorySizeSplitter = new(building2Ds);
+                        while ((building2Ds = memorySizeSplitter.Next(serializableObjectsPostOptions.BatchMemorySize)) is not null)
                         {
-                            longProgressWrapper.Increment(building2Ds.Count);
+                            // Passing the cancellationToken to the nested async call
+                            if (await UpdateItemsAsync(gISPostgreSQLWebAPIManager, building2Ds, code, serializableObjectsPostOptions))
+                            {
+                                longProgressWrapper.Increment(building2Ds.Count);
+                            }
                         }
                     }
                 }

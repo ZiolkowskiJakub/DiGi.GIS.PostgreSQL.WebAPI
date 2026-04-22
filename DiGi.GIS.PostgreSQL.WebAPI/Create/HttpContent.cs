@@ -1,4 +1,5 @@
 ﻿using DiGi.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -33,35 +34,40 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
         public static async Task<HttpContent?> HttpContent(this byte[] bytes, CancellationToken cancellationToken)
         {
-            if (bytes is null)
+            if (bytes == null || bytes.Length == 0)
             {
                 return null;
             }
 
-            HttpContent result;
+            // Use a pooled memory stream or a simple one, but ensure we don't dispose it before StreamContent uses it.
+            MemoryStream memoryStream = new ();
 
-            //Decide if we want to use Gzip (optional: you could add a threshold here, e.g., if jsonBytes.Length > 1024)
-            MemoryStream memoryStream = new();
-
-            using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal, leaveOpen: true))
+            try
             {
-                await gzipStream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
+                using (GZipStream gzipStream = new (memoryStream, CompressionLevel.Optimal, leaveOpen: true))
+                {
+                    // If cancellationToken is already cancelled, this throws OperationCanceledException
+                    await gzipStream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
+                }
+
+                memoryStream.Position = 0;
+
+                // StreamContent takes ownership of the memoryStream and will dispose it.
+                StreamContent result = new (memoryStream);
+
+                result.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json")
+                {
+                    CharSet = Encoding.UTF8.WebName
+                };
+                result.Headers.ContentEncoding.Add("gzip");
+
+                return result;
             }
-
-            //Move pointer to the beginning of the compressed stream
-            memoryStream.Position = 0;
-
-            // Create ByteArrayContent from compressed stream
-            result = new StreamContent(memoryStream);
-
-            //CRITICAL HEADERS: Tell the API this is JSON and it is GZIPPED
-            result.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json")
+            catch (Exception)
             {
-                CharSet = Encoding.UTF8.WebName
-            };
-            result.Headers.ContentEncoding.Add("gzip");
-
-            return result;
+                memoryStream.Dispose();
+                throw; // Re-throw to be caught in ExecuteAsync
+            }
         }
     }
 }

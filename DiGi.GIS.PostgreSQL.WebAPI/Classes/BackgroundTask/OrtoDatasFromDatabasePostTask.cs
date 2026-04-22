@@ -25,7 +25,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
-            string requestUri_OrtoDatas = new UrlBuilder(path_OrtoDatas).AddParameter("count", 100).ToString();
+            string requestUri_OrtoDatas = new UrlBuilder(path_OrtoDatas).AddParameter("count", 5).ToString();
 
             HttpClient? httpClient_Building2D = GISPostgreSQLWebAPIManager.CreateHttpClient<Building2DController>(nameof(Building2DController.GetItemsByBuilding2DReferencesAsync), out string? path_Building2D);
             if (httpClient_Building2D is null || string.IsNullOrWhiteSpace(path_Building2D))
@@ -33,11 +33,15 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
+            HttpClient? httpClient_Geoportal = GISPostgreSQLWebAPIManager.CreateHttpClient("Geoportal");
+            if (httpClient_Geoportal is null)
+            {
+                return false;
+            }
+
             string requestUri_Building2D = new UrlBuilder(path_Building2D).ToString();
 
             PostOptions postOptions = new() { RequestResult = true };
-
-            using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
 
             PostResponse<List<Building2DReference>?> postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
             if (postResponse_Building2DReferences is null || !postResponse_Building2DReferences.Succeeded)
@@ -49,12 +53,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             while (postResponse_Building2DReferences is not null && postResponse_Building2DReferences.Succeeded && postResponse_Building2DReferences.Result is List<Building2DReference> building2DReferences && building2DReferences.Count > 0)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 while (building2DReferences.Count > 0)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-
                     int? countyId = building2DReferences[0].CountyId;
 
                     Core.Query.Filter(building2DReferences, x => x?.CountyId == countyId, out List<Building2DReference>? building2DReference_In, out List<Building2DReference>? building2DReferences_Out);
@@ -62,41 +62,69 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
                     if (building2DReference_In != null && building2DReference_In.Count != 0 && countyId is not null && countyId.HasValue)
                     {
-                        HttpContent? httpContent = await Create.HttpContent(building2DReference_In, cancellationTokenSource.Token);
-                        if (httpContent is null)
+                        try
                         {
-                            return false;
-                        }
+                            List<GIS.Classes.Building2D>? building2Ds = null;
 
-                        PostResponse<List<GIS.Classes.Building2D>?> postResponse_Building2Ds = await DiGi.WebAPI.Modify.PostAsync<List<GIS.Classes.Building2D>>(httpClient_Building2D, requestUri_Building2D, httpContent, postOptions);
-                        if (postResponse_Building2Ds is null || !postResponse_Building2Ds.Succeeded || postResponse_Building2Ds.Result is not List<GIS.Classes.Building2D> building2Ds || building2Ds.Count == 0)
-                        {
-                            continue;
-                        }
+                            using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
 
-                        OrtoDatasBuilding2DOptions ortoDatasBuilding2DOptions = new();
+                            using (HttpContent? httpContent = await Create.HttpContent(building2DReference_In, cancellationTokenSource.Token).ConfigureAwait(false))
+                            {
+                                if (httpContent is null)
+                                {
+                                    return false;
+                                }
 
-                        List<GIS.Classes.OrtoDatas> ortoDatasList = [];
-                        foreach (GIS.Classes.Building2D building2D in building2Ds)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
+                                PostResponse<List<GIS.Classes.Building2D>?> postResponse_Building2Ds = await DiGi.WebAPI.Modify.PostAsync<List<GIS.Classes.Building2D>>(httpClient_Building2D, requestUri_Building2D, httpContent, postOptions);
+                                if (postResponse_Building2Ds is null || !postResponse_Building2Ds.Succeeded)
+                                {
+                                    continue;
+                                }
 
-                            GIS.Classes.OrtoDatas? ortoDatas = await GIS.Create.OrtoDatas(building2D, ortoDatasBuilding2DOptions.Years, ortoDatasBuilding2DOptions.Offset, ortoDatasBuilding2DOptions.Width, ortoDatasBuilding2DOptions.Reduce, squared: true);
-                            if (ortoDatas is null)
+                                building2Ds = postResponse_Building2Ds.Result;
+                            }
+
+                            if(building2Ds is null || building2Ds.Count == 0)
                             {
                                 continue;
                             }
 
-                            ortoDatasList.Add(ortoDatas);
-                        }
+                            OrtoDatasBuilding2DOptions ortoDatasBuilding2DOptions = new();
 
-                        bool succeeded = await ExecuteAsync(ortoDatasList, countyId.Value, longProgressWrapper, cancellationToken); //await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId.Value, postOptions);
-                        if (!succeeded)
+                            List<GIS.Classes.OrtoDatas> ortoDatasList = [];
+                            foreach (GIS.Classes.Building2D building2D in building2Ds)
+                            {
+                                GIS.Classes.OrtoDatas? ortoDatas = await GIS.Create.OrtoDatas(httpClient_Geoportal, building2D, ortoDatasBuilding2DOptions.Years, ortoDatasBuilding2DOptions.Offset, ortoDatasBuilding2DOptions.Width, ortoDatasBuilding2DOptions.Reduce, squared: true);
+                                if (ortoDatas is null)
+                                {
+                                    continue;
+                                }
+
+                                ortoDatasList.Add(ortoDatas);
+                            }
+
+                            bool succeeded = await ExecuteAsync(ortoDatasList, countyId.Value, longProgressWrapper, cancellationToken); //await GISPostgreSQLWebAPIManager.UpdateItemsAsync(ortoDatasList, countyId.Value, postOptions);
+                            if (!succeeded)
+                            {
+                                return false;
+                            }
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            return false;
+                        }
+                        catch (HttpRequestException)
+                        {
+                            continue;
+                        }
+                        catch (Exception)
                         {
                             return false;
                         }
                     }
                 }
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
             }
