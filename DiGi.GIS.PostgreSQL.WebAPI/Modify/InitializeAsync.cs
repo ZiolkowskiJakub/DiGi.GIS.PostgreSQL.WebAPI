@@ -25,9 +25,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             if (gISPostgreSQLConverterManager is not null)
             {
                 List<PostgreSQL.Interfaces.IGISPostgreSQLConverter> gISPostgreSQLConverters = gISPostgreSQLConverterManager.GetPostgreSQLConverters<PostgreSQL.Interfaces.IGISPostgreSQLConverter>();
-                if(gISPostgreSQLConverters is not null)
+                if (gISPostgreSQLConverters is not null)
                 {
-                    foreach(PostgreSQL.Interfaces.IGISPostgreSQLConverter gISPostgreSQLConverter in gISPostgreSQLConverters)
+                    foreach (PostgreSQL.Interfaces.IGISPostgreSQLConverter gISPostgreSQLConverter in gISPostgreSQLConverters)
                     {
                         serviceCollection.AddSingleton(gISPostgreSQLConverter.GetType(), gISPostgreSQLConverter);
                     }

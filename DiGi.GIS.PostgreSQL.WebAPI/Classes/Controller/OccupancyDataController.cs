@@ -12,11 +12,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class OccupancyDataController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private readonly AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
-        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
-        
-        private readonly Building2DOccupancyDataPostgreSQLConverter building2DOccupancyDataPostgreSQLConverter;
         private readonly AdministrativeAreal2DOccupancyDataPostgreSQLConverter administrativeAreal2DOccupancyDataPostgreSQLConverter;
+        private readonly AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
+        private readonly Building2DOccupancyDataPostgreSQLConverter building2DOccupancyDataPostgreSQLConverter;
+        private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
         public OccupancyDataController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, Building2DOccupancyDataPostgreSQLConverter building2DOccupancyDataPostgreSQLConverter, AdministrativeAreal2DOccupancyDataPostgreSQLConverter administrativeAreal2DOccupancyDataPostgreSQLConverter, AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
@@ -24,6 +23,101 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.building2DOccupancyDataPostgreSQLConverter = building2DOccupancyDataPostgreSQLConverter;
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
             this.administrativeAreal2DOccupancyDataPostgreSQLConverter = administrativeAreal2DOccupancyDataPostgreSQLConverter;
+        }
+
+        [HttpGet("building2d/itemsbyreference")]
+        public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OccupancyDataController), nameof(GetItemsByReferenceAsync));
+
+            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
+
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or empty");
+                return BadRequest();
+            }
+
+            if (building2DOccupancyDataPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "OccupancyDataPostgreSQLConverter is null");
+                return BadRequest();
+            }
+
+            List<Building2DOccupancyData>? building2DOccupancyDatas_PostgreSQL = await building2DOccupancyDataPostgreSQLConverter.GetItemsByReferenceAsync(reference, countyId, null, cancellationToken);
+
+            if (building2DOccupancyDatas_PostgreSQL is null || building2DOccupancyDatas_PostgreSQL.Count == 0)
+            {
+                Serilog.Modify.Log("No Building2DOccupancyDatas found for provided reference");
+                return NoContent();
+            }
+
+            List<GIS.Interfaces.IOccupancyData> occupancyDatas = [];
+            foreach (Building2DOccupancyData building2DOccupancyData_PostgreSQL in building2DOccupancyDatas_PostgreSQL)
+            {
+                GIS.Interfaces.IOccupancyData? occupancyData_GIS = building2DOccupancyData_PostgreSQL.ToDiGi();
+                if (occupancyData_GIS is null)
+                {
+                    continue;
+                }
+
+                occupancyDatas.Add(occupancyData_GIS);
+            }
+
+            if (occupancyDatas is null || occupancyDatas.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(occupancyDatas) ?? string.Empty, "application/json");
+        }
+
+        [HttpGet("administrativeareal2d/itemsbyreference")]
+        public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, CancellationToken cancellationToken = default)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OccupancyDataController), nameof(GetItemsByReferenceAsync));
+
+            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
+
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or empty");
+                return BadRequest();
+            }
+
+            if (building2DOccupancyDataPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "OccupancyDataPostgreSQLConverter is null");
+                return BadRequest();
+            }
+
+            List<AdministrativeAreal2DOccupancyData>? administrativeAreal2DOccupancyDatas_PostgreSQL = await administrativeAreal2DOccupancyDataPostgreSQLConverter.GetItemsByReferenceAsync(reference, null, cancellationToken);
+
+            if (administrativeAreal2DOccupancyDatas_PostgreSQL is null || administrativeAreal2DOccupancyDatas_PostgreSQL.Count == 0)
+            {
+                Serilog.Modify.Log("No AdministrativeAreal2DOccupancyDatas found for provided reference");
+                return NoContent();
+            }
+
+            List<GIS.Interfaces.IOccupancyData> occupancyDatas = [];
+            foreach (AdministrativeAreal2DOccupancyData administrativeAreal2DOccupancyData_PostgreSQL in administrativeAreal2DOccupancyDatas_PostgreSQL)
+            {
+                GIS.Interfaces.IOccupancyData? occupancyData_GIS = administrativeAreal2DOccupancyData_PostgreSQL.ToDiGi();
+                if (occupancyData_GIS is null)
+                {
+                    continue;
+                }
+
+                occupancyDatas.Add(occupancyData_GIS);
+            }
+
+            if (occupancyDatas is null || occupancyDatas.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(occupancyDatas) ?? string.Empty, "application/json");
         }
 
         [HttpPost("building2d/updateitems")]
@@ -76,7 +170,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<Building2DOccupancyData> building2DOccupancyDatas_PostgreSQL = [];
             foreach (GIS.Classes.OccupancyData occupancyData_GIS in occupancyDatas_GIS)
             {
-                if(Convert.ToPostgreSQL(occupancyData_GIS, countyId) is Building2DOccupancyData building2DOccupancyData_PostgreSQL)
+                if (Convert.ToPostgreSQL(occupancyData_GIS, countyId) is Building2DOccupancyData building2DOccupancyData_PostgreSQL)
                 {
                     building2DOccupancyDatas_PostgreSQL.Add(building2DOccupancyData_PostgreSQL);
                 }
@@ -181,101 +275,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return Ok();
-        }
-
-        [HttpGet("building2d/itemsbyreference")]
-        public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(OccupancyDataController), nameof(GetItemsByReferenceAsync));
-
-            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
-            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
-
-            if (string.IsNullOrWhiteSpace(reference))
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or empty");
-                return BadRequest();
-            }
-
-            if (building2DOccupancyDataPostgreSQLConverter is null)
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "OccupancyDataPostgreSQLConverter is null");
-                return BadRequest();
-            }
-
-            List<Building2DOccupancyData>? building2DOccupancyDatas_PostgreSQL = await building2DOccupancyDataPostgreSQLConverter.GetItemsByReferenceAsync(reference, countyId, null, cancellationToken);
-
-            if (building2DOccupancyDatas_PostgreSQL is null || building2DOccupancyDatas_PostgreSQL.Count == 0)
-            {
-                Serilog.Modify.Log("No Building2DOccupancyDatas found for provided reference");
-                return NoContent();
-            }
-
-            List<GIS.Interfaces.IOccupancyData> occupancyDatas = [];
-            foreach (Building2DOccupancyData building2DOccupancyData_PostgreSQL in building2DOccupancyDatas_PostgreSQL)
-            {
-                GIS.Interfaces.IOccupancyData? occupancyData_GIS = building2DOccupancyData_PostgreSQL.ToDiGi();
-                if (occupancyData_GIS is null)
-                {
-                    continue;
-                }
-
-                occupancyDatas.Add(occupancyData_GIS);
-            }
-
-            if (occupancyDatas is null || occupancyDatas.Count == 0)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(occupancyDatas) ?? string.Empty, "application/json");
-        }
-
-        [HttpGet("administrativeareal2d/itemsbyreference")]
-        public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, CancellationToken cancellationToken = default)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(OccupancyDataController), nameof(GetItemsByReferenceAsync));
-
-            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
-
-            if (string.IsNullOrWhiteSpace(reference))
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or empty");
-                return BadRequest();
-            }
-
-            if (building2DOccupancyDataPostgreSQLConverter is null)
-            {
-                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "OccupancyDataPostgreSQLConverter is null");
-                return BadRequest();
-            }
-
-            List<AdministrativeAreal2DOccupancyData>? administrativeAreal2DOccupancyDatas_PostgreSQL = await administrativeAreal2DOccupancyDataPostgreSQLConverter.GetItemsByReferenceAsync(reference, null, cancellationToken);
-
-            if (administrativeAreal2DOccupancyDatas_PostgreSQL is null || administrativeAreal2DOccupancyDatas_PostgreSQL.Count == 0)
-            {
-                Serilog.Modify.Log("No AdministrativeAreal2DOccupancyDatas found for provided reference");
-                return NoContent();
-            }
-
-            List<GIS.Interfaces.IOccupancyData> occupancyDatas = [];
-            foreach (AdministrativeAreal2DOccupancyData administrativeAreal2DOccupancyData_PostgreSQL in administrativeAreal2DOccupancyDatas_PostgreSQL)
-            {
-                GIS.Interfaces.IOccupancyData? occupancyData_GIS = administrativeAreal2DOccupancyData_PostgreSQL.ToDiGi();
-                if (occupancyData_GIS is null)
-                {
-                    continue;
-                }
-
-                occupancyDatas.Add(occupancyData_GIS);
-            }
-
-            if (occupancyDatas is null || occupancyDatas.Count == 0)
-            {
-                return NoContent();
-            }
-
-            return Content(Core.Convert.ToSystem_String(occupancyDatas) ?? string.Empty, "application/json");
         }
     }
 }

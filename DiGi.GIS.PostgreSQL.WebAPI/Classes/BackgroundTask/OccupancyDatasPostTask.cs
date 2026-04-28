@@ -1,7 +1,5 @@
 ﻿using DiGi.Core.Classes;
-using DiGi.Core.Interfaces;
 using DiGi.GIS.Classes;
-using DiGi.GIS.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +16,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         public string? Code { get; set; }
-        
+
         public IEnumerable<OccupancyData>? Values_AdministrativeAreal2D { get; set; }
-        
+
         protected async Task<bool> ExecuteAsync(IEnumerable<OccupancyData>? occupancyData_Building2D, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)
         {
             if (occupancyData_Building2D is null || !occupancyData_Building2D.Any())

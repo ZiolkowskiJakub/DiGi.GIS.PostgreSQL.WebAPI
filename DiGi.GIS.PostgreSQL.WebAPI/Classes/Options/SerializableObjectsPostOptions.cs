@@ -24,6 +24,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         [JsonInclude, JsonPropertyName(nameof(BatchMemorySize))]
-        public int  BatchMemorySize { get; set; } = 10 * 1024 * 1024;
+        public int BatchMemorySize { get; set; } = 10 * 1024 * 1024;
     }
 }

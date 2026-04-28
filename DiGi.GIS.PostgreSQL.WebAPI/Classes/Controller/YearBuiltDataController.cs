@@ -1,5 +1,4 @@
-﻿using DiGi.Core;
-using DiGi.GIS.PostgreSQL.Classes;
+﻿using DiGi.GIS.PostgreSQL.Classes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -74,7 +73,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<YearBuiltData> yearBuiltDatas_PostgreSQL = [];
             foreach (GIS.Classes.YearBuiltData yearBuiltData_GIS in yearBuiltDatas_GIS)
             {
-                if(Convert.ToPostgreSQL(yearBuiltData_GIS, countyId) is YearBuiltData yearBuiltData_PostgreSQL)
+                if (Convert.ToPostgreSQL(yearBuiltData_GIS, countyId) is YearBuiltData yearBuiltData_PostgreSQL)
                 {
                     yearBuiltDatas_PostgreSQL.Add(yearBuiltData_PostgreSQL);
                 }

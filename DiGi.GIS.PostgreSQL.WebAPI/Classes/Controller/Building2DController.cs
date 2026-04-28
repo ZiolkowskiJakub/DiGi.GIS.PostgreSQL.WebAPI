@@ -266,7 +266,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(building2Ds) ?? string.Empty, "application/json");
         }
-        
+
         [HttpGet("point2dsbyreferences")]
         public async Task<IActionResult> GetPoint2DsByReferencesAsync([FromBody] IEnumerable<string> references, [FromQuery(Name = "countyid")] int? countyId)
         {
@@ -280,7 +280,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(point2Ds) ?? string.Empty, "application/json");
         }
-        
+
         [HttpPost("updateitem")]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "code")] string? code)
         {
@@ -337,12 +337,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             Serilog.Modify.Log("Building2Ds conversion to PostgreSQL started. Building2Ds count: {Count}", building2Ds.Count);
-
-
-
-
-
-
 
             List<PostgreSQL.Classes.Building2D> building2Ds_PostgreSQL = [];
             foreach (Building2D building2D in building2Ds)

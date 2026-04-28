@@ -211,9 +211,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 
             serializableObjectsPostOptions ??= new SerializableObjectsPostOptions();
 
-            LongProgressWrapper longProgressWrapper = new (progress);
+            LongProgressWrapper longProgressWrapper = new(progress);
 
-            // Using statement ensures ZipArchive and the underlying FileStream are closed 
+            // Using statement ensures ZipArchive and the underlying FileStream are closed
             // even if OperationCanceledException is thrown.
             using ZipArchive zipArchive = ZipFile.OpenRead(path);
 

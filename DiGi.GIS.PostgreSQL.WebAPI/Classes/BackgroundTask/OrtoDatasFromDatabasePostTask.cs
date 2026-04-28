@@ -91,7 +91,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                                 building2Ds = postResponse_Building2Ds.Result;
                             }
 
-                            if(building2Ds is null || building2Ds.Count == 0)
+                            if (building2Ds is null || building2Ds.Count == 0)
                             {
                                 continue;
                             }

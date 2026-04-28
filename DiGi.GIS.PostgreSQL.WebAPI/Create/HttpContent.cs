@@ -40,11 +40,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             }
 
             // Use a pooled memory stream or a simple one, but ensure we don't dispose it before StreamContent uses it.
-            MemoryStream memoryStream = new ();
+            MemoryStream memoryStream = new();
 
             try
             {
-                using (GZipStream gzipStream = new (memoryStream, CompressionLevel.Optimal, leaveOpen: true))
+                using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal, leaveOpen: true))
                 {
                     // If cancellationToken is already cancelled, this throws OperationCanceledException
                     await gzipStream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
@@ -53,7 +53,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 memoryStream.Position = 0;
 
                 // StreamContent takes ownership of the memoryStream and will dispose it.
-                StreamContent result = new (memoryStream);
+                StreamContent result = new(memoryStream);
 
                 result.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json")
                 {

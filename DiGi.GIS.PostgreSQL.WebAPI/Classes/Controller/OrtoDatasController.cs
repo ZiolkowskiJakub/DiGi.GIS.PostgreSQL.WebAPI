@@ -17,6 +17,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter;
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter;
+
         public OrtoDatasController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
@@ -109,6 +110,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                     count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.CountyId);
                     count_OrtoDatas = await ortoDatasPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.CountyId);
                     break;
+
                 case AdministrativeArealType.County:
                     Serilog.Modify.Log("Calculating estimated count for {Id}", administrativeAreal2DReference.Id.ToString() ?? "???");
                     count_Building2D = await building2DPostgreSQLConverter.GetEstimatedCountAsync(administrativeAreal2DReference.Id);
@@ -147,7 +149,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
             else
             {
-                if(count_Building2D == -1)
+                if (count_Building2D == -1)
                 {
                     Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Building2D count could not be calculated");
                 }
