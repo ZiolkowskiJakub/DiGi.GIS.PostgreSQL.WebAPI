@@ -1,7 +1,5 @@
-﻿using DiGi.GIS.PostgreSQL.Classes;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DiGi.Analytical.Building.HVAC.Classes;
