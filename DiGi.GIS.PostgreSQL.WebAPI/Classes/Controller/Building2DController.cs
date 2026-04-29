@@ -115,6 +115,20 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2D) ?? string.Empty, "application/json");
         }
 
+        [HttpGet("itembyreference")]
+        public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByReferenceAsync));
+
+            PostgreSQL.Classes.Building2D? building2D = await building2DPostgreSQLConverter.GetBuilding2DByReferenceAsync(reference, countyId);
+            if (building2D is null)
+            {
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building2D.ToDiGi()) ?? string.Empty, "application/json");
+        }
+        
         [HttpGet("itemsbyboundingbox")]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance)
         {
