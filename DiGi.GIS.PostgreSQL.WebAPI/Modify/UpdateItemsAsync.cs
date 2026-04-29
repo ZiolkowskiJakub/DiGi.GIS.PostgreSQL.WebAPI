@@ -110,7 +110,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OccupancyDataController>(nameof(OccupancyDataController.UpdateItemsAsync), out string? path);
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OccupancyDataController>(nameof(OccupancyDataController.Building2DUpdateItemsAsync), out string? path);
             if (httpClient is null || string.IsNullOrWhiteSpace(path))
             {
                 return false;
@@ -129,7 +129,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
                 return false;
             }
 
-            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OccupancyDataController>(nameof(OccupancyDataController.UpdateItemsAsync), out string? path);
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<OccupancyDataController>(nameof(OccupancyDataController.AdministrativeAreal2DUpdateItemsAsync), out string? path);
             if (httpClient is null || string.IsNullOrWhiteSpace(path))
             {
                 return false;
