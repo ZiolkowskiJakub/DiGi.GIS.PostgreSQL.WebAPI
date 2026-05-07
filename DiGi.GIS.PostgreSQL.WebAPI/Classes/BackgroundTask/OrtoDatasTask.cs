@@ -14,6 +14,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     {
         private readonly GISPostgreSQLConverterManager? gISPostgreSQLConverterManager;
         private readonly GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager;
+        
         public OrtoDatasTask(GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, GISPostgreSQLConverterManager? gISPostgreSQLConverterManager)
         {
             this.gISPostgreSQLWebAPIManager = gISPostgreSQLWebAPIManager ?? throw new ArgumentNullException(nameof(gISPostgreSQLWebAPIManager));
@@ -23,6 +24,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         protected override async Task<bool> ExecuteAsync(IProgress<long> progress, CancellationToken cancellationToken)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasTask), nameof(ExecuteAsync));
+
+            if(gISPostgreSQLWebAPIManager is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "GISPostgreSQLWebAPIManager cannot be null");
+                return false;
+            }
 
             OrtoDatasPostgreSQLConverter? ortoDatasPostgreSQLConverter = gISPostgreSQLConverterManager?.GetPostgreSQLConverter<OrtoDatasPostgreSQLConverter>();
             if (ortoDatasPostgreSQLConverter is null)

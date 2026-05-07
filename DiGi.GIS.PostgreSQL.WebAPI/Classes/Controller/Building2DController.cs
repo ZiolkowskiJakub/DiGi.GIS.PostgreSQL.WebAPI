@@ -196,7 +196,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NoContent();
             }
 
-            List<Building2D> building2Ds = new List<Building2D>();
+            List<Building2D> building2Ds = [];
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
                 Building2D? building2D = building2D_PostgreSQL.ToDiGi();
