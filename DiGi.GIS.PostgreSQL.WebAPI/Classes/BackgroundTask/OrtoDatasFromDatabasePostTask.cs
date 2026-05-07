@@ -5,7 +5,6 @@ using DiGi.WebAPI.Classes;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,17 +33,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return false;
             }
 
-            HttpClient? httpClient_Geoportal = GISPostgreSQLWebAPIManager.CreateHttpClient("Geoportal");
+            HttpClient? httpClient_Geoportal = Create.HttpClient_Geoportal(GISPostgreSQLWebAPIManager);
             if (httpClient_Geoportal is null)
             {
                 return false;
             }
-
-            AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();
-
-            string applicationInfo = string.Format("{0}/{1}", assemblyName.Name ?? "DiGi.GIS.PostgreSQL.WebAPI", assemblyName.Version?.ToString() ?? "1.0.0.0");
-
-            httpClient_Geoportal.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) {applicationInfo}");
 
             string requestUri_Building2D = new UrlBuilder(path_Building2D).ToString();
 
