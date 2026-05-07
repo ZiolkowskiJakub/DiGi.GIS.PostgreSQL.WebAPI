@@ -137,6 +137,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 }
 
                 await ortoDatasPostgreSQLConverter.UpdateAsync(ortoDatasList_PostgreSQL);
+                
+                longProgressWrapper?.Increment(ortoDatasList_PostgreSQL.Count);
 
                 Serilog.Modify.Log("OrtoDatas updating ended");
 
