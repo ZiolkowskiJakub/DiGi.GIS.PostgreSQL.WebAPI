@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using static DiGi.BDL.Constants.Url;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
@@ -248,21 +249,29 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("itemsbyadministrativearealtype")]
         public async Task<IActionResult> GetItemsByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] string? administrativeArealType)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
+            Serilog.Modify.Log("AdministrativeArealType provided: {AdministrativeArealType}", administrativeArealType ?? string.Empty);
+
             if (string.IsNullOrWhiteSpace(administrativeArealType))
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Invalid AdministrativeArealType provided");
                 return BadRequest();
             }
 
             if (!Core.Query.TryGetEnum(administrativeArealType, out AdministrativeArealType administrativeArealType_Temp) || administrativeArealType_Temp == AdministrativeArealType.Undefined)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Invalid AdministrativeArealType provided");
                 return BadRequest();
             }
 
             List<AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByAdministrativeArealTypeAsync(administrativeArealType_Temp);
             if (administrativeAreal2Ds_PostgreSQL is null)
             {
+                Serilog.Modify.Log("No content found");
                 return NoContent();
             }
+
+            Serilog.Modify.Log("content found: {Count} items", administrativeAreal2Ds_PostgreSQL.Count);
 
             List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
             foreach (AdministrativeAreal2D administrativeAreal2D_PostgreSQL in administrativeAreal2Ds_PostgreSQL)
@@ -276,10 +285,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 administrativeAreal2Ds.Add(administrativeAreal2D);
             }
 
+
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
+                Serilog.Modify.Log("No content found");
                 return NoContent();
             }
+
+            Serilog.Modify.Log("{Count} items converted to GIS", administrativeAreal2Ds.Count);
 
             return Content(Core.Convert.ToSystem_String(administrativeAreal2Ds) ?? string.Empty, "application/json");
         }
