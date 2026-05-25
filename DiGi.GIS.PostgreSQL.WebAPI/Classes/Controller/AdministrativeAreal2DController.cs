@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using static DiGi.BDL.Constants.Url;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
@@ -284,7 +283,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
                 administrativeAreal2Ds.Add(administrativeAreal2D);
             }
-
 
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {

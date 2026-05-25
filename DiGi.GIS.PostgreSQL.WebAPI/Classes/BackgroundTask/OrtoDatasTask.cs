@@ -14,7 +14,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     {
         private readonly GISPostgreSQLConverterManager? gISPostgreSQLConverterManager;
         private readonly GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager;
-        
+
         public OrtoDatasTask(GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, GISPostgreSQLConverterManager? gISPostgreSQLConverterManager)
         {
             this.gISPostgreSQLWebAPIManager = gISPostgreSQLWebAPIManager ?? throw new ArgumentNullException(nameof(gISPostgreSQLWebAPIManager));
@@ -25,7 +25,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasTask), nameof(ExecuteAsync));
 
-            if(gISPostgreSQLWebAPIManager is null)
+            if (gISPostgreSQLWebAPIManager is null)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "GISPostgreSQLWebAPIManager cannot be null");
                 return false;
@@ -58,7 +58,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             Serilog.Modify.Log("Items count: {Count}", count);
 
             List<Building2DReference>? building2DReferences = await ortoDatasPostgreSQLConverter.GetNextBuilding2DReferencesAsync(count);
-            if(building2DReferences is null)
+            if (building2DReferences is null)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "No Building2DReferences found in database");
                 return false;
@@ -84,7 +84,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                         Serilog.Modify.Log("PostgreSQL Building2Ds extraction starting");
 
                         List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBuilding2DReferences(building2DReferences_In);
-                        if(building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
+                        if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
                         {
                             Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "No PostgreSQL Building2Ds found");
                             continue;
@@ -95,7 +95,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                         foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
                         {
                             GIS.Classes.Building2D? building2D = building2D_PostgreSQL.ToDiGi();
-                            if(building2D is null)
+                            if (building2D is null)
                             {
                                 continue;
                             }
@@ -128,16 +128,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 Serilog.Modify.Log("OrtoDatas updating starting");
 
                 List<PostgreSQL.Classes.OrtoDatas> ortoDatasList_PostgreSQL = [];
-                foreach(GIS.Classes.OrtoDatas ortoDatas in ortoDatasList)
+                foreach (GIS.Classes.OrtoDatas ortoDatas in ortoDatasList)
                 {
-                    if(ortoDatas?.ToPostgreSQL(countyId) is PostgreSQL.Classes.OrtoDatas ortoDatas_PostgreSQL)
+                    if (ortoDatas?.ToPostgreSQL(countyId) is PostgreSQL.Classes.OrtoDatas ortoDatas_PostgreSQL)
                     {
                         ortoDatasList_PostgreSQL.Add(ortoDatas_PostgreSQL);
                     }
                 }
 
                 await ortoDatasPostgreSQLConverter.UpdateAsync(ortoDatasList_PostgreSQL);
-                
+
                 longProgressWrapper?.Increment(ortoDatasList_PostgreSQL.Count);
 
                 Serilog.Modify.Log("OrtoDatas updating ended");
