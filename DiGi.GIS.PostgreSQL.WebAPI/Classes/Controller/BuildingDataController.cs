@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DiGi.Core.IO.Table.Classes;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
@@ -21,8 +22,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByReferenceAsync));
 
-            PostgreSQL.Classes.Building2DReference? building2DReference = await buildingDataPostgreSQLConverter.GetBuilding2DReferenceByIdAsync(id, countyId);
-            if (building2DReference is null)
+            Table table = await buildingDataPostgreSQLConverter.PullAsync([reference], countyId);
+            if (table is null)
             {
                 return NoContent();
             }
