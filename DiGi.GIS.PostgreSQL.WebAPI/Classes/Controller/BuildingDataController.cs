@@ -22,13 +22,15 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByReferenceAsync));
 
-            Table table = await buildingDataPostgreSQLConverter.PullAsync([reference], countyId);
+            Table? table = await buildingDataPostgreSQLConverter.PullAsync([reference], countyId);
             if (table is null)
             {
                 return NoContent();
             }
 
-            return Content(Core.Convert.ToSystem_String(building2DReference) ?? string.Empty, "application/json");
+            throw new System.NotImplementedException();
+
+            //return Content(Core.Convert.ToSystem_String(building2DReference) ?? string.Empty, "application/json");
         }
     }
 }
