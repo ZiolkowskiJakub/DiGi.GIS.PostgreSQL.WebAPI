@@ -1,6 +1,7 @@
 ﻿using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.GIS.PostgreSQL.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
         }
 
+        /// <summary>
+        /// Gets an administrative area reference by its code and type.
+        /// </summary>
+        /// <param name="code">AdministrativeAreal2D code</param>
+        /// <param name="administrativeArealType">AdministrativeArealType text based on the enum DiGi.GIS.PostgreSQL.Enums.AdministrativeArealType values </param>
+        /// <returns>AdministrativeAreal2DReference</returns>
         [HttpGet("administrativeareal2Dreferencebycode")]
+        [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferenceByCodeAsync([FromQuery(Name = "code")] string? code, [FromQuery(Name = "administrativearealtype")] string? administrativeArealType)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
