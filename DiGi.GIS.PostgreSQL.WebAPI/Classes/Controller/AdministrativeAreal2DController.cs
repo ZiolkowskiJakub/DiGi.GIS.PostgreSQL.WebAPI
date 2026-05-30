@@ -17,7 +17,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     /// </summary>
     [ApiController]
     [Route("gis/[controller]")]
-    [ApiExplorerSettings(IgnoreApi = false)]
     public class AdministrativeAreal2DController : WebAPIController
     {
         private readonly AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
@@ -36,6 +35,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Gets an administrative area reference by its code and type.
         /// </summary>
         [HttpGet("administrativeareal2Dreferencebycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferenceByCodeAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,6 +65,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves an administrative area reference by its identifier.
         /// </summary>
         [HttpGet("administrativeareal2Dreferencebyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferenceByIdAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferenceByIdAsync([FromQuery(Name = "id")] int id)
@@ -87,6 +88,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves the administrative area reference path by its identifier.
         /// </summary>
         [HttpGet("administrativeareal2Dreferencepathbyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathByIdAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReferencePath), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathByIdAsync([FromQuery(Name = "id")] int id)
@@ -105,6 +107,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves administrative area reference paths by name.
         /// </summary>
         [HttpPost("administrativeareal2Dreferencepathsbyname", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathsByNameAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReferencePath>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathsByNameAsync([FromBody] string text, CancellationToken cancellationToken = default)
@@ -140,6 +143,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves all administrative area references filtered by administrative area type.
         /// </summary>
         [HttpGet("administrativeareal2Dreferencesbyadministrativearealtype", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReference>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] AdministrativeArealType administrativeArealType, [FromQuery(Name = "parentId")] int? parentId, [FromQuery(Name = "uniquecode")] bool? uniqueCode)
@@ -158,6 +162,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves administrative area references by their code.
         /// </summary>
         [HttpGet("administrativeareal2Dreferencesbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencesByCodeAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReference>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -198,6 +203,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves all available codes.
         /// </summary>
         [HttpGet("codes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetCodesAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetCodesAsync()
@@ -223,6 +229,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves the identifier for a given code.
         /// </summary>
         [HttpGet("idbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetIdByCodeAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetIdByCodeAsync([FromQuery(Name = "code")] string code, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
@@ -643,6 +650,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Retrieves subcodes for a given code.
         /// </summary>
         [HttpGet("subcodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetSubCodesAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -673,7 +681,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <summary>
         /// Updates a single administrative area item.
         /// </summary>
-        [HttpGet("updateitem", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemAsync)}")]
+        [HttpPost("updateitem", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -714,7 +722,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <summary>
         /// Updates multiple administrative area items.
         /// </summary>
-        [HttpGet("updateitems", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemsAsync)}")]
+        [HttpPost("updateitems", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemsAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
