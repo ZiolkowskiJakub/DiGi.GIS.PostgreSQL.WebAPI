@@ -34,7 +34,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("building2Dreferencebyid", Name = $"{nameof(Building2DController)}_{nameof(GetBuilding2DReferenceByIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2DReference), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetBuilding2DReferenceByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferenceByIdAsync));
@@ -42,13 +42,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             PostgreSQL.Classes.Building2DReference? building2DReference = await building2DPostgreSQLConverter.GetBuilding2DReferenceByIdAsync(id, countyId);
             if (building2DReference is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2DReference);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -60,7 +60,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("building2Dreferencebyreference", Name = $"{nameof(Building2DController)}_{nameof(GetBuilding2DReferenceByReferenceAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2DReference), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetBuilding2DReferenceByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferenceByReferenceAsync));
@@ -68,13 +68,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             PostgreSQL.Classes.Building2DReference? building2DReference = await building2DPostgreSQLConverter.GetBuilding2DReferenceByReferenceAsync(reference, countyId);
             if (building2DReference is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2DReference);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -86,7 +86,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("building2Dreferencesbyadministrativeareal2Did", Name = $"{nameof(Building2DController)}_{nameof(GetBuilding2DReferencesByAdministrativeAreal2DIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2DReference>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetBuilding2DReferencesByAdministrativeAreal2DIdAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetBuilding2DReferencesByAdministrativeAreal2DIdAsync));
@@ -95,7 +95,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = Core.Convert.ToSystem_String(building2DReferences);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -106,7 +106,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itembyid", Name = $"{nameof(Building2DController)}_{nameof(GetItemByIdAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] long id, [FromQuery(Name = "countyid")] int? countyId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByIdAsync));
@@ -114,19 +114,19 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             PostgreSQL.Classes.Building2D? building2D = await building2DPostgreSQLConverter.GetBuilding2DByIdAsync(id, countyId);
             if (building2D is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             Building2D? building2D_DiGi = building2D.ToDiGi();
             if (building2D_DiGi is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2D_DiGi);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -137,7 +137,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itembypoint", Name = $"{nameof(Building2DController)}_{nameof(GetItemByPointAsync)}")]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2D), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance)
         {
@@ -154,18 +154,18 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             PostgreSQL.Classes.Building2D? building2D_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DByPoint2DAsync(new Point2D(x, y), tolerance.Value);
             if (building2D_PostgreSQL is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             if (building2D_PostgreSQL.ToDiGi() is not Building2D building2D)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2D);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -176,7 +176,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itembyreference", Name = $"{nameof(Building2DController)}_{nameof(GetItemByReferenceAsync)}")]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2D), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByReferenceAsync));
@@ -184,13 +184,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             PostgreSQL.Classes.Building2D? building2D = await building2DPostgreSQLConverter.GetBuilding2DByReferenceAsync(reference, countyId);
             if (building2D is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2D.ToDiGi());
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -201,7 +201,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbyboundingbox", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByBoundingBoxAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance)
         {
@@ -218,7 +218,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByBoundingBox2DAsync(new BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), tolerance.Value);
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             List<Building2D> building2Ds = [];
@@ -235,13 +235,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (building2Ds is null || building2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -250,9 +250,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <summary>
         /// Retrieves building 2D items by their references.
         /// </summary>
-        [HttpGet("itemsbybuilding2Dreferences", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByBuilding2DReferencesAsync)}")]
+        [HttpPost("itemsbybuilding2Dreferences", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByBuilding2DReferencesAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByBuilding2DReferencesAsync([FromBody] JsonArray? jsonArray)
         {
@@ -278,7 +278,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             List<Building2D> building2Ds = [];
@@ -295,14 +295,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (building2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             // Returning OK (200) with the serialized string
             string? json = Core.Convert.ToSystem_String(building2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -313,7 +313,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbycircle", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByCircleAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance)
         {
@@ -354,7 +354,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<PostgreSQL.Classes.Building2D>? building2Ds_PostgreSQL = await building2DPostgreSQLConverter.GetBuilding2DsByCircle2DAsync(new Circle2D(new Point2D(x, y), radius_Temp), tolerance.Value);
             if (building2Ds_PostgreSQL is null || building2Ds_PostgreSQL.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             List<Building2D> building2Ds = [];
@@ -371,13 +371,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (building2Ds is null || building2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(building2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -386,9 +386,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <summary>
         /// Retrieves Point2D coordinates by their references.
         /// </summary>
-        [HttpGet("point2dsbyreferences", Name = $"{nameof(Building2DController)}_{nameof(GetPoint2DsByReferencesAsync)}")]
+        [HttpPost("point2dsbyreferences", Name = $"{nameof(Building2DController)}_{nameof(GetPoint2DsByReferencesAsync)}")]
         [ProducesResponseType(typeof(List<Point2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPoint2DsByReferencesAsync([FromBody] IEnumerable<string> references, [FromQuery(Name = "countyid")] int? countyId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetPoint2DsByReferencesAsync));
@@ -396,13 +396,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<Point2D>? point2Ds = await building2DPostgreSQLConverter.GetPoint2DsByReferences(references, countyId);
             if (point2Ds is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(point2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -413,7 +413,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpPost("updateitem", Name = $"{nameof(Building2DController)}_{nameof(UpdateItemAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "code")] string? code)
@@ -425,7 +424,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (jsonObject is null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
             Building2D? building2D = Core.Create.SerializableObject<Building2D>(jsonObject);

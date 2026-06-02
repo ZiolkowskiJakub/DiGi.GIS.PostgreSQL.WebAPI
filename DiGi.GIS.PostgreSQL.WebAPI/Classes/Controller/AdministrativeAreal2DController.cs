@@ -37,7 +37,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("administrativeareal2Dreferencebycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferenceByCodeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferenceByCodeAsync([FromQuery(Name = "code")] string? code, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
@@ -55,7 +55,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReference);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -67,7 +67,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("administrativeareal2Dreferencebyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferenceByIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferenceByIdAsync([FromQuery(Name = "id")] int id)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
@@ -78,7 +78,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReference);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -90,14 +90,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("administrativeareal2Dreferencepathbyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathByIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReferencePath), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathByIdAsync([FromQuery(Name = "id")] int id)
         {
             AdministrativeAreal2DReferencePath? administrativeAreal2DReferencePath = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencePathAsync(id);
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReferencePath);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -109,7 +109,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpPost("administrativeareal2Dreferencepathsbyname", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathsByNameAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReferencePath>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathsByNameAsync([FromBody] string text, CancellationToken cancellationToken = default)
         {
             try
@@ -119,14 +120,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
                 if (administrativeAreal2DReferencePaths is null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 // Converting the list to a JSON string using your specialized DLL converter.
                 string? json = Core.Convert.ToSystem_String(administrativeAreal2DReferencePaths);
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 // Returning the string directly as application/json avoids double serialization.
@@ -145,14 +146,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("administrativeareal2Dreferencesbyadministrativearealtype", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReference>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] AdministrativeArealType administrativeArealType, [FromQuery(Name = "parentId")] int? parentId, [FromQuery(Name = "uniquecode")] bool? uniqueCode)
         {
             List<AdministrativeAreal2DReference>? administrativeAreal2DReferences = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync(administrativeArealType, parentId, uniqueCode ?? false);
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReferences);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -164,7 +165,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("administrativeareal2Dreferencesbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencesByCodeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReference>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencesByCodeAsync([FromQuery(Name = "code")] string code, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
@@ -192,7 +193,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReferences);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             Serilog.Modify.Log("Number of AdministrativeAreal2DReferences to be returned: {Count}", administrativeAreal2DReferences!.Count);
@@ -205,13 +206,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("codes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetCodesAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCodesAsync()
         {
             HashSet<string>? codes = await administrativeAreal2DPostgreSQLConverter.GetCodesAsync();
             if (codes is null || codes.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             JsonArray jsonArray = [.. codes];
@@ -219,7 +220,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = jsonArray.ToJsonString();
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -253,7 +254,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itembycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemByCodeAsync)}")]
         [ProducesResponseType(typeof(GIS.Classes.AdministrativeAreal2D), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemByCodeAsync([FromQuery(Name = "code")] string code)
         {
@@ -265,14 +266,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             AdministrativeAreal2D? administrativeAreal2D_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DByCodeAsync(code);
             if (administrativeAreal2D_PostgreSQL is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi();
             string? json = Core.Convert.ToSystem_String(administrativeAreal2D);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -283,21 +284,21 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itembyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemByIdAsync)}")]
         [ProducesResponseType(typeof(GIS.Classes.AdministrativeAreal2D), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] int id)
         {
             AdministrativeAreal2D? administrativeAreal2D_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DByIdAsync(id);
             if (administrativeAreal2D_PostgreSQL is null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             GIS.Classes.AdministrativeAreal2D? administrativeAreal2D = administrativeAreal2D_PostgreSQL.ToDiGi();
             string? json = Core.Convert.ToSystem_String(administrativeAreal2D);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -308,7 +309,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbyadministrativearealtype", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByAdministrativeArealTypeAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] AdministrativeArealType administrativeArealType)
         {
@@ -345,7 +346,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
                 Serilog.Modify.Log("No content found");
-                return NoContent();
+                return NotFound();
             }
 
             Serilog.Modify.Log("{Count} items converted to GIS", administrativeAreal2Ds.Count);
@@ -353,7 +354,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = Core.Convert.ToSystem_String(administrativeAreal2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -364,7 +365,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbyboundingbox", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByBoundingBoxAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
@@ -387,7 +388,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByBoundingBox2DAsync(new BoundingBox2D(new Core.Classes.Range<double>(x_1, x_2), new Core.Classes.Range<double>(y_1, y_2)), administrativeArealTypes, tolerance.Value);
             if (administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
@@ -404,13 +405,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(administrativeAreal2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -421,7 +422,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbycircle", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCircleAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
@@ -468,7 +469,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByCircle2DAsync(new Circle2D(new Point2D(x, y), radius_Temp), administrativeArealTypes, tolerance.Value);
             if (administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
@@ -485,13 +486,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(administrativeAreal2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -502,7 +503,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodeAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCodeAsync([FromQuery(Name = "code")] string code, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
@@ -514,7 +515,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<AdministrativeAreal2D>? administrativeAreal2Ds_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DsByCodeAsync(code, administrativeArealType);
             if (administrativeAreal2Ds_PostgreSQL is null || administrativeAreal2Ds_PostgreSQL.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             List<GIS.Classes.AdministrativeAreal2D> administrativeAreal2Ds = [];
@@ -531,13 +532,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(administrativeAreal2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -546,9 +547,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <summary>
         /// Retrieves administrative area items filtered by multiple codes.
         /// </summary>
-        [HttpGet("itemsbycodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodesAsync)}")]
+        [HttpPost("itemsbycodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodesAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCodesAsync([FromBody] List<string> codes)
         {
@@ -577,13 +578,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(administrativeAreal2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -594,7 +595,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpGet("itemsbypoint", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByPointAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] AdministrativeArealType? administrativeArealType)
         {
@@ -634,13 +635,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             if (administrativeAreal2Ds is null || administrativeAreal2Ds.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             string? json = Core.Convert.ToSystem_String(administrativeAreal2Ds);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -652,7 +653,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [HttpGet("subcodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetSubCodesAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetSubCodesAsync([FromQuery(Name = "code")] string code)
         {
@@ -664,7 +665,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             HashSet<string>? subcodes = await administrativeAreal2DPostgreSQLConverter.GetSubCodesAsync(code);
             if (subcodes is null || subcodes.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
 
             JsonArray jsonArray = [.. subcodes];
@@ -672,7 +673,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string? json = jsonArray.ToJsonString();
             if (string.IsNullOrWhiteSpace(json))
             {
-                return NoContent();
+                return NotFound();
             }
 
             return Content(json, "application/json");
@@ -683,9 +684,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         [HttpPost("updateitem", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject)
         {
             if (!gISPostgreSQLWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
