@@ -344,7 +344,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         [HttpGet("itembyreference")]
-        public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId)
+        public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId = null)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetItemByReferenceAsync));
             Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
@@ -565,6 +565,35 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return Ok();
+        }
+
+        [HttpGet("imagebyreference")]
+        public async Task<IActionResult> GetImageByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "year")] short year, [FromQuery(Name = "countyid")] int? countyId = null)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetImageByReferenceAsync));
+            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
+            Serilog.Modify.Log("Countyid provided: {CountyId}", countyId?.ToString() ?? string.Empty);
+            Serilog.Modify.Log("Year provided: {Year}", year.ToString());
+
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or whitespace");
+                return BadRequest("Reference cannot be null or whitespace.");
+            }
+
+            PostgreSQL.Classes.OrtoDatas? ortoDatas = await ortoDatasPostgreSQLConverter.GetOrtoDatasByReferenceAsync(reference, countyId);
+            if (ortoDatas is null)
+            {
+                return NotFound();
+            }
+
+            byte[]? bytes = ortoDatas?.ToDiGi()?.GetBytes(new DateTime(year, 1, 1));
+            if(bytes is null)
+            {
+                return NotFound();
+            }
+
+            return File(bytes, "image/jpeg");
         }
     }
 }
