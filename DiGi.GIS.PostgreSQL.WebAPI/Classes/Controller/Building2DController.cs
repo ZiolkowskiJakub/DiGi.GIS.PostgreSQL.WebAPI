@@ -102,44 +102,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Retrieves references of the building2Ds filtered by county Id.
-        /// </summary>
-        [HttpGet("referencesbycountyid", Name = $"{nameof(Building2DController)}_{nameof(GetReferencesByCountyIdAsync)}")]
-        [ApiExplorerSettings(IgnoreApi = false)]
-        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetReferencesByCountyIdAsync([FromQuery(Name = "countyid")] int countyId, [FromQuery(Name = "subdivisionid")] int? subdivisionId = null)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetReferencesByCountyIdAsync));
-
-            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = await building2DPostgreSQLConverter.GetBuilding2DReferencesAsync(countyId, subdivisionId);
-            if (building2DReferences is null || building2DReferences.Count == 0)
-            {
-                return NotFound();
-            }
-
-            List<string> references = [];
-            foreach (PostgreSQL.Classes.Building2DReference building2DReference in building2DReferences)
-            {
-                if (string.IsNullOrWhiteSpace(building2DReference.Reference))
-                {
-                    continue;
-                }
-                references.Add(building2DReference.Reference);
-            }
-
-            JsonArray jsonArray = [.. references];
-
-            string? json = jsonArray.ToJsonString();
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return NotFound();
-            }
-
-            return Content(json, "application/json");
-        }
-
-        /// <summary>
         /// Retrieves a building 2D item by its identifier.
         /// </summary>
         [HttpGet("itembyid", Name = $"{nameof(Building2DController)}_{nameof(GetItemByIdAsync)}")]
@@ -446,6 +408,43 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
+        /// <summary>
+        /// Retrieves references of the building2Ds filtered by county Id.
+        /// </summary>
+        [HttpGet("referencesbycountyid", Name = $"{nameof(Building2DController)}_{nameof(GetReferencesByCountyIdAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetReferencesByCountyIdAsync([FromQuery(Name = "countyid")] int countyId, [FromQuery(Name = "subdivisionid")] int? subdivisionId = null)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetReferencesByCountyIdAsync));
+
+            List<PostgreSQL.Classes.Building2DReference>? building2DReferences = await building2DPostgreSQLConverter.GetBuilding2DReferencesAsync(countyId, subdivisionId);
+            if (building2DReferences is null || building2DReferences.Count == 0)
+            {
+                return NotFound();
+            }
+
+            List<string> references = [];
+            foreach (PostgreSQL.Classes.Building2DReference building2DReference in building2DReferences)
+            {
+                if (string.IsNullOrWhiteSpace(building2DReference.Reference))
+                {
+                    continue;
+                }
+                references.Add(building2DReference.Reference);
+            }
+
+            JsonArray jsonArray = [.. references];
+
+            string? json = jsonArray.ToJsonString();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
         /// <summary>
         /// Updates a single building 2D item.
         /// </summary>

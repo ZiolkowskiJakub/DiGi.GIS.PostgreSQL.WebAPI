@@ -47,15 +47,15 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Retrieves all columns with given categories (if provided).
+        /// Retrieves all columns.
         /// </summary>
-        [HttpPost("columns", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnsAsync)}")]
+        [HttpGet("columns", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnsAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<DiGi.PostgreSQL.Table.Classes.Column>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetColumnsAsync([FromBody] List<string>? categories = null)
+        public async Task<IActionResult> GetColumnsAsync()
         {
-            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync(categories);
+            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync();
             if (columns is null || columns.Count == 0)
             {
                 return NotFound();
@@ -81,36 +81,67 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Retrieves unique values for a given column unique id and optionally county id.
+        /// Retrieves all columns with given categories (if provided).
         /// </summary>
-        [HttpPost("uniquevalues", Name = $"{nameof(BuildingDataController)}_{nameof(GetUniqueValuesAsync)}")]
+        [HttpPost("columnsbycategories", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnsByCategoriesAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
-        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<DiGi.PostgreSQL.Table.Classes.Column>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUniqueValuesAsync([FromBody] string columnUniqueId, [FromQuery(Name = "countyid")] int? countyId = null)
+        public async Task<IActionResult> GetColumnsByCategoriesAsync([FromBody] List<string>? categories = null)
         {
-            IEnumerable<object?>? values;
-            if(countyId is null)
-            {
-                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(columnUniqueId);
-            }
-            else
-            {
-                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(columnUniqueId, countyId.Value);
-            }
-
-            if (values is null || !values.Any())
+            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync(categories);
+            if (columns is null || columns.Count == 0)
             {
                 return NotFound();
             }
 
-            JsonArray jsonArray = [];
-            foreach(object? value in values)
+            List<DiGi.PostgreSQL.Table.Classes.Column> columns_PostgreSQL = [];
+            foreach (Column column in columns)
             {
-                jsonArray.Add(value);
+                DiGi.PostgreSQL.Table.Classes.Column? column_PostgreSQL = DiGi.PostgreSQL.Table.Convert.ToDiGi(column);
+                if (column_PostgreSQL is not null)
+                {
+                    columns_PostgreSQL.Add(column_PostgreSQL);
+                }
             }
 
-            string? json = jsonArray.ToJsonString();
+            string? json = Core.Convert.ToSystem_String(columns_PostgreSQL);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+        
+        /// <summary>
+        /// Retrieves all columns with given categories by columns by categories parameter (which contains categories).
+        /// </summary>
+        /// <param name="columnsByCategoriesParameter"> The parameter containing the categories for querying columns. </param>
+        /// <returns>Column <see cref="DiGi.PostgreSQL.Table.Classes.Column"/></returns>
+        [HttpPost("columnsbycategoriesparameter", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnsByCategoriesParameterAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(List<DiGi.PostgreSQL.Table.Classes.Column>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetColumnsByCategoriesParameterAsync([FromBody] ColumnsByCategoriesParameter columnsByCategoriesParameter)
+        {
+            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync(columnsByCategoriesParameter.Categories);
+            if (columns is null || columns.Count == 0)
+            {
+                return NotFound();
+            }
+
+            List<DiGi.PostgreSQL.Table.Classes.Column> columns_PostgreSQL = [];
+            foreach (Column column in columns)
+            {
+                DiGi.PostgreSQL.Table.Classes.Column? column_PostgreSQL = DiGi.PostgreSQL.Table.Convert.ToDiGi(column);
+                if (column_PostgreSQL is not null)
+                {
+                    columns_PostgreSQL.Add(column_PostgreSQL);
+                }
+            }
+
+            string? json = Core.Convert.ToSystem_String(columns_PostgreSQL);
             if (string.IsNullOrWhiteSpace(json))
             {
                 return NotFound();
@@ -155,29 +186,107 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Retrieves a building data table by building data query (column unique ids, county id and references).
+        /// Retrieves a building data table by building data by references parameter (column unique ids, county id and references).
         /// </summary>
-        [HttpPost("tablebybuildingdataquery", Name = $"{nameof(BuildingDataController)}_{nameof(GetTableByBuildingDataQueryAsync)}")]
+        [HttpPost("tablebybuildingdatabyreferencesparameter", Name = $"{nameof(BuildingDataController)}_{nameof(GetTableByBuildingDataByReferencesParameterAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetTableByBuildingDataQueryAsync([FromBody] BuildingDataQuery buildingDataQuery)
+        public async Task<IActionResult> GetTableByBuildingDataByReferencesParameterAsync([FromBody] BuildingDataByReferencesParameter buildingDataByReferencesParameter)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByBuildingDataQueryAsync));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByBuildingDataByReferencesParameterAsync));
 
-            IEnumerable<string>? columnUniqueIds = buildingDataQuery.ColumnUniqueIds;
+            IEnumerable<string>? columnUniqueIds = buildingDataByReferencesParameter.ColumnUniqueIds;
             if (columnUniqueIds is not null && !columnUniqueIds.Any())
             {
                 columnUniqueIds = null;
             }
 
-            Table? table = await buildingDataPostgreSQLConverter.PullAsync(buildingDataQuery.References, buildingDataQuery.CountyId, columnUniqueIds);
+            Table? table = await buildingDataPostgreSQLConverter.PullAsync(buildingDataByReferencesParameter.References, buildingDataByReferencesParameter.CountyId, columnUniqueIds);
             if (table is null)
             {
                 return NotFound();
             }
 
             string? json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Retrieves unique values for a given column unique id and optionally county id.
+        /// </summary>
+        [HttpGet("uniquevalues", Name = $"{nameof(BuildingDataController)}_{nameof(GetUniqueValuesAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUniqueValuesAsync([FromQuery(Name = "columnuniqueid")] string columnUniqueId, [FromQuery(Name = "countyid")] int? countyId = null)
+        {
+            IEnumerable<object?>? values;
+            if(countyId is null)
+            {
+                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(columnUniqueId);
+            }
+            else
+            {
+                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(columnUniqueId, countyId.Value);
+            }
+
+            if (values is null || !values.Any())
+            {
+                return NotFound();
+            }
+
+            JsonArray jsonArray = [];
+            foreach(object? value in values)
+            {
+                jsonArray.Add(value);
+            }
+
+            string? json = jsonArray.ToJsonString();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Retrieves unique values for a given UniqueValuesByColumnUniqueIdParameter (column unique id and optionally county id).
+        /// </summary>
+        [HttpPost("uniquevaluesbycolumnuniqueidparameter", Name = $"{nameof(BuildingDataController)}_{nameof(GetUniqueValuesByColumnUniqueIdParameterAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUniqueValuesByColumnUniqueIdParameterAsync([FromBody] UniqueValuesByColumnUniqueIdParameter uniqueValuesByColumnUniqueIdParameter)
+        {
+            IEnumerable<object?>? values;
+            if (uniqueValuesByColumnUniqueIdParameter.CountyId is null)
+            {
+                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(uniqueValuesByColumnUniqueIdParameter.ColumnUniqueId);
+            }
+            else
+            {
+                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(uniqueValuesByColumnUniqueIdParameter.ColumnUniqueId, uniqueValuesByColumnUniqueIdParameter.CountyId.Value);
+            }
+
+            if (values is null || !values.Any())
+            {
+                return NotFound();
+            }
+
+            JsonArray jsonArray = [];
+            foreach (object? value in values)
+            {
+                jsonArray.Add(value);
+            }
+
+            string? json = jsonArray.ToJsonString();
             if (string.IsNullOrWhiteSpace(json))
             {
                 return NotFound();
