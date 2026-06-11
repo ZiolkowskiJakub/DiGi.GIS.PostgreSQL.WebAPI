@@ -469,15 +469,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <summary> Retrieves administrative area items within a specified circle. </summary>
         /// <param name="x">The X-coordinate of the center point of the search circle.</param>
         /// <param name="y">The Y-coordinate of the center point of the search circle.</param>
-
         /// <param name="radius">The radius of the search circle.</param>
-
         /// <param name="diameter">The diameter of the search circle.</param>
-
         /// <param name="tolerance">The tolerance value for the spatial query.</param>
-
         /// <param name="administrativeArealType">The type of administrative area to retrieve.</param>
-
         /// <returns>An <see cref="IActionResult" /> containing a list of administrative area items if found, or an error response.</returns>
 
         [HttpGet("itemsbycircle", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCircleAsync)}")]
@@ -559,11 +554,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary> Retrieves administrative area items filtered by code. </summary>
-
         /// <param name="code">The code used to filter the administrative area items.</param>
-
         /// <param name="administrativeArealType">The optional type of administrative area to filter by.</param>
-
         /// <returns>An <see cref="IActionResult" /> containing a list of matching administrative area items, or an error response if the code is invalid or no items are found.</returns>
 
         [HttpGet("itemsbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodeAsync)}")]
@@ -610,9 +602,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary> Retrieves administrative area items filtered by multiple codes. </summary>
-
         /// <param name="codes">The list of codes used to filter the administrative area items.</param>
-
         /// <returns>A task that represents the asynchronous operation.</returns>
 
         [HttpPost("itemsbycodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodesAsync)}")]
@@ -659,15 +649,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary> Retrieves administrative area items at or near a specified point. </summary>
-
         /// <param name="x">The X-coordinate of the search point.</param>
-
         /// <param name="y">The Y-coordinate of the search point.</param>
-
         /// <param name="tolerance">The optional tolerance distance to use when searching for items near the specified point. If null, a default macro distance is used.</param>
-
         /// <param name="administrativeArealType">The optional type filter for the administrative area items to be retrieved.</param>
-
         /// <returns>A task that represents the asynchronous operation.</returns>
 
         [HttpGet("itemsbypoint", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByPointAsync)}")]
@@ -725,9 +710,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary> Retrieves subcodes for a given code. </summary>
-
         /// <param name="code">The administrative area code used to retrieve the associated subcodes.</param>
-
         /// <returns>A task that represents the asynchronous operation.</returns>
 
         [HttpGet("subcodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetSubCodesAsync)}")]
@@ -760,9 +743,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary> Updates a single administrative area item. </summary>
-
         /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data used to update the administrative area item. This value can be null.</param>
-
         /// <returns>A task that represents the asynchronous operation.</returns>
 
         [HttpPost("updateitem", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemAsync)}")]
@@ -804,9 +785,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary> Updates multiple administrative area items. </summary>
-
         /// <param name="jsonArray">The JSON array containing the administrative area items to be updated.</param>
-
         /// <returns>A task that represents the asynchronous operation.</returns>
 
         [HttpPost("updateitems", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemsAsync)}")]
