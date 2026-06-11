@@ -1,5 +1,6 @@
 ﻿using DiGi.Core.IO.Table.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
+using DiGi.PostgreSQL.Table;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -203,6 +204,38 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             Table? table = await buildingDataPostgreSQLConverter.PullAsync(buildingDataByReferencesParameter.References, buildingDataByReferencesParameter.CountyId, columnUniqueIds);
+            if (table is null)
+            {
+                return NotFound();
+            }
+
+            string? json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Retrieves a building data table by building data by subdivision ids parameter (column unique ids, subdivision ids).
+        /// </summary>
+        [HttpPost("tablebybuildingdatabysubdivisionidsparameter", Name = $"{nameof(BuildingDataController)}_{nameof(GetTableByBuildingDataBySubdivisionIdsParameterAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTableByBuildingDataBySubdivisionIdsParameterAsync([FromBody] BuildingDataBySubdivisionIdsParameter buildingDataBySubdivisionIdsParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByBuildingDataBySubdivisionIdsParameterAsync));
+
+            IEnumerable<string>? columnUniqueIds = buildingDataBySubdivisionIdsParameter.ColumnUniqueIds;
+            if (columnUniqueIds is not null && !columnUniqueIds.Any())
+            {
+                columnUniqueIds = null;
+            }
+
+            Table? table = await buildingDataPostgreSQLConverter.PullAsync(IO.Constants.Column.SubdivisionId.UniqueId()!, buildingDataBySubdivisionIdsParameter.SubdivisionIds, columnUniqueIds);
             if (table is null)
             {
                 return NotFound();
