@@ -1,4 +1,4 @@
-﻿using DiGi.Geometry.Planar.Classes;
+using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.GIS.PostgreSQL.Enums;
 using DiGi.WebAPI.Classes;
@@ -22,18 +22,19 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AdministrativeAreal2DController"/> class.
-        /// </summary>
+        /// <summary></summary>
+        /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher for the GIS PostgreSQL Web API.</param>
+        /// <param name="administrativeAreal2DPostgreSQLConverter">The converter used for administrative area 2D PostgreSQL operations.</param>
         public AdministrativeAreal2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
         }
 
-        /// <summary>
-        /// Gets an administrative area reference by its code and type.
-        /// </summary>
+        /// <summary> Gets an administrative area reference by its code and type. </summary>
+        /// <param name="code">The unique code of the administrative area.</param>
+        /// <param name="administrativeArealType">The type of the administrative area.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("administrativeareal2Dreferencebycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferenceByCodeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
@@ -61,9 +62,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves an administrative area reference by its identifier.
-        /// </summary>
+        /// <summary> Retrieves an administrative area reference by its identifier. </summary>
+        /// <param name="id">The unique identifier of the administrative area reference to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("administrativeareal2Dreferencebyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferenceByIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReference), StatusCodes.Status200OK)]
@@ -84,9 +85,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves the administrative area reference path by its identifier.
-        /// </summary>
+        /// <summary> Retrieves the administrative area reference path by its identifier. </summary>
+        /// <param name="id">The unique identifier of the administrative area reference path to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("administrativeareal2Dreferencepathbyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathByIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(AdministrativeAreal2DReferencePath), StatusCodes.Status200OK)]
@@ -103,9 +104,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area reference paths by name.
-        /// </summary>
+        /// <summary> Retrieves administrative area reference paths by name. </summary>
+        /// <param name="text">The search text used to find matching administrative area reference paths.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by the called method to indicate that the operation should be canceled.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("administrativeareal2Dreferencepathsbyname", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathsByNameAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReferencePath>), StatusCodes.Status200OK)]
@@ -140,9 +142,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
         }
 
-        /// <summary>
-        /// Retrieves all administrative area references filtered by administrative area type.
-        /// </summary>
+        /// <summary> Retrieves all administrative area references filtered by administrative area type. </summary>
+        /// <param name="administrativeArealType">The administrative area type used to filter the references.</param>
+        /// <param name="parentId">The optional parent identifier used for filtering.</param>
+        /// <param name="uniqueCode">An optional flag indicating whether to filter by unique code.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("administrativeareal2Dreferencesbyadministrativearealtype", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReference>), StatusCodes.Status200OK)]
@@ -159,9 +163,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area references by their code.
-        /// </summary>
+        /// <summary> Retrieves administrative area references by their code. </summary>
+        /// <param name="code">The unique identifier or code used to retrieve the administrative area references.</param>
+        /// <param name="administrativeArealType">An optional filter specifying the type of administrative area.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("administrativeareal2Dreferencesbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencesByCodeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReference>), StatusCodes.Status200OK)]
@@ -200,9 +205,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves all available codes.
-        /// </summary>
+        /// <summary> Retrieves all available administrative area codes. </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("codes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetCodesAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
@@ -226,9 +230,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves the identifier for a given code.
-        /// </summary>
+        /// <summary> Retrieves the identifier for a given code. </summary>
+        /// <param name="code">The unique code of the administrative area.</param>
+        /// <param name="administrativeArealType">The optional type of the administrative area to filter the search.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("idbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetIdByCodeAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
@@ -249,9 +254,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok(id.Value);
         }
 
-        /// <summary>
-        /// Retrieves an administrative area item by its code.
-        /// </summary>
+        /// <summary> Retrieves an administrative area item by its code. </summary>
+        /// <param name="code">The unique code of the administrative area to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itembycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemByCodeAsync)}")]
         [ProducesResponseType(typeof(GIS.Classes.AdministrativeAreal2D), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -279,9 +284,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves an administrative area item by its identifier.
-        /// </summary>
+        /// <summary> Asynchronously retrieves an administrative area item by its unique identifier. </summary>
+        /// <param name="id">The integer identifier of the administrative area item to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itembyid", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemByIdAsync)}")]
         [ProducesResponseType(typeof(GIS.Classes.AdministrativeAreal2D), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -304,9 +309,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves all administrative area items filtered by administrative area type.
-        /// </summary>
+        /// <summary> Retrieves all administrative area items filtered by administrative area type. </summary>
+        /// <param name="administrativeArealType">The administrative area type used to filter the results.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbyadministrativearealtype", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByAdministrativeArealTypeAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -360,9 +365,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area items within a specified bounding box.
-        /// </summary>
+        /// <summary> Retrieves administrative area items within a specified bounding box. </summary>
+        /// <param name="x_1">The X-coordinate of the first corner of the bounding box.</param>
+        /// <param name="y_1">The Y-coordinate of the first corner of the bounding box.</param>
+        /// <param name="x_2">The X-coordinate of the second corner of the bounding box.</param>
+        /// <param name="y_2">The Y-coordinate of the second corner of the bounding box.</param>
+        /// <param name="tolerance">An optional tolerance value for the spatial query. If not provided, a default macro distance is used.</param>
+        /// <param name="administrativeArealType">An optional filter to restrict results to a specific type of administrative area.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbyboundingbox", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByBoundingBoxAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -417,9 +427,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area items within a specified circle.
-        /// </summary>
+        /// <summary> Retrieves administrative area items within a specified circle. </summary>
+        /// <param name="x">The X-coordinate of the center point of the search circle.</param>
+        /// <param name="y">The Y-coordinate of the center point of the search circle.</param>
+        /// <param name="radius">The radius of the search circle.</param>
+        /// <param name="diameter">The diameter of the search circle.</param>
+        /// <param name="tolerance">The tolerance value for the spatial query.</param>
+        /// <param name="administrativeArealType">The type of administrative area to retrieve.</param>
+        /// <returns>An <see cref="IActionResult" /> containing a list of administrative area items if found, or an error response.</returns>
         [HttpGet("itemsbycircle", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCircleAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -498,9 +513,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area items filtered by code.
-        /// </summary>
+        /// <summary> Retrieves administrative area items filtered by code. </summary>
+        /// <param name="code">The code used to filter the administrative area items.</param>
+        /// <param name="administrativeArealType">The optional type of administrative area to filter by.</param>
+        /// <returns>An <see cref="IActionResult" /> containing a list of matching administrative area items, or an error response if the code is invalid or no items are found.</returns>
         [HttpGet("itemsbycode", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodeAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -544,9 +560,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area items filtered by multiple codes.
-        /// </summary>
+        /// <summary> Retrieves administrative area items filtered by multiple codes. </summary>
+        /// <param name="codes">The list of codes used to filter the administrative area items.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("itemsbycodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByCodesAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -590,9 +606,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves administrative area items at or near a specified point.
-        /// </summary>
+        /// <summary> Retrieves administrative area items at or near a specified point. </summary>
+        /// <param name="x">The X-coordinate of the search point.</param>
+        /// <param name="y">The Y-coordinate of the search point.</param>
+        /// <param name="tolerance">The optional tolerance distance to use when searching for items near the specified point. If null, a default macro distance is used.</param>
+        /// <param name="administrativeArealType">The optional type filter for the administrative area items to be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbypoint", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetItemsByPointAsync)}")]
         [ProducesResponseType(typeof(List<GIS.Classes.AdministrativeAreal2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -647,9 +666,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves subcodes for a given code.
-        /// </summary>
+        /// <summary> Retrieves subcodes for a given code. </summary>
+        /// <param name="code">The administrative area code used to retrieve the associated subcodes.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("subcodes", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetSubCodesAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
@@ -679,9 +698,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Updates a single administrative area item.
-        /// </summary>
+        /// <summary> Updates a single administrative area item. </summary>
+        /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data used to update the administrative area item. This value can be null.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitem", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -720,9 +739,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
-        /// <summary>
-        /// Updates multiple administrative area items.
-        /// </summary>
+        /// <summary> Updates multiple administrative area items. </summary>
+        /// <param name="jsonArray">The JSON array containing the administrative area items to be updated.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitems", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(UpdateItemsAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

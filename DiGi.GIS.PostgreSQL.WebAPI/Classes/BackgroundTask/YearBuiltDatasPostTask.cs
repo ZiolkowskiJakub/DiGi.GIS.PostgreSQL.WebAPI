@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Provides functionality to handle the asynchronous posting of <see cref="YearBuiltData"/> collections to the PostgreSQL database.
+    /// </summary>
     public class YearBuiltDatasPostTask : SerializableObjectsPostTask<YearBuiltData>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager used to handle data persistence.</param>
         public YearBuiltDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
             : base(gISPostgreSQLWebAPIManager)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string? Code { get; set; }
 
         protected async Task<bool> ExecuteAsync(IEnumerable<YearBuiltData>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)

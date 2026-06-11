@@ -14,6 +14,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 {
     public static partial class Modify
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
+        /// <param name="administrativeAreal2Ds">A collection of administrative area items to update.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<AdministrativeAreal2D>? administrativeAreal2Ds, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || administrativeAreal2Ds is null)
@@ -30,6 +37,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2Ds), postOptions);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
+        /// <param name="administrativeAreal2D">The administrative area item to be updated.</param>
+        /// <param name="postOptions">Optional configuration options for the HTTP POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, AdministrativeAreal2D? administrativeAreal2D, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || administrativeAreal2D is null)
@@ -46,6 +60,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2D), postOptions);
         }
 
+        /// <summary>
+        /// Updates multiple 2D building items asynchronously.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
+        /// <param name="building2Ds">A collection of <see cref="Building2D"/> items to be updated.</param>
+        /// <param name="code">An optional code used for the update operation.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<Building2D>? building2Ds, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || building2Ds is null)
@@ -65,6 +87,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2Ds), postOptions);
         }
 
+        /// <summary>
+        /// Asynchronously updates multiple ortho data items via the PostgreSQL Web API.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The <see cref="GISPostgreSQLWebAPIManager"/> instance used to perform the update operation.</param>
+        /// <param name="ortoDatas">A collection of <see cref="OrtoDatas"/> items to be updated.</param>
+        /// <param name="code">An optional code used to identify or filter the items for updating.</param>
+        /// <param name="postOptions">Optional configuration options for the update request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<OrtoDatas>? ortoDatas, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || ortoDatas is null)
@@ -84,6 +114,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(ortoDatas), postOptions);
         }
 
+        /// <summary>
+        /// Asynchronously updates multiple year built data items via the PostgreSQL Web API.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The manager instance used to facilitate the web API communication.</param>
+        /// <param name="yearBuiltDatas">A collection of <see cref="T:DiGi.GIS.Classes.YearBuiltData"/> objects to be updated.</param>
+        /// <param name="code">An optional code identifier for the update request.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<YearBuiltData>? yearBuiltDatas, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || yearBuiltDatas is null)
@@ -103,6 +141,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(yearBuiltDatas), postOptions);
         }
 
+        /// <summary>
+        /// Asynchronously updates multiple occupancy data items via the Web API.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The <see cref="GISPostgreSQLWebAPIManager"/> instance used to create the HTTP client for the request.</param>
+        /// <param name="occupancyDatas">A collection of <see cref="OccupancyData"/> items to be updated.</param>
+        /// <param name="code">An optional code associated with the update operation.</param>
+        /// <param name="postOptions">Optional configuration settings for the HTTP POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<OccupancyData>? occupancyDatas, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || occupancyDatas is null)
@@ -122,6 +168,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(occupancyDatas), postOptions);
         }
 
+        /// <summary>
+        /// Asynchronously updates multiple occupancy data items via the PostgreSQL Web API.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The manager instance used to facilitate the API communication.</param>
+        /// <param name="occupancyDatas">The collection of <see cref="OccupancyData"/> items to be updated.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<OccupancyData>? occupancyDatas, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || occupancyDatas is null)
@@ -140,6 +193,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(occupancyDatas), postOptions);
         }
 
+        /// <summary>
+        /// Updates multiple ortho data items for a specific county.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The <see cref="GISPostgreSQLWebAPIManager"/> instance used to perform the update operation.</param>
+        /// <param name="ortoDatas">The collection of <see cref="OrtoDatas"/> items to be updated.</param>
+        /// <param name="countyId">The unique identifier of the county for which the items are being updated.</param>
+        /// <param name="postOptions">Optional configuration options for the HTTP POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<OrtoDatas>? ortoDatas, int countyId, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || ortoDatas is null)
@@ -159,6 +220,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(ortoDatas), postOptions);
         }
 
+        /// <summary>
+        /// Asynchronously updates building items in the PostgreSQL GIS database via the web API.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The manager instance used to handle communication with the PostgreSQL Web API.</param>
+        /// <param name="building2D">The <see cref="Building2D"/> object containing the data to be updated.</param>
+        /// <param name="code">An optional identification code associated with the update request.</param>
+        /// <param name="postOptions">Optional configuration settings for the HTTP POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, Building2D? building2D, string? code = null, PostOptions? postOptions = null)
         {
             if (gISPostgreSQLWebAPIManager is null || building2D is null)
@@ -178,6 +247,18 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(building2D), postOptions);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
+        /// <param name="path">The file system path to the source data files.</param>
+        /// <param name="oT_ADJA_A">Indicates whether items with the OT_ADJA_A suffix should be updated. Defaults to <c>true</c>.</param>
+        /// <param name="oT_ADMS_A">Indicates whether items with the OT_ADMS_A suffix should be updated. Defaults to <c>true</c>.</param>
+        /// <param name="oT_BUBD_A">Indicates whether items with the OT_BUBD_A suffix should be updated. Defaults to <c>true</c>.</param>
+        /// <param name="serializableObjectsPostOptions">The options used for serializing objects during the POST request.</param>
+        /// <param name="progress">The progress reporter for reporting progress updates.</param>
+        /// <param name="cancellationToken">The cancellation token to observe.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, string? path, bool oT_ADJA_A = true, bool oT_ADMS_A = true, bool oT_BUBD_A = true, SerializableObjectsPostOptions? serializableObjectsPostOptions = null, IProgress<long>? progress = default, CancellationToken? cancellationToken = default)
         {
             // Use the provided cancellationToken or a default one to avoid null checks later
@@ -302,6 +383,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="httpClient">The <see cref="System.Net.Http.HttpClient"/> used to perform the network request.</param>
+        /// <param name="requestUri">The target URI where the update request is sent.</param>
+        /// <param name="json">The JSON string containing the data to be updated.</param>
+        /// <param name="postOptions">Optional <see cref="DiGi.WebAPI.Classes.PostOptions"/> used to configure the operation, such as specifying a delay.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this HttpClient httpClient, string? requestUri, string? json, PostOptions? postOptions = null)
         {
             if (httpClient is null || string.IsNullOrWhiteSpace(requestUri) || json is null)

@@ -8,8 +8,15 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Provides functionality to asynchronously post a collection of <see cref="AdministrativeAreal2D"/> objects to the PostgreSQL database.
+    /// </summary>
     public class AdministrativeAreal2DsPostTask : SerializableObjectsPostTask<AdministrativeAreal2D>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager used to handle database operations.</param>
         public AdministrativeAreal2DsPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
             : base(gISPostgreSQLWebAPIManager)
         {

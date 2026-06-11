@@ -19,16 +19,28 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         public int? CountyId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public UniqueValuesByColumnUniqueIdParameter()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columnUniqueId">The unique identifier of the column.</param>
+        /// <param name="countyId">The optional unique identifier of the county.</param>
         public UniqueValuesByColumnUniqueIdParameter(string columnUniqueId, int? countyId)
         {
             ColumnUniqueId = columnUniqueId;
             CountyId = countyId;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data used to initialize the parameter.</param>
         public UniqueValuesByColumnUniqueIdParameter(JsonObject jsonObject)
         : base(jsonObject)
         {

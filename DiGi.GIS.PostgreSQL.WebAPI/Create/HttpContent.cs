@@ -1,4 +1,4 @@
-﻿using DiGi.Core.Interfaces;
+using DiGi.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +12,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 {
     public static partial class Create
     {
+        /// <summary>
+        /// Converts a collection of serializable objects into an <see cref="System.Net.Http.HttpContent"/> object by first serializing them to a JSON string.
+        /// </summary>
+        /// <typeparam name="TSerializableObject">The type of the objects in the collection, which must implement <see cref="ISerializableObject"/>.</typeparam>
+        /// <param name="serializableObjects">The collection of objects to be serialized and converted to HTTP content.</param>
+        /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<HttpContent?> HttpContent<TSerializableObject>(this IEnumerable<TSerializableObject> serializableObjects, CancellationToken cancellationToken) where TSerializableObject : ISerializableObject
         {
             string? json = Core.Convert.ToSystem_String(serializableObjects);
@@ -19,6 +26,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await HttpContent(json ?? string.Empty, cancellationToken);
         }
 
+        /// <summary>
+        /// Converts a JSON string into an asynchronous <see cref="System.Net.Http.HttpContent"/> object.
+        /// </summary>
+        /// <param name="json">The JSON string to be converted.</param>
+        /// <param name="cancellationToken">The cancellationToken.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<HttpContent?> HttpContent(this string json, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(json))
@@ -32,6 +45,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             return await HttpContent(jsonBytes, cancellationToken);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes">The raw byte array to be compressed.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<HttpContent?> HttpContent(this byte[] bytes, CancellationToken cancellationToken)
         {
             if (bytes == null || bytes.Length == 0)

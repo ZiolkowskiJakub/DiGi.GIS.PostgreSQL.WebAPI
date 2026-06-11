@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OrtoDatasPostTask : SerializableObjectsPostTask<OrtoDatas>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The manager instance used to handle PostgreSQL web API operations.</param>
         public OrtoDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
             : base(gISPostgreSQLWebAPIManager)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string? Code { get; set; }
 
         protected async Task<bool> ExecuteAsync(IEnumerable<OrtoDatas>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken)

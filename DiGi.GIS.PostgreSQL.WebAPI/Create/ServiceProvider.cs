@@ -6,6 +6,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 {
     public static partial class Create
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>An <see cref="IServiceProvider"/> containing the registered services.</returns>
         public static IServiceProvider ServiceProvider()
         {
             IServiceCollection serviceCollection = new ServiceCollection();

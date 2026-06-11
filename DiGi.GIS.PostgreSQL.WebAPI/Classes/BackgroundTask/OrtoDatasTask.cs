@@ -10,11 +10,19 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OrtoDatasTask : ReportableBackgroundTask<long>, IGISPostgreSQLObject
     {
         private readonly GISPostgreSQLConverterManager? gISPostgreSQLConverterManager;
         private readonly GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The manager responsible for handling GIS PostgreSQL Web API operations.</param>
+        /// <param name="gISPostgreSQLConverterManager">The manager that handles conversion processes for GIS data within a PostgreSQL database context.</param>
         public OrtoDatasTask(GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, GISPostgreSQLConverterManager? gISPostgreSQLConverterManager)
         {
             this.gISPostgreSQLWebAPIManager = gISPostgreSQLWebAPIManager ?? throw new ArgumentNullException(nameof(gISPostgreSQLWebAPIManager));

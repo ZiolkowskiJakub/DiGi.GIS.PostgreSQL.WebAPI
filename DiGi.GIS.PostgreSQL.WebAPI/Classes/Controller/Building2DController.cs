@@ -1,4 +1,4 @@
-﻿using DiGi.Geometry.Planar.Classes;
+using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.Classes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,18 +19,19 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter;
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building2DController"/> class.
-        /// </summary>
+        /// <summary></summary>
+        /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher for the GIS PostgreSQL Web API.</param>
+        /// <param name="building2DPostgreSQLConverter">The converter used for Building 2D data operations in PostgreSQL.</param>
         public Building2DController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
             this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
         }
 
-        /// <summary>
-        /// Retrieves a building 2D reference by its identifier.
-        /// </summary>
+        /// <summary> Asynchronously retrieves a building 2D reference by its unique identifier and an optional county identifier. </summary>
+        /// <param name="id">The unique identifier of the building.</param>
+        /// <param name="countyId">An optional integer representing the county identifier used to filter the search.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("building2Dreferencebyid", Name = $"{nameof(Building2DController)}_{nameof(GetBuilding2DReferenceByIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2DReference), StatusCodes.Status200OK)]
@@ -54,9 +55,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves a building 2D reference by its reference code.
-        /// </summary>
+        /// <summary> Retrieves a building 2D reference by its unique reference code and an optional county identifier. </summary>
+        /// <param name="reference">The unique reference string of the building to retrieve.</param>
+        /// <param name="countyId">The optional integer identifier of the county used to filter the search.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("building2Dreferencebyreference", Name = $"{nameof(Building2DController)}_{nameof(GetBuilding2DReferenceByReferenceAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2DReference), StatusCodes.Status200OK)]
@@ -80,9 +82,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves building 2D references filtered by administrative area 2D identifier.
-        /// </summary>
+        /// <summary> Retrieves building 2D references filtered by administrative area 2D identifier. </summary>
+        /// <param name="administrativeAreal2DId">The unique identifier of the administrative area 2D used to filter the building references.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("building2Dreferencesbyadministrativeareal2Did", Name = $"{nameof(Building2DController)}_{nameof(GetBuilding2DReferencesByAdministrativeAreal2DIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2DReference>), StatusCodes.Status200OK)]
@@ -101,9 +103,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves a building 2D item by its identifier.
-        /// </summary>
+        /// <summary> Retrieves a building 2D item by its identifier. </summary>
+        /// <param name="id">The unique identifier of the building 2D item to retrieve.</param>
+        /// <param name="countyId">The optional county identifier associated with the building.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itembyid", Name = $"{nameof(Building2DController)}_{nameof(GetItemByIdAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -132,9 +135,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves a building 2D item at or near a specified point.
-        /// </summary>
+        /// <summary> Retrieves a building 2D item at or near a specified point. </summary>
+        /// <param name="x">The X coordinate of the search point.</param>
+        /// <param name="y">The Y coordinate of the search point.</param>
+        /// <param name="tolerance">The optional tolerance distance to use when searching for the item near the specified point.</param>
+        /// <returns>An <see cref="IActionResult" /> containing the building 2D item if found, or an error response.</returns>
         [HttpGet("itembypoint", Name = $"{nameof(Building2DController)}_{nameof(GetItemByPointAsync)}")]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2D), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -171,9 +176,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves a building 2D item by its reference code.
-        /// </summary>
+        /// <summary> Asynchronously retrieves a building 2D item by its reference code and an optional county identifier. </summary>
+        /// <param name="reference">The unique reference string used to locate the building 2D item.</param>
+        /// <param name="countyId">The optional identifier of the county associated with the building.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itembyreference", Name = $"{nameof(Building2DController)}_{nameof(GetItemByReferenceAsync)}")]
         [ProducesResponseType(typeof(PostgreSQL.Classes.Building2D), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -196,9 +202,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves building 2D items within a specified bounding box.
-        /// </summary>
+        /// <summary> Retrieves building 2D items within a specified bounding box. </summary>
+        /// <param name="x_1">The X-coordinate of the first corner of the bounding box.</param>
+        /// <param name="y_1">The Y-coordinate of the first corner of the bounding box.</param>
+        /// <param name="x_2">The X-coordinate of the second corner of the bounding box.</param>
+        /// <param name="y_2">The Y-coordinate of the second corner of the bounding box.</param>
+        /// <param name="tolerance">An optional tolerance value for the spatial query. If not provided or NaN, a default macro distance is used.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbyboundingbox", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByBoundingBoxAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -247,9 +257,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves building 2D items by their references.
-        /// </summary>
+        /// <summary> Retrieves building 2D items by their references. </summary>
+        /// <param name="jsonArray">The JSON array containing the building 2D references to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("itemsbybuilding2Dreferences", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByBuilding2DReferencesAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -308,9 +318,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves building 2D items within a specified circle.
-        /// </summary>
+        /// <summary> Retrieves building 2D items within a specified circle. </summary>
+        /// <param name="x">The X-coordinate of the center of the circle.</param>
+        /// <param name="y">The Y-coordinate of the center of the circle.</param>
+        /// <param name="radius">The radius of the search circle.</param>
+        /// <param name="diameter">The diameter of the search circle.</param>
+        /// <param name="tolerance">The tolerance value to be applied to the search area.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbycircle", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByCircleAsync)}")]
         [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -383,9 +397,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves Point2D coordinates by their references.
-        /// </summary>
+        /// <summary> Retrieves Point2D coordinates by their references. </summary>
+        /// <param name="references">A collection of reference strings used to identify the Point2D objects.</param>
+        /// <param name="countyId">The optional identifier for the county associated with the coordinates.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("point2dsbyreferences", Name = $"{nameof(Building2DController)}_{nameof(GetPoint2DsByReferencesAsync)}")]
         [ProducesResponseType(typeof(List<Point2D>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -408,9 +423,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary>
-        /// Retrieves references of the building2Ds filtered by county Id.
-        /// </summary>
+        /// <summary> Retrieves references of the building2Ds filtered by county Id. </summary>
+        /// <param name="countyId">The unique identifier of the county used to filter the building 2D references.</param>
+        /// <param name="subdivisionId">The optional unique identifier of the subdivision used to further filter the building 2D references.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("referencesbycountyid", Name = $"{nameof(Building2DController)}_{nameof(GetReferencesByCountyIdAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
@@ -445,9 +461,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(json, "application/json");
         }
-        /// <summary>
-        /// Updates a single building 2D item.
-        /// </summary>
+        /// <summary> Updates a single building 2D item. </summary>
+        /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data to update the building 2D item. This value can be null.</param>
+        /// <param name="code">The code identifying the specific building 2D item to be updated. This value can be null.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitem", Name = $"{nameof(Building2DController)}_{nameof(UpdateItemAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -481,9 +498,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
-        /// <summary>
-        /// Updates multiple building 2D items.
-        /// </summary>
+        /// <summary> Updates multiple building 2D items. </summary>
+        /// <param name="jsonArray">The JSON array containing the building 2D items to be updated.</param>
+        /// <param name="code">An optional code used for the update operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitems", Name = $"{nameof(Building2DController)}_{nameof(UpdateItemsAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

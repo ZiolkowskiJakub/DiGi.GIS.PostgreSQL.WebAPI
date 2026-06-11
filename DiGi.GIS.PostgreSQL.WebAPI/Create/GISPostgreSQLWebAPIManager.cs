@@ -7,6 +7,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
 {
     public static partial class Create
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static GISPostgreSQLWebAPIManager? GISPostgreSQLWebAPIManager()
         {
             IServiceProvider serviceProvider = ServiceProvider();

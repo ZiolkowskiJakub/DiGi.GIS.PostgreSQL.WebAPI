@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Controller providing API endpoints for managing and accessing orthophoto data and related GIS spatial information via a PostgreSQL database.
+    /// </summary>
     [ApiController]
     [Route("gis/[controller]")]
     public class OrtoDatasController : DiGi.WebAPI.Classes.WebAPIController
@@ -18,6 +21,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher used to monitor changes to the GIS PostgreSQL Web API settings.</param>
+        /// <param name="ortoDatasPostgreSQLConverter">The converter used for handling OrtoDatas data operations within the PostgreSQL database.</param>
+        /// <param name="building2DPostgreSQLConverter">The converter used for handling Building 2D data operations within the PostgreSQL database.</param>
+        /// <param name="administrativeAreal2DPostgreSQLConverter">The converter used for handling Administrative Areal 2D data operations within the PostgreSQL database.</param>
         public OrtoDatasController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
@@ -26,6 +36,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
         }
 
+        /// <summary>
+        /// Asynchronously checks for the existence of a collection of references, optionally filtered by a county identifier.
+        /// </summary>
+        /// <param name="references">A list of strings representing the references to be checked.</param>
+        /// <param name="countyId">The countyId.</param>
+        /// <param name="inverted">The inverted.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("containsbyreferences")]
         public async Task<IActionResult> ContainsByReferencesAsync([FromBody] List<string>? references, [FromQuery(Name = "countyId")] int? countyId, [FromQuery(Name = "inverted")] bool? inverted)
         {
@@ -66,6 +83,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
         }
 
+        /// <summary>
+        /// Retrieves the estimated coverage factor for a specified administrative area 2D identifier.
+        /// </summary>
+        /// <param name="administrativeAreal2DId">The unique identifier of the administrative area 2D.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the estimated coverage factor or an error status code.</returns>
         [HttpGet("estimatedcoveragefactor")]
         public async Task<IActionResult> GetEstimatedCoverageFactorAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
         {
@@ -163,6 +185,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok(result);
         }
 
+        /// <summary>
+        /// Retrieves the estimated coverage factors for the specified administrative area identifiers.
+        /// </summary>
+        /// <param name="administrativeAreal2DIds">The collection of administrative area 2D identifiers to be processed.</param>
+        /// <param name="analyze">An optional flag indicating whether to perform an analysis during the retrieval process.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("estimatedcoveragefactors")]
         public async Task<IActionResult> GetEstimatedCoverageFactorsAsync([FromBody] IEnumerable<int> administrativeAreal2DIds, bool? analyze)
         {
@@ -343,6 +371,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok(result);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves an orthodata item based on the specified reference and optional county identifier.
+        /// </summary>
+        /// <param name="reference">The unique reference string used to locate the orthodata item.</param>
+        /// <param name="countyId">The optional identifier of the county associated with the orthodata item.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itembyreference")]
         public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId = null)
         {
@@ -371,6 +405,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String((Core.Interfaces.ISerializableObject)ortoDatas_DiGi) ?? string.Empty, "application/json");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="count">The maximum number of building 2D reference objects to retrieve. Defaults to 100.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("nextbuilding2Dreferences")]
         public async Task<IActionResult> NextBuilding2DReferences([FromQuery(Name = "count")] int count = 100)
         {
@@ -406,6 +445,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building2DReferences) ?? string.Empty, "application/json");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jsonArray">The JSON array containing the updated item data.</param>
+        /// <param name="code">The unique identifier or code used to identify the items for update.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitemsbycode")]
         public async Task<IActionResult> UpdateItemsByCodeAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string code)
         {
@@ -496,6 +541,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
+        /// <summary>
+        /// Updates orthodata items associated with a specific county identifier.
+        /// </summary>
+        /// <param name="jsonArray">The JSON array containing the orthodata items to be updated.</param>
+        /// <param name="countyId">The unique identifier of the county for which the updates are applied.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitemsbycountyid")]
         public async Task<IActionResult> UpdateItemsByCountyIdAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "countyId")] int countyId)
         {
@@ -567,6 +618,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
+        /// <summary>
+        /// Retrieves orthophoto image data based on the provided reference, year, and optional county identifier.
+        /// </summary>
+        /// <param name="reference">The unique reference string of the orthophoto image.</param>
+        /// <param name="year">The production or capture year of the orthophoto image.</param>
+        /// <param name="countyId">The optional identifier of the county associated with the orthophoto data.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("imagebyreference")]
         public async Task<IActionResult> GetImageByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "year")] short year, [FromQuery(Name = "countyid")] int? countyId = null)
         {

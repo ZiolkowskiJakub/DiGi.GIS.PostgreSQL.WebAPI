@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Provides functionality to handle the asynchronous posting of multiple <see cref="Building2D"/> objects to the GIS PostgreSQL database.
+    /// </summary>
     public class Building2DsPostTask : SerializableObjectsPostTask<Building2D>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The <see cref="GISPostgreSQLWebAPIManager"/> used to manage PostgreSQL GIS operations.</param>
         public Building2DsPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
             : base(gISPostgreSQLWebAPIManager)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string? Code { get; set; }
 
         protected async Task<bool> ExecuteAsync(IEnumerable<Building2D>? values, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken? cancellationToken = default)

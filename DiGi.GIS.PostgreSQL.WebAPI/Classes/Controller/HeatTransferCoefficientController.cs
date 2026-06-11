@@ -7,16 +7,28 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Controller responsible for handling API requests related to heat transfer coefficients, providing access to regulated heat transfer coefficient data.
+    /// </summary>
     [ApiController]
     [Route("gis/[controller]")]
     public class HeatTransferCoefficientController : DiGi.WebAPI.Classes.WebAPIController
     {
         private static readonly RegulatedHeatTransferCoefficientsManager regulatedHeatTransferCoefficientsManager = Analytical.Building.HVAC.Create.RegulatedHeatTransferCoefficientsManager();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public HeatTransferCoefficientController()
         {
         }
 
+        /// <summary>
+        /// Retrieves the regulated heat transfer coefficients for a specified year.
+        /// </summary>
+        /// <param name="year">The year used to filter the regulated heat transfer coefficients.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by the caller to cancel the asynchronous operation.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of the request, containing the retrieved coefficients or an error status.</returns>
         [HttpGet("regulatedheattransfercoefficientsbyyear")]
         public async Task<IActionResult> GetRegulatedHeatTransferCoefficientsByYearAsync([FromQuery(Name = "year")] short year, CancellationToken cancellationToken = default)
         {

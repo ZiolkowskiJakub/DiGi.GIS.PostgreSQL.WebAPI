@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Provides API endpoints for managing and updating year built data stored in a PostgreSQL database.
+    /// </summary>
     [ApiController]
     [Route("gis/[controller]")]
     public class YearBuiltDataController : DiGi.WebAPI.Classes.WebAPIController
@@ -16,6 +19,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
         private readonly YearBuiltDataPostgreSQLConverter yearBuiltDataPostgreSQLConverter;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher used to monitor changes to the PostgreSQL Web API configuration.</param>
+        /// <param name="yearBuiltDataPostgreSQLConverter">The converter for YearBuiltData objects when interacting with a PostgreSQL database.</param>
+        /// <param name="administrativeAreal2DPostgreSQLConverter">The converter for administrative areal 2D data when interacting with a PostgreSQL database.</param>
         public YearBuiltDataController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, YearBuiltDataPostgreSQLConverter yearBuiltDataPostgreSQLConverter, AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
@@ -23,6 +32,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
         }
 
+        /// <summary>
+        /// Updates multiple year built data items based on the provided JSON array and identification code.
+        /// </summary>
+        /// <param name="jsonArray">The JSON array containing the data items to be updated.</param>
+        /// <param name="code">The identification code required for the update operation.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of the update operation.</returns>
         [HttpPost("updateitems")]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string code)
         {
@@ -111,6 +126,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
+        /// <summary>
+        /// Asynchronously retrieves items based on a provided reference and an optional county identifier.
+        /// </summary>
+        /// <param name="reference">The unique reference string used to identify the year built data items.</param>
+        /// <param name="countyId">An optional integer representing the county ID to filter the results.</param>
+        /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to observe for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbyreference")]
         public async Task<IActionResult> GetItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
         {

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
+    /// <summary>
+    /// Controller responsible for handling requests related to occupancy data within the GIS PostgreSQL Web API.
+    /// </summary>
     [ApiController]
     [Route("gis/[controller]")]
     public class OccupancyDataController : DiGi.WebAPI.Classes.WebAPIController
@@ -17,6 +20,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly Building2DOccupancyDataPostgreSQLConverter building2DOccupancyDataPostgreSQLConverter;
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher used to monitor settings for the GIS PostgreSQL Web API.</param>
+        /// <param name="building2DOccupancyDataPostgreSQLConverter">The converter used for building 2D occupancy data operations in the PostgreSQL database.</param>
+        /// <param name="administrativeAreal2DOccupancyDataPostgreSQLConverter">The converter used for administrative areal 2D occupancy data operations in the PostgreSQL database.</param>
+        /// <param name="administrativeAreal2DPostgreSQLConverter">The converter used for administrative areal 2D data operations in the PostgreSQL database.</param>
         public OccupancyDataController(GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, Building2DOccupancyDataPostgreSQLConverter building2DOccupancyDataPostgreSQLConverter, AdministrativeAreal2DOccupancyDataPostgreSQLConverter administrativeAreal2DOccupancyDataPostgreSQLConverter, AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.gISPostgreSQLWebAPIConfigurationFileWatcher = gISPostgreSQLWebAPIConfigurationFileWatcher;
@@ -25,6 +35,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             this.administrativeAreal2DOccupancyDataPostgreSQLConverter = administrativeAreal2DOccupancyDataPostgreSQLConverter;
         }
 
+        /// <summary>
+        /// Asynchronously updates occupancy data items for administrative areal 2D entities.
+        /// </summary>
+        /// <param name="jsonArray">The <see cref="JsonArray"/> containing the occupancy data items to be updated.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of the update operation, returning a bad request if updates are disabled or no content if the input array is null or empty.</returns>
         [HttpPost("administrativeareal2d/updateitems")]
         public async Task<IActionResult> AdministrativeAreal2DUpdateItemsAsync([FromBody] JsonArray? jsonArray)
         {
@@ -94,6 +109,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
+        /// <summary>
+        /// Asynchronously updates building 2D items based on the provided JSON data and identification code.
+        /// </summary>
+        /// <param name="jsonArray">The <see cref="JsonArray"/> containing the item data to be updated.</param>
+        /// <param name="code">The identification code used to validate or categorize the update request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("building2d/updateitems")]
         public async Task<IActionResult> Building2DUpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string code)
         {
@@ -182,6 +203,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Ok();
         }
 
+        /// <summary>
+        /// Retrieves administrative areal 2D items based on the provided reference identifier.
+        /// </summary>
+        /// <param name="reference">The unique reference string used to identify the administrative areal 2D items.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by the caller to cancel the asynchronous operation.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of the operation, containing the requested items or an error response.</returns>
         [HttpGet("administrativeareal2d/itemsbyreference")]
         public async Task<IActionResult> GetAdministrativeAreal2DItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, CancellationToken cancellationToken = default)
         {
@@ -229,6 +256,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(occupancyDatas) ?? string.Empty, "application/json");
         }
 
+        /// <summary>
+        /// Retrieves Building 2D occupancy data items based on a specified reference and an optional county identifier.
+        /// </summary>
+        /// <param name="reference">The unique reference string used to identify the building 2D items.</param>
+        /// <param name="countyId">The optional identifier of the county associated with the building data.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by the caller to cancel the asynchronous operation.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the requested building 2D items, or a <see cref="Microsoft.AspNetCore.Mvc.BadRequestResult"/> if the reference is null or whitespace.</returns>
         [HttpGet("building2d/itemsbyreference")]
         public async Task<IActionResult> GetBuilding2DItemsByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
         {
