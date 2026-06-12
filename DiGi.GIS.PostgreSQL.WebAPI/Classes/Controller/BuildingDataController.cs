@@ -29,23 +29,50 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Computes statistical summaries (Avg, Sum, Min, Max, Count, SplitDistinctCount, SplitValueDistribution) on a partition column.
+        /// Computes single-value statistical summaries (Avg, Sum, Min, Max, Count, DistinctCount) on a partition column.
         /// </summary>
-        /// <param name="aggregateRequestParameter">The parameter containing target column, aggregate function, county identifier, and optional separator.</param>
+        /// <param name="singlevalueAggregateRequestParameter">The parameter containing target column, single-value aggregate function, and county identifier.</param>
         /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
-        [HttpPost("aggregatesummary", Name = $"{nameof(BuildingDataController)}_{nameof(GetAggregateSummaryAsync)}")]
+        [HttpPost("aggregatesummary/singlevalue", Name = $"{nameof(BuildingDataController)}_GetSinglevalueAggregateSummaryAsync")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAggregateSummaryAsync([FromBody] AggregateRequestParameter aggregateRequestParameter)
+        public async Task<IActionResult> GetSinglevalueAggregateSummaryAsync([FromBody] SinglevalueAggregateRequestParameter singlevalueAggregateRequestParameter)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetAggregateSummaryAsync));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetSinglevalueAggregateSummaryAsync));
 
             JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
-                aggregateRequestParameter.ColumnUniqueId,
-                aggregateRequestParameter.AggregateFunction,
-                aggregateRequestParameter.CountyId,
-                aggregateRequestParameter.Separator);
+                singlevalueAggregateRequestParameter.ColumnUniqueId,
+                singlevalueAggregateRequestParameter.SinglevalueAggregateFunction,
+                singlevalueAggregateRequestParameter.CountyId);
+
+            if (resultNode is null)
+            {
+                return NotFound();
+            }
+
+            string json = resultNode.ToJsonString();
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Computes multi-value statistical summaries (SplitDistinctCount, SplitValueDistribution) on a partition column.
+        /// </summary>
+        /// <param name="multivalueAggregateRequestParameter">The parameter containing target column, multi-value aggregate function, county identifier, and optional separator.</param>
+        /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
+        [HttpPost("aggregatesummary/multivalue", Name = $"{nameof(BuildingDataController)}_GetMultivalueAggregateSummaryAsync")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMultivalueAggregateSummaryAsync([FromBody] MultivalueAggregateRequestParameter multivalueAggregateRequestParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetMultivalueAggregateSummaryAsync));
+
+            JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
+                multivalueAggregateRequestParameter.ColumnUniqueId,
+                multivalueAggregateRequestParameter.MultivalueAggregateFunction,
+                multivalueAggregateRequestParameter.CountyId,
+                multivalueAggregateRequestParameter.Separator);
 
             if (resultNode is null)
             {

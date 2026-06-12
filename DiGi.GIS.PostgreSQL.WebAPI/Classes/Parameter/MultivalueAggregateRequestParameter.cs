@@ -1,26 +1,25 @@
 using DiGi.PostgreSQL.Table.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    /// Parameter class containing options for database aggregation queries.
+    /// Parameter class containing options for multi-value database aggregation queries.
     /// </summary>
-    public class AggregateRequestParameter : DiGi.WebAPI.Classes.Parameter
+    public class MultivalueAggregateRequestParameter : DiGi.WebAPI.Classes.Parameter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AggregateRequestParameter"/> class.
+        /// Initializes a new instance of the <see cref="MultivalueAggregateRequestParameter"/> class.
         /// </summary>
-        public AggregateRequestParameter()
+        public MultivalueAggregateRequestParameter()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AggregateRequestParameter"/> class using an <see cref="JsonObject"/> object.
+        /// Initializes a new instance of the <see cref="MultivalueAggregateRequestParameter"/> class using a <see cref="System.Text.Json.Nodes.JsonObject"/> object.
         /// </summary>
         /// <param name="jsonObject">The JSON object containing data used to initialize the parameter.</param>
-        public AggregateRequestParameter(JsonObject jsonObject)
+        public MultivalueAggregateRequestParameter(System.Text.Json.Nodes.JsonObject jsonObject)
             : base(jsonObject)
         {
         }
@@ -40,11 +39,11 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public string ColumnUniqueId { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the aggregation function to perform.
+        /// Gets or sets the multi-value aggregation function to perform.
         /// </summary>
-        /// <example>Sum</example>
+        /// <example>SplitDistinctCount</example>
         [Required]
-        public AggregateFunction AggregateFunction { get; set; }
+        public MultivalueAggregateFunction MultivalueAggregateFunction { get; set; }
 
         /// <summary>
         /// Gets or sets the optional string separator; defaults to null triggering dynamic auto-detection.
