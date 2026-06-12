@@ -96,7 +96,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <param name="categories">An optional list of category names to filter the columns by. If null, the filtering behavior is determined by the underlying data source.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("columnsbycategories", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnsByCategoriesAsync)}")]
-        [ApiExplorerSettings(IgnoreApi = false)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(List<DiGi.PostgreSQL.Table.Classes.Column>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnsByCategoriesAsync([FromBody] List<string>? categories = null)
@@ -168,7 +168,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <param name="categories">An optional list of category names used to filter the column references.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("columnuniqueids", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnUniqueIdsAsync)}")]
-        [ApiExplorerSettings(IgnoreApi = false)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnUniqueIdsAsync([FromBody] List<string>? categories = null)
@@ -339,6 +339,126 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 return NotFound();
             }
 
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves all column references, optionally filtered by the specified categories.
+        /// </summary>
+        /// <param name="categories">An optional list of category names to filter the column references by.</param>
+        /// <returns>A task representing the asynchronous operation, returning a list of column references.</returns>
+        [HttpGet("columnreferences", Name = $"{nameof(BuildingDataController)}_{nameof(GetColumnReferencesAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(List<DiGi.PostgreSQL.Table.Classes.ColumnReference>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetColumnReferencesAsync([FromQuery] List<string>? categories = null)
+        {
+            List<DiGi.PostgreSQL.Table.Classes.ColumnReference>? columnReferences = await buildingDataPostgreSQLConverter.GetColumnReferencesByCategoriesAsync(categories);
+            if (columnReferences is null || columnReferences.Count == 0)
+            {
+                return NotFound();
+            }
+
+            string? json = Core.Convert.ToSystem_String(columnReferences);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Retrieves a building data table using keyset-based paginated cursor streaming.
+        /// </summary>
+        /// <param name="buildingDataByPagingParameter">The parameter containing paging options, including column projections, county identifier, cursor, and page size.</param>
+        /// <returns>A task representing the asynchronous operation, returning the populated table.</returns>
+        [HttpPost("tablebybuildingdatabypagingparameter", Name = $"{nameof(BuildingDataController)}_{nameof(GetTableByBuildingDataByPagingParameterAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTableByBuildingDataByPagingParameterAsync([FromBody] BuildingDataByPagingParameter buildingDataByPagingParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByBuildingDataByPagingParameterAsync));
+
+            IEnumerable<string>? columnUniqueIds = buildingDataByPagingParameter.ColumnUniqueIds;
+            if (columnUniqueIds is not null && !columnUniqueIds.Any())
+            {
+                columnUniqueIds = null;
+            }
+
+            Table? table = await buildingDataPostgreSQLConverter.PullAsync(
+                buildingDataByPagingParameter.CountyId,
+                columnUniqueIds,
+                buildingDataByPagingParameter.Cursor,
+                buildingDataByPagingParameter.PageSize);
+
+            if (table is null)
+            {
+                return NotFound();
+            }
+
+            string? json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Computes statistical summaries (Avg, Sum, Min, Max, Count, SplitDistinctCount, SplitValueDistribution) on a partition column.
+        /// </summary>
+        /// <param name="aggregateRequestParameter">The parameter containing target column, aggregate function, county identifier, and optional separator.</param>
+        /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
+        [HttpPost("aggregatesummary", Name = $"{nameof(BuildingDataController)}_{nameof(GetAggregateSummaryAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAggregateSummaryAsync([FromBody] AggregateRequestParameter aggregateRequestParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetAggregateSummaryAsync));
+
+            JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
+                aggregateRequestParameter.ColumnUniqueId,
+                aggregateRequestParameter.AggregateFunction,
+                aggregateRequestParameter.CountyId,
+                aggregateRequestParameter.Separator);
+
+            if (resultNode is null)
+            {
+                return NotFound();
+            }
+
+            string json = resultNode.ToJsonString();
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Generates a value range distribution histogram for a specific building data column inside a county partition.
+        /// </summary>
+        /// <param name="histogramRequestParameter">The parameter containing the target column, county identifier, and desired bucket count.</param>
+        /// <returns>A task representing the asynchronous operation, returning the histogram bucket list as a JSON array.</returns>
+        [HttpPost("histogramsummary", Name = $"{nameof(BuildingDataController)}_{nameof(GetHistogramSummaryAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(JsonArray), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetHistogramSummaryAsync([FromBody] HistogramRequestParameter histogramRequestParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetHistogramSummaryAsync));
+
+            JsonArray? histogramArray = await buildingDataPostgreSQLConverter.GetHistogramSummaryAsync(
+                histogramRequestParameter.ColumnUniqueId,
+                histogramRequestParameter.BucketCount,
+                histogramRequestParameter.CountyId);
+
+            if (histogramArray is null)
+            {
+                return NotFound();
+            }
+
+            string json = histogramArray.ToJsonString();
             return Content(json, "application/json");
         }
     }
