@@ -142,6 +142,12 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
         }
 
+        /// <summary>
+        /// Retrieves administrative area reference paths by name parameter (where Text is the search term).
+        /// </summary>
+        /// <param name="administrativeAreal2DReferencePathsByNameParameter">The parameter containing the search term for querying administrative areas by name. </param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task that represents the asynchronous operation. List of AdministrativeAreal2DReferencePaths <see cref="AdministrativeAreal2DReferencePath"/> if valid administrative area references are found.</returns>
         [HttpPost("administrativeareal2Dreferencepathsbynameparameter", Name = $"{nameof(AdministrativeAreal2DController)}_{nameof(GetAdministrativeAreal2DReferencePathsByNameParameterAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<AdministrativeAreal2DReferencePath>), StatusCodes.Status200OK)]

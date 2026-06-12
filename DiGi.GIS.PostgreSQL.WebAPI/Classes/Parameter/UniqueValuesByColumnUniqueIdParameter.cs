@@ -9,25 +9,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class UniqueValuesByColumnUniqueIdParameter : DiGi.WebAPI.Classes.Parameter
     {
         /// <summary>
-        /// Gets or sets the unique identifier of the column (Column.UniqueId).
-        /// </summary>
-        [Required]
-        public string ColumnUniqueId { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the county identifier.
-        /// </summary>
-        public int? CountyId { get; set; }
-
-        /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="UniqueValuesByColumnUniqueIdParameter"/> class.
         /// </summary>
         public UniqueValuesByColumnUniqueIdParameter()
         {
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="UniqueValuesByColumnUniqueIdParameter"/> class with the specified column unique id and county id.
         /// </summary>
         /// <param name="columnUniqueId">The unique identifier of the column.</param>
         /// <param name="countyId">The optional unique identifier of the county.</param>
@@ -38,13 +27,24 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="UniqueValuesByColumnUniqueIdParameter"/> class using an <see cref="JsonObject"/> object.
         /// </summary>
         /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data used to initialize the parameter.</param>
         public UniqueValuesByColumnUniqueIdParameter(JsonObject jsonObject)
-        : base(jsonObject)
+            : base(jsonObject)
         {
 
         }
+
+        /// <summary>
+        /// Gets or sets the unique identifier of the column (Column.UniqueId).
+        /// </summary>
+        [Required]
+        public string ColumnUniqueId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the county identifier.
+        /// </summary>
+        public int? CountyId { get; set; }
     }
 }

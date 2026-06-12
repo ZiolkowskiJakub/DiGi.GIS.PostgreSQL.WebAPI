@@ -10,19 +10,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class ColumnsByCategoriesParameter : DiGi.WebAPI.Classes.Parameter
     {
         /// <summary>
-        /// Gets or sets the categories for querying columns. All columns will be returned if the collection is null or empty.
-        /// </summary>
-        public IEnumerable<string> Categories { get; set; } = [];
-
-        /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ColumnsByCategoriesParameter"/> class.
         /// </summary>
         public ColumnsByCategoriesParameter()
         {
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ColumnsByCategoriesParameter"/> class with the specified categories.
         /// </summary>
         /// <param name="categories">The collection of categories for querying columns.</param>
         public ColumnsByCategoriesParameter(IEnumerable<string> categories)
@@ -31,7 +26,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ColumnsByCategoriesParameter"/> class using an <see cref="JsonObject"/> object.
         /// </summary>
         /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data used to initialize the parameter.</param>
         public ColumnsByCategoriesParameter(JsonObject jsonObject)
@@ -39,5 +34,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         {
 
         }
+
+        /// <summary>
+        /// Gets or sets the categories for querying columns. All columns will be returned if the collection is null or empty.
+        /// </summary>
+        public IEnumerable<string> Categories { get; set; } = [];
     }
 }
