@@ -6,7 +6,7 @@
     public class GISPostgreSQLWebAPIConfigurationFileWatcher : Core.IO.FileWatcher.Classes.ConfigurationFileWatcher
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="path">The path to the configuration file to be watched.</param>
         /// <param name="interval">The time interval in milliseconds between checks for changes to the configuration file.</param>

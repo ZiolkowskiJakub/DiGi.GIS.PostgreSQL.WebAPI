@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<None Include="Classes\Parameter\CountByAdministrativeAreal2DIdsParameter.cs" />
 		<PackageReference Include="Npgsql" Version="10.0.2" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	</ItemGroup>

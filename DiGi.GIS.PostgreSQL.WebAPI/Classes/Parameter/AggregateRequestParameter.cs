@@ -1,6 +1,6 @@
+using DiGi.PostgreSQL.Table.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
-using DiGi.PostgreSQL.Table.Enums;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {

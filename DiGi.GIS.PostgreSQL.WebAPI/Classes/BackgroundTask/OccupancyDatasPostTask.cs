@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class OccupancyDatasPostTask : SerializableObjectsPostTask<OccupancyData>
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The manager used to handle GIS PostgreSQL Web API operations.</param>
         public OccupancyDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
@@ -23,7 +23,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string? Code { get; set; }
 

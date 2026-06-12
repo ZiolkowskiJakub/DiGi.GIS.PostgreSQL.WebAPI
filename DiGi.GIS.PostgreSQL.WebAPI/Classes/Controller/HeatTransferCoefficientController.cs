@@ -17,7 +17,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private static readonly RegulatedHeatTransferCoefficientsManager regulatedHeatTransferCoefficientsManager = Analytical.Building.HVAC.Create.RegulatedHeatTransferCoefficientsManager();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public HeatTransferCoefficientController()
         {

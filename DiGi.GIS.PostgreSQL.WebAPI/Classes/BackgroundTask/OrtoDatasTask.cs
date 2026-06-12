@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class OrtoDatasTask : ReportableBackgroundTask<long>, IGISPostgreSQLObject
     {
@@ -19,7 +19,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The manager responsible for handling GIS PostgreSQL Web API operations.</param>
         /// <param name="gISPostgreSQLConverterManager">The manager that handles conversion processes for GIS data within a PostgreSQL database context.</param>

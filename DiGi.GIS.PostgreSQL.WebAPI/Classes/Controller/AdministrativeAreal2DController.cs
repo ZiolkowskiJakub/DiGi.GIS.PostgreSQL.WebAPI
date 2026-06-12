@@ -155,7 +155,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathsByNameParameterAsync([FromBody] AdministrativeAreal2DReferencePathsByNameParameter administrativeAreal2DReferencePathsByNameParameter, CancellationToken cancellationToken = default)
         {
-            if(string.IsNullOrWhiteSpace(administrativeAreal2DReferencePathsByNameParameter?.Text))
+            if (string.IsNullOrWhiteSpace(administrativeAreal2DReferencePathsByNameParameter?.Text))
             {
                 return NotFound();
             }

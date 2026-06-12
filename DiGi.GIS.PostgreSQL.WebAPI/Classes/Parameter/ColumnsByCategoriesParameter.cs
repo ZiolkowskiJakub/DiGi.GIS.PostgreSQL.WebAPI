@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
@@ -32,7 +31,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public ColumnsByCategoriesParameter(JsonObject jsonObject)
         : base(jsonObject)
         {
-
         }
 
         /// <summary>

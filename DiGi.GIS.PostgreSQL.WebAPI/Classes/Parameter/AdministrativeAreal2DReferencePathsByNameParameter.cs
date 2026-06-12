@@ -31,7 +31,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public AdministrativeAreal2DReferencePathsByNameParameter(JsonObject jsonObject)
         : base(jsonObject)
         {
-
         }
 
         /// <summary>

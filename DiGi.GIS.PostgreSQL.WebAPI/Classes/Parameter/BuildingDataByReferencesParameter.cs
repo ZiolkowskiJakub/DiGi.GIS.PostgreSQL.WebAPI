@@ -39,7 +39,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Gets or sets the unique identifiers of the columns (Column.UniqueId). All columns will be returned if the collection is null or empty. 
+        /// Gets or sets the unique identifiers of the columns (Column.UniqueId). All columns will be returned if the collection is null or empty.
         /// Required if performance is a concern and the column unique identifiers are available; otherwise, the column unique identifiers will be determined by the building data PostgreSQL converter.
         /// </summary>
         public IEnumerable<string> ColumnUniqueIds { get; set; } = [];

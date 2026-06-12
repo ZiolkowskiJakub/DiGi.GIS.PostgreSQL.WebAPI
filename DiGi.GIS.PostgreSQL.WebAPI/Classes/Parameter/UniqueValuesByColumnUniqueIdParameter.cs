@@ -33,7 +33,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public UniqueValuesByColumnUniqueIdParameter(JsonObject jsonObject)
             : base(jsonObject)
         {
-
         }
 
         /// <summary>

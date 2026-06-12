@@ -11,7 +11,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly IHttpClientFactory? httpClientFactory;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="httpClientFactory">The HTTP client factory used to create and manage <see cref="HttpClient"/> instances.</param>
         public GISPostgreSQLWebAPIManager(IHttpClientFactory? httpClientFactory)
@@ -20,7 +20,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name">The unique identifier or name of the HTTP client to be created.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
