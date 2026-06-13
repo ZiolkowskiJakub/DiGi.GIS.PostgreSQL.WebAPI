@@ -1,7 +1,6 @@
 using DiGi.Core.IO.Table.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.PostgreSQL.Table;
-using FilterGroup = DiGi.PostgreSQL.Table.Classes.FilterGroup;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -21,8 +20,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly BuildingDataPostgreSQLConverter buildingDataPostgreSQLConverter;
 
         /// <summary>
-/// Initializes a new instance of the BuildingDataController class.
-/// </summary>
+        /// Initializes a new instance of the BuildingDataController class.
+        /// </summary>
         /// <param name="buildingDataPostgreSQLConverter">The <see cref="BuildingDataPostgreSQLConverter" /> used to handle building data operations and database conversions.</param>
         public BuildingDataController(BuildingDataPostgreSQLConverter buildingDataPostgreSQLConverter)
         {
