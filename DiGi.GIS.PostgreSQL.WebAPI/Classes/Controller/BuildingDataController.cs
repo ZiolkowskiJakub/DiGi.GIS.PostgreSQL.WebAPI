@@ -1,6 +1,7 @@
 using DiGi.Core.IO.Table.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.PostgreSQL.Table;
+using FilterGroup = DiGi.PostgreSQL.Table.Classes.FilterGroup;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -44,7 +45,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
                 singlevalueAggregateRequestParameter.ColumnUniqueId,
                 singlevalueAggregateRequestParameter.SinglevalueAggregateFunction,
-                singlevalueAggregateRequestParameter.CountyId);
+                singlevalueAggregateRequestParameter.CountyId,
+                singlevalueAggregateRequestParameter.FilterGroup);
 
             if (resultNode is null)
             {
@@ -72,7 +74,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
                 multivalueAggregateRequestParameter.ColumnUniqueId,
                 multivalueAggregateRequestParameter.MultivalueAggregateFunction,
                 multivalueAggregateRequestParameter.CountyId,
-                multivalueAggregateRequestParameter.Separator);
+                multivalueAggregateRequestParameter.Separator,
+                multivalueAggregateRequestParameter.FilterGroup);
 
             if (resultNode is null)
             {
@@ -281,9 +284,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Generates a value range distribution histogram for a specific building data column inside a county partition.
+        /// Generates a value range distribution histogram for a specific building data column inside a county partition, applying optional dynamic filters.
         /// </summary>
-        /// <param name="histogramRequestParameter">The parameter containing the target column, county identifier, and desired bucket count.</param>
+        /// <param name="histogramRequestParameter">The parameter containing the target column, county identifier, desired bucket count, and optional dynamic filters.</param>
         /// <returns>A task representing the asynchronous operation, returning the histogram bucket list as a JSON array.</returns>
         [HttpPost("histogramsummary", Name = $"{nameof(BuildingDataController)}_{nameof(GetHistogramSummaryAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
@@ -296,7 +299,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             JsonArray? histogramArray = await buildingDataPostgreSQLConverter.GetHistogramSummaryAsync(
                 histogramRequestParameter.ColumnUniqueId,
                 histogramRequestParameter.BucketCount,
-                histogramRequestParameter.CountyId);
+                histogramRequestParameter.CountyId,
+                histogramRequestParameter.FilterGroup);
 
             if (histogramArray is null)
             {
@@ -450,8 +454,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
-        /// <summary> Retrieves unique values for a given <see cref="UniqueValuesByColumnUniqueIdParameter" /> (column unique id and optionally county id). </summary>
-        /// <param name="uniqueValuesByColumnUniqueIdParameter">The parameter containing the column unique identifier and optional county identifier.</param>
+        /// <summary> Retrieves unique values for a given <see cref="UniqueValuesByColumnUniqueIdParameter" /> (column unique id and optionally county id), applying optional dynamic filters. </summary>
+        /// <param name="uniqueValuesByColumnUniqueIdParameter">The parameter containing the column unique identifier, optional county identifier, and optional dynamic filters.</param>
         /// <returns>An <see cref="IActionResult" /> representing the result of the operation, typically a list of unique values or a not found status.</returns>
         [HttpPost("uniquevaluesbycolumnuniqueidparameter", Name = $"{nameof(BuildingDataController)}_{nameof(GetUniqueValuesByColumnUniqueIdParameterAsync)}")]
         [ApiExplorerSettings(IgnoreApi = false)]
@@ -462,11 +466,16 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             IEnumerable<object?>? values;
             if (uniqueValuesByColumnUniqueIdParameter.CountyId is null)
             {
-                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(uniqueValuesByColumnUniqueIdParameter.ColumnUniqueId);
+                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(
+                    uniqueValuesByColumnUniqueIdParameter.ColumnUniqueId,
+                    uniqueValuesByColumnUniqueIdParameter.FilterGroup);
             }
             else
             {
-                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(uniqueValuesByColumnUniqueIdParameter.ColumnUniqueId, uniqueValuesByColumnUniqueIdParameter.CountyId.Value);
+                values = await buildingDataPostgreSQLConverter.GetUniqueValuesAsync<object?>(
+                    uniqueValuesByColumnUniqueIdParameter.ColumnUniqueId,
+                    uniqueValuesByColumnUniqueIdParameter.CountyId.Value,
+                    uniqueValuesByColumnUniqueIdParameter.FilterGroup);
             }
 
             if (values is null || !values.Any())
@@ -487,6 +496,48 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Retrieves a building data table filtered by the specified dynamic hierarchical filters.
+        /// </summary>
+        /// <param name="buildingDataByFilterGroupParameter">The parameter containing the dynamic filter group and optional column unique identifiers.</param>
+        /// <returns>A task representing the asynchronous operation, returning the populated filtered table.</returns>
+        [HttpPost("tablebyfiltergroup", Name = $"{nameof(BuildingDataController)}_GetTableByFilterGroupAsync")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTableByFilterGroupAsync([FromBody] BuildingDataByFilterGroupParameter buildingDataByFilterGroupParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByFilterGroupAsync));
+
+            List<string>? strings_ColumnUniqueIds = buildingDataByFilterGroupParameter.ColumnUniqueIds;
+            if (strings_ColumnUniqueIds is not null && !strings_ColumnUniqueIds.Any())
+            {
+                strings_ColumnUniqueIds = null;
+            }
+
+            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByUniqueIdsAsync(strings_ColumnUniqueIds);
+            if (columns is null || columns.Count == 0)
+            {
+                return NotFound();
+            }
+
+            Table table_Result = new Table(columns);
+
+            bool isSuccess = await buildingDataPostgreSQLConverter.PullAsync(table_Result, buildingDataByFilterGroupParameter.FilterGroup);
+            if (!isSuccess)
+            {
+                return NotFound();
+            }
+
+            string? string_Json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table_Result);
+            if (string.IsNullOrWhiteSpace(string_Json))
+            {
+                return NotFound();
+            }
+
+            return Content(string_Json, "application/json");
         }
     }
 }

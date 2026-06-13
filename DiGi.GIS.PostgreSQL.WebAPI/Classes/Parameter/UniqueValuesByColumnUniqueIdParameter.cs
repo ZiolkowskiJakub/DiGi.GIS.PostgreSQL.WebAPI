@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
+using DiGi.PostgreSQL.Table.Classes;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
@@ -45,5 +46,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// Gets or sets the county identifier.
         /// </summary>
         public int? CountyId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the optional dynamic hierarchical filters to apply prior to retrieving unique values.
+        /// </summary>
+        public FilterGroup? FilterGroup { get; set; }
     }
 }

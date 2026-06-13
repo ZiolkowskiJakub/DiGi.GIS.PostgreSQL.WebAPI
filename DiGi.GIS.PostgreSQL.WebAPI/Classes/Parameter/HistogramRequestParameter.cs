@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
+using DiGi.PostgreSQL.Table.Classes;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
@@ -43,5 +44,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// </summary>
         /// <example>20</example>
         public int BucketCount { get; set; } = 10;
+
+        /// <summary>
+        /// Gets or sets the optional dynamic hierarchical filters to apply prior to generating the histogram.
+        /// </summary>
+        public FilterGroup? FilterGroup { get; set; }
     }
 }

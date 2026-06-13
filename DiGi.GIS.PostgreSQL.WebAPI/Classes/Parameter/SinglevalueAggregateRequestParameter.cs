@@ -1,3 +1,4 @@
+using DiGi.PostgreSQL.Table.Classes;
 using DiGi.PostgreSQL.Table.Enums;
 using System.ComponentModel.DataAnnotations;
 
@@ -44,5 +45,10 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <example>Sum</example>
         [Required]
         public SinglevalueAggregateFunction SinglevalueAggregateFunction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the optional dynamic hierarchical filters to apply prior to aggregation.
+        /// </summary>
+        public FilterGroup? FilterGroup { get; set; }
     }
 }
