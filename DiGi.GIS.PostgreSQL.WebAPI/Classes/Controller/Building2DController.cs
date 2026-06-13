@@ -160,6 +160,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(json, "application/json");
         }
+
         /// <summary> Retrieves a building 2D item by its identifier. </summary>
         /// <param name="id">The unique identifier of the building 2D item to retrieve.</param>
         /// <param name="countyId">The optional county identifier associated with the building.</param>
@@ -453,6 +454,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return Content(json, "application/json");
         }
+
         /// <summary> Retrieves Point2D coordinates by their references. </summary>
         /// <param name="references">A collection of reference strings used to identify the Point2D objects.</param>
         /// <param name="countyId">The optional identifier for the county associated with the coordinates.</param>

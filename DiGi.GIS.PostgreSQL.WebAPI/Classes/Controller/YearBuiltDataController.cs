@@ -20,7 +20,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly YearBuiltDataPostgreSQLConverter yearBuiltDataPostgreSQLConverter;
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the YearBuiltDataController class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher used to monitor changes to the PostgreSQL Web API configuration.</param>
         /// <param name="yearBuiltDataPostgreSQLConverter">The converter for YearBuiltData objects when interacting with a PostgreSQL database.</param>

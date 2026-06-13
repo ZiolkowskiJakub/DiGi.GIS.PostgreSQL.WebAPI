@@ -46,7 +46,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
         }
 
         /// <summary>
-        ///
+        /// Asynchronously creates GZip-compressed HttpContent from the provided byte array.
         /// </summary>
         /// <param name="bytes">The raw byte array to be compressed.</param>
         /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>

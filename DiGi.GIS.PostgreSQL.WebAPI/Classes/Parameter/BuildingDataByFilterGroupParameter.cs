@@ -1,7 +1,7 @@
+using DiGi.PostgreSQL.Table.Classes;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
-using DiGi.PostgreSQL.Table.Classes;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {

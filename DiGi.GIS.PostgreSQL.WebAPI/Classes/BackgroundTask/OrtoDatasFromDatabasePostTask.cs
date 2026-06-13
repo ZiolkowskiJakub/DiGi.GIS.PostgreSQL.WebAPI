@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    ///
+    /// Handles the process of posting orthodata retrieved from the database.
     /// </summary>
     public class OrtoDatasFromDatabasePostTask : OrtoDatasPostTask
     {
         /// <summary>
-        ///
+        /// Handles the process of posting orthodata retrieved from the database.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The manager responsible for handling GIS PostgreSQL Web API communications.</param>
         public OrtoDatasFromDatabasePostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)

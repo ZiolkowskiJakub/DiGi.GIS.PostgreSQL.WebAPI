@@ -14,7 +14,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class YearBuiltDatasPostTask : SerializableObjectsPostTask<YearBuiltData>
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the YearBuiltDatasPostTask class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager used to handle data persistence.</param>
         public YearBuiltDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
@@ -23,7 +23,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Gets or sets the code associated with the year built data post task.
         /// </summary>
         public string? Code { get; set; }
 

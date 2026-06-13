@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    ///
+    /// Represents a task for posting occupancy data to the GIS PostgreSQL Web API.
     /// </summary>
     public class OccupancyDatasPostTask : SerializableObjectsPostTask<OccupancyData>
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the OccupancyDatasPostTask class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The manager used to handle GIS PostgreSQL Web API operations.</param>
         public OccupancyDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
@@ -23,7 +23,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Gets or sets the code associated with the occupancy data post task.
         /// </summary>
         public string? Code { get; set; }
 

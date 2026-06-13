@@ -21,8 +21,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly BuildingDataPostgreSQLConverter buildingDataPostgreSQLConverter;
 
         /// <summary>
-        ///
-        /// </summary>
+/// Initializes a new instance of the BuildingDataController class.
+/// </summary>
         /// <param name="buildingDataPostgreSQLConverter">The <see cref="BuildingDataPostgreSQLConverter" /> used to handle building data operations and database conversions.</param>
         public BuildingDataController(BuildingDataPostgreSQLConverter buildingDataPostgreSQLConverter)
         {

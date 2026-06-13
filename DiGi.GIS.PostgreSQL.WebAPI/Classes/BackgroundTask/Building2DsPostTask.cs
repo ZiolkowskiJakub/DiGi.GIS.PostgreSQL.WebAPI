@@ -14,7 +14,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class Building2DsPostTask : SerializableObjectsPostTask<Building2D>
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the Building2DsPostTask class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The <see cref="GISPostgreSQLWebAPIManager"/> used to manage PostgreSQL GIS operations.</param>
         public Building2DsPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
@@ -23,7 +23,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Gets or sets the code associated with the building 2D post task.
         /// </summary>
         public string? Code { get; set; }
 

@@ -7,7 +7,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
     public static partial class Create
     {
         /// <summary>
-        ///
+        /// Creates and configures a service provider with the registered services.
         /// </summary>
         /// <returns>An <see cref="IServiceProvider"/> containing the registered services.</returns>
         public static IServiceProvider ServiceProvider()

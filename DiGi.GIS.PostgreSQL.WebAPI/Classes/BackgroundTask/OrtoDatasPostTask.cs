@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    ///
+    /// Handles the posting of OrtoDatas objects to the PostgreSQL web API.
     /// </summary>
     public class OrtoDatasPostTask : SerializableObjectsPostTask<OrtoDatas>
     {
         /// <summary>
-        ///
+        /// Handles the posting of OrtoDatas objects to the PostgreSQL web API.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The manager instance used to handle PostgreSQL web API operations.</param>
         public OrtoDatasPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)
@@ -23,7 +23,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Gets or sets the code associated with the OrtoDatas post task.
         /// </summary>
         public string? Code { get; set; }
 

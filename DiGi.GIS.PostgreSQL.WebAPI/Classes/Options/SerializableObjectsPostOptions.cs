@@ -9,14 +9,14 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class SerializableObjectsPostOptions : DiGi.WebAPI.Classes.PostOptions
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the SerializableObjectsPostOptions class.
         /// </summary>
         public SerializableObjectsPostOptions()
         {
         }
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the SerializableObjectsPostOptions class using the specified JSON object.
         /// </summary>
         /// <param name="jsonObject">The <see cref="T:System.Text.Json.Nodes.JsonObject" /> containing the data used to initialize the options.</param>
         public SerializableObjectsPostOptions(JsonObject jsonObject)
@@ -25,7 +25,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the SerializableObjectsPostOptions class using values from an existing instance.
         /// </summary>
         /// <param name="serializableObjectsPostOptions">The source options instance to copy values from, or <see langword="null"/> to use default settings.</param>
         public SerializableObjectsPostOptions(SerializableObjectsPostOptions? serializableObjectsPostOptions)

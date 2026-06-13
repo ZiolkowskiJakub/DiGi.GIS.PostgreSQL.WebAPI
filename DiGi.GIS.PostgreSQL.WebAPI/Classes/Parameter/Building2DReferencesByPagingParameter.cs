@@ -30,7 +30,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         /// <param name="building2DReferencesByPagingParameter">The parameter instance to copy properties from.</param>
         public Building2DReferencesByPagingParameter(Building2DReferencesByPagingParameter building2DReferencesByPagingParameter)
         {
-            if(building2DReferencesByPagingParameter is not null)
+            if (building2DReferencesByPagingParameter is not null)
             {
                 CountyId = building2DReferencesByPagingParameter.CountyId;
                 SubdivisionId = building2DReferencesByPagingParameter.SubdivisionId;

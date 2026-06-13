@@ -21,7 +21,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher;
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the OccupancyDataController class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher used to monitor settings for the GIS PostgreSQL Web API.</param>
         /// <param name="building2DOccupancyDataPostgreSQLConverter">The converter used for building 2D occupancy data operations in the PostgreSQL database.</param>

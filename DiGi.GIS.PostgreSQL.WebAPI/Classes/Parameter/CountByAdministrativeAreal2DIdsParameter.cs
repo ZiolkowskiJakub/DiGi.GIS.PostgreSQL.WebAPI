@@ -17,7 +17,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         public CountByAdministrativeAreal2DIdsParameter(CountByAdministrativeAreal2DIdsParameter countByAdministrativeAreal2DIdsParameter)
         {
-            if(countByAdministrativeAreal2DIdsParameter is not null)
+            if (countByAdministrativeAreal2DIdsParameter is not null)
             {
                 AdministrativeAreal2DIds = countByAdministrativeAreal2DIdsParameter.AdministrativeAreal2DIds;
             }
@@ -25,6 +25,5 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
         [Required]
         public IEnumerable<int> AdministrativeAreal2DIds { get; set; } = [];
-
-   }
+    }
 }

@@ -14,7 +14,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     public class AdministrativeAreal2DsPostTask : SerializableObjectsPostTask<AdministrativeAreal2D>
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the AdministrativeAreal2DsPostTask class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager used to handle database operations.</param>
         public AdministrativeAreal2DsPostTask(GISPostgreSQLWebAPIManager gISPostgreSQLWebAPIManager)

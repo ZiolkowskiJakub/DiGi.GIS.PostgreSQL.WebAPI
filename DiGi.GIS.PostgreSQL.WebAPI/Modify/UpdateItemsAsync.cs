@@ -15,7 +15,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
     public static partial class Modify
     {
         /// <summary>
-        ///
+        /// Asynchronously updates a collection of administrative area items.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
         /// <param name="administrativeAreal2Ds">A collection of administrative area items to update.</param>
@@ -38,7 +38,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
         }
 
         /// <summary>
-        ///
+        /// Updates a single administrative area item asynchronously.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
         /// <param name="administrativeAreal2D">The administrative area item to be updated.</param>
@@ -248,7 +248,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
         }
 
         /// <summary>
-        ///
+        /// Asynchronously updates items from the specified file system path.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
         /// <param name="path">The file system path to the source data files.</param>
@@ -384,7 +384,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
         }
 
         /// <summary>
-        ///
+        /// Asynchronously updates items by sending a JSON payload to the specified request URI.
         /// </summary>
         /// <param name="httpClient">The <see cref="System.Net.Http.HttpClient"/> used to perform the network request.</param>
         /// <param name="requestUri">The target URI where the update request is sent.</param>

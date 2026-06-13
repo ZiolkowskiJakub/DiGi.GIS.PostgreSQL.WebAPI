@@ -22,7 +22,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         private readonly PostgreSQL.Classes.OrtoDatasPostgreSQLConverter ortoDatasPostgreSQLConverter;
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the OrtoDatasController class.
         /// </summary>
         /// <param name="gISPostgreSQLWebAPIConfigurationFileWatcher">The configuration file watcher used to monitor changes to the GIS PostgreSQL Web API settings.</param>
         /// <param name="ortoDatasPostgreSQLConverter">The converter used for handling OrtoDatas data operations within the PostgreSQL database.</param>
@@ -406,7 +406,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Retrieves the next batch of building 2D reference objects.
         /// </summary>
         /// <param name="count">The maximum number of building 2D reference objects to retrieve. Defaults to 100.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
@@ -446,7 +446,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        ///
+        /// Updates items identified by a specific code using the provided JSON array.
         /// </summary>
         /// <param name="jsonArray">The JSON array containing the updated item data.</param>
         /// <param name="code">The unique identifier or code used to identify the items for update.</param>
