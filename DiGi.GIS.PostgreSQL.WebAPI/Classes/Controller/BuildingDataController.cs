@@ -29,63 +29,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
-        /// Computes single-value statistical summaries (Avg, Sum, Min, Max, Count, DistinctCount) on a partition column.
-        /// </summary>
-        /// <param name="singlevalueAggregateRequestParameter">The parameter containing target column, single-value aggregate function, and county identifier.</param>
-        /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
-        [HttpPost("aggregatesummary/singlevalue", Name = $"{nameof(BuildingDataController)}_GetSinglevalueAggregateSummaryAsync")]
-        [ApiExplorerSettings(IgnoreApi = false)]
-        [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetSinglevalueAggregateSummaryAsync([FromBody] SinglevalueAggregateRequestParameter singlevalueAggregateRequestParameter)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetSinglevalueAggregateSummaryAsync));
-
-            JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
-                singlevalueAggregateRequestParameter.ColumnUniqueId,
-                singlevalueAggregateRequestParameter.SinglevalueAggregateFunction,
-                singlevalueAggregateRequestParameter.CountyId,
-                singlevalueAggregateRequestParameter.FilterGroup);
-
-            if (resultNode is null)
-            {
-                return NotFound();
-            }
-
-            string json = resultNode.ToJsonString();
-            return Content(json, "application/json");
-        }
-
-        /// <summary>
-        /// Computes multi-value statistical summaries (SplitDistinctCount, SplitValueDistribution) on a partition column.
-        /// </summary>
-        /// <param name="multivalueAggregateRequestParameter">The parameter containing target column, multi-value aggregate function, county identifier, and optional separator.</param>
-        /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
-        [HttpPost("aggregatesummary/multivalue", Name = $"{nameof(BuildingDataController)}_GetMultivalueAggregateSummaryAsync")]
-        [ApiExplorerSettings(IgnoreApi = false)]
-        [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetMultivalueAggregateSummaryAsync([FromBody] MultivalueAggregateRequestParameter multivalueAggregateRequestParameter)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetMultivalueAggregateSummaryAsync));
-
-            JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
-                multivalueAggregateRequestParameter.ColumnUniqueId,
-                multivalueAggregateRequestParameter.MultivalueAggregateFunction,
-                multivalueAggregateRequestParameter.CountyId,
-                multivalueAggregateRequestParameter.Separator,
-                multivalueAggregateRequestParameter.FilterGroup);
-
-            if (resultNode is null)
-            {
-                return NotFound();
-            }
-
-            string json = resultNode.ToJsonString();
-            return Content(json, "application/json");
-        }
-
-        /// <summary>
         /// Asynchronously retrieves all available building data column categories.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.</returns>
@@ -311,6 +254,63 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         }
 
         /// <summary>
+        /// Computes multi-value statistical summaries (SplitDistinctCount, SplitValueDistribution) on a partition column.
+        /// </summary>
+        /// <param name="multivalueAggregateRequestParameter">The parameter containing target column, multi-value aggregate function, county identifier, and optional separator.</param>
+        /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
+        [HttpPost("aggregatesummary/multivalue", Name = $"{nameof(BuildingDataController)}_{nameof(GetMultivalueAggregateSummaryAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMultivalueAggregateSummaryAsync([FromBody] MultivalueAggregateRequestParameter multivalueAggregateRequestParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetMultivalueAggregateSummaryAsync));
+
+            JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
+                multivalueAggregateRequestParameter.ColumnUniqueId,
+                multivalueAggregateRequestParameter.MultivalueAggregateFunction,
+                multivalueAggregateRequestParameter.CountyId,
+                multivalueAggregateRequestParameter.Separator,
+                multivalueAggregateRequestParameter.FilterGroup);
+
+            if (resultNode is null)
+            {
+                return NotFound();
+            }
+
+            string json = resultNode.ToJsonString();
+            return Content(json, "application/json");
+        }
+
+        /// <summary>
+        /// Computes single-value statistical summaries (Avg, Sum, Min, Max, Count, DistinctCount) on a partition column.
+        /// </summary>
+        /// <param name="singlevalueAggregateRequestParameter">The parameter containing target column, single-value aggregate function, and county identifier.</param>
+        /// <returns>A task representing the asynchronous operation, returning the aggregate result as a JSON node.</returns>
+        [HttpPost("aggregatesummary/singlevalue", Name = $"{nameof(BuildingDataController)}_{nameof(GetSinglevalueAggregateSummaryAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(JsonNode), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetSinglevalueAggregateSummaryAsync([FromBody] SinglevalueAggregateRequestParameter singlevalueAggregateRequestParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetSinglevalueAggregateSummaryAsync));
+
+            JsonNode? resultNode = await buildingDataPostgreSQLConverter.GetAggregateSummaryAsync(
+                singlevalueAggregateRequestParameter.ColumnUniqueId,
+                singlevalueAggregateRequestParameter.SinglevalueAggregateFunction,
+                singlevalueAggregateRequestParameter.CountyId,
+                singlevalueAggregateRequestParameter.FilterGroup);
+
+            if (resultNode is null)
+            {
+                return NotFound();
+            }
+
+            string json = resultNode.ToJsonString();
+            return Content(json, "application/json");
+        }
+        
+        /// <summary>
         /// Retrieves a building data table using keyset-based paginated cursor streaming.
         /// </summary>
         /// <param name="buildingDataByPagingParameter">The parameter containing paging options, including column projections, county identifier, cursor, and page size.</param>
@@ -413,6 +413,48 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(json, "application/json");
         }
 
+        /// <summary>
+        /// Retrieves a building data table filtered by the specified dynamic hierarchical filters.
+        /// </summary>
+        /// <param name="buildingDataByFilterGroupParameter">The parameter containing the dynamic filter group and optional column unique identifiers.</param>
+        /// <returns>A task representing the asynchronous operation, returning the populated filtered table.</returns>
+        [HttpPost("tablebyfiltergroup", Name = $"{nameof(BuildingDataController)}_{nameof(GetTableByFilterGroupAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTableByFilterGroupAsync([FromBody] BuildingDataByFilterGroupParameter buildingDataByFilterGroupParameter)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByFilterGroupAsync));
+
+            List<string>? strings_ColumnUniqueIds = buildingDataByFilterGroupParameter.ColumnUniqueIds;
+            if (strings_ColumnUniqueIds is not null && !strings_ColumnUniqueIds.Any())
+            {
+                strings_ColumnUniqueIds = null;
+            }
+
+            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByUniqueIdsAsync(strings_ColumnUniqueIds);
+            if (columns is null || columns.Count == 0)
+            {
+                return NotFound();
+            }
+
+            Table table_Result = new Table(columns);
+
+            bool isSuccess = await buildingDataPostgreSQLConverter.PullAsync(table_Result, buildingDataByFilterGroupParameter.FilterGroup);
+            if (!isSuccess)
+            {
+                return NotFound();
+            }
+
+            string? string_Json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table_Result);
+            if (string.IsNullOrWhiteSpace(string_Json))
+            {
+                return NotFound();
+            }
+
+            return Content(string_Json, "application/json");
+        }
+
         /// <summary> Retrieves unique values for a specified column unique identifier and an optional county identifier. </summary>
         /// <param name="columnUniqueId">The unique identifier of the column from which to retrieve unique values.</param>
         /// <param name="countyId">The optional integer identifier of the county used to filter the results.</param>
@@ -495,48 +537,6 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             }
 
             return Content(json, "application/json");
-        }
-
-        /// <summary>
-        /// Retrieves a building data table filtered by the specified dynamic hierarchical filters.
-        /// </summary>
-        /// <param name="buildingDataByFilterGroupParameter">The parameter containing the dynamic filter group and optional column unique identifiers.</param>
-        /// <returns>A task representing the asynchronous operation, returning the populated filtered table.</returns>
-        [HttpPost("tablebyfiltergroup", Name = $"{nameof(BuildingDataController)}_GetTableByFilterGroupAsync")]
-        [ApiExplorerSettings(IgnoreApi = false)]
-        [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetTableByFilterGroupAsync([FromBody] BuildingDataByFilterGroupParameter buildingDataByFilterGroupParameter)
-        {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByFilterGroupAsync));
-
-            List<string>? strings_ColumnUniqueIds = buildingDataByFilterGroupParameter.ColumnUniqueIds;
-            if (strings_ColumnUniqueIds is not null && !strings_ColumnUniqueIds.Any())
-            {
-                strings_ColumnUniqueIds = null;
-            }
-
-            List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByUniqueIdsAsync(strings_ColumnUniqueIds);
-            if (columns is null || columns.Count == 0)
-            {
-                return NotFound();
-            }
-
-            Table table_Result = new Table(columns);
-
-            bool isSuccess = await buildingDataPostgreSQLConverter.PullAsync(table_Result, buildingDataByFilterGroupParameter.FilterGroup);
-            if (!isSuccess)
-            {
-                return NotFound();
-            }
-
-            string? string_Json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table_Result);
-            if (string.IsNullOrWhiteSpace(string_Json))
-            {
-                return NotFound();
-            }
-
-            return Content(string_Json, "application/json");
         }
     }
 }
