@@ -1,4 +1,5 @@
 using DiGi.Core.IO.Table.Classes;
+using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.PostgreSQL.Table;
 using Microsoft.AspNetCore.Http;
@@ -64,7 +65,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<DiGi.PostgreSQL.Table.Classes.ColumnReference>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetColumnReferencesAsync([FromQuery] List<string>? categories = null)
+        public async Task<IActionResult> GetColumnReferencesAsync([FromQuery(Name = "categories")] List<string>? categories = null)
         {
             List<DiGi.PostgreSQL.Table.Classes.ColumnReference>? columnReferences = await buildingDataPostgreSQLConverter.GetColumnReferencesByCategoriesAsync(categories);
             if (columnReferences is null || columnReferences.Count == 0)
@@ -309,7 +310,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             string json = resultNode.ToJsonString();
             return Content(json, "application/json");
         }
-        
+
         /// <summary>
         /// Retrieves a building data table using keyset-based paginated cursor streaming.
         /// </summary>
@@ -455,6 +456,37 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             return Content(string_Json, "application/json");
         }
 
+        /// <summary>
+        /// Retrieves a building data table for one specific building.
+        /// </summary>
+        /// <param name="reference">Building reference</param>
+        /// <param name="countyId">The unique identifier of the county for which building belongs to.</param>
+        /// <returns>A task representing the asynchronous operation, returning the populated filtered table with data for sigle building.</returns>
+        [HttpGet("tablebyreference", Name = $"{nameof(BuildingDataController)}_{nameof(GetTableByReferenceAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [ProducesResponseType(typeof(DiGi.PostgreSQL.Table.Classes.Table), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTableByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId = null)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetTableByReferenceAsync));
+            Serilog.Modify.Log("Reference provided: {Id}", reference.ToString() ?? string.Empty);
+            Serilog.Modify.Log("CountyId provided: {Id}", countyId?.ToString() ?? string.Empty);
+
+            if(string.IsNullOrWhiteSpace(reference))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null");
+                return BadRequest();
+            }
+
+            BuildingDataByReferencesParameter buildingDataByReferencesParameter = new ()
+            {
+                References = [reference],
+                CountyId = countyId
+            };
+
+            return await GetTableByBuildingDataByReferencesParameterAsync(buildingDataByReferencesParameter);
+        }
+        
         /// <summary> Retrieves unique values for a specified column unique identifier and an optional county identifier. </summary>
         /// <param name="columnUniqueId">The unique identifier of the column from which to retrieve unique values.</param>
         /// <param name="countyId">The optional integer identifier of the county used to filter the results.</param>
