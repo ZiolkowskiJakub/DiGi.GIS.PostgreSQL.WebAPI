@@ -365,17 +365,20 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             if (columnUniqueIds is not null && !columnUniqueIds.Any())
             {
                 columnUniqueIds = null;
+                Serilog.Modify.Log("No column Ids have been provided");
             }
 
             Table? table = await buildingDataPostgreSQLConverter.PullAsync(buildingDataByReferencesParameter.References, buildingDataByReferencesParameter.CountyId, columnUniqueIds);
             if (table is null)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Table could not be extracted from Converter");
                 return NotFound();
             }
 
             string? json = Core.IO.Table.Convert.ToSystem_String<Table, Column, Row>(table);
             if (string.IsNullOrWhiteSpace(json))
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Table could not be converted to json");
                 return NotFound();
             }
 

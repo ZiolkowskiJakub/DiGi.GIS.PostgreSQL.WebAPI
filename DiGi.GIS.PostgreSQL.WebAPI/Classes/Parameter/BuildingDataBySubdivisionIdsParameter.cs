@@ -1,40 +1,39 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
 
 namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
-    /// Represents a parameter containing references for querying building data.
+    /// Represents a parameter containing subdivision ids for querying building data.
     /// </summary>
-    public class BuildingDataByReferencesParameter : DiGi.WebAPI.Classes.Parameter
+    public class BuildingDataBySubdivisionIdsParameter : DiGi.WebAPI.Classes.Parameter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildingDataByReferencesParameter"/> class.
+        /// Initializes a new instance of the <see cref="BuildingDataBySubdivisionIdsParameter"/> class.
         /// </summary>
-        public BuildingDataByReferencesParameter()
+        public BuildingDataBySubdivisionIdsParameter()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildingDataByReferencesParameter"/> class using an existing <see cref="BuildingDataByReferencesParameter"/> object.
+        /// Initializes a new instance of the <see cref="BuildingDataBySubdivisionIdsParameter"/> class using an existing <see cref="BuildingDataBySubdivisionIdsParameter"/> object.
         /// </summary>
-        /// <param name="buildingDataByReferencesParameter">The parameter object to copy data from.</param>
-        public BuildingDataByReferencesParameter(BuildingDataByReferencesParameter buildingDataByReferencesParameter)
+        /// <param name="buildingDataBySubdivisionIdsParameter">The parameter object to copy data from.</param>
+        public BuildingDataBySubdivisionIdsParameter(BuildingDataBySubdivisionIdsParameter buildingDataBySubdivisionIdsParameter)
         {
-            if (buildingDataByReferencesParameter is not null)
+            if (buildingDataBySubdivisionIdsParameter is not null)
             {
-                References = buildingDataByReferencesParameter.References;
-                CountyId = buildingDataByReferencesParameter.CountyId;
-                ColumnUniqueIds = buildingDataByReferencesParameter.ColumnUniqueIds;
+                SubdivisionIds = buildingDataBySubdivisionIdsParameter.SubdivisionIds;
+                ColumnUniqueIds = buildingDataBySubdivisionIdsParameter.ColumnUniqueIds;
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildingDataByReferencesParameter"/> class using a JSON object.
+        /// Initializes a new instance of the <see cref="BuildingDataBySubdivisionIdsParameter"/> class using a JSON object.
         /// </summary>
         /// <param name="jsonObject">The JSON object containing parameter data.</param>
-        public BuildingDataByReferencesParameter(JsonObject jsonObject)
+        public BuildingDataBySubdivisionIdsParameter(JsonObject jsonObject)
             : base(jsonObject)
         {
         }
@@ -46,15 +45,9 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
         public IEnumerable<string> ColumnUniqueIds { get; set; } = [];
 
         /// <summary>
-        /// Gets or sets the county identifier.
-        /// Required if performance is a concern and the county identifier is available; otherwise, the county identifier will be determined by the building data PostgreSQL converter.
-        /// </summary>
-        public int? CountyId { get; set; } = null;
-
-        /// <summary>
-        /// Gets or sets the references for the building data parameter.
+        /// Gets or sets the subdivision ids for the building data
         /// </summary>
         [Required]
-        public IEnumerable<string> References { get; set; } = [];
+        public IEnumerable<int> SubdivisionIds { get; set; } = [];
     }
 }
