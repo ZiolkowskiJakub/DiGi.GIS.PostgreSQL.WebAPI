@@ -1,4 +1,4 @@
-﻿namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
+namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 {
     /// <summary>
     /// Provides functionality to watch and retrieve configuration settings for the GIS PostgreSQL Web API from a specified configuration file.
@@ -56,6 +56,17 @@
             get
             {
                 return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateYearBuiltData));
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether updating EPW file data is enabled in the configuration.
+        /// </summary>
+        public bool AllowUpdateEPWFile
+        {
+            get
+            {
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateEPWFile));
             }
         }
     }

@@ -1,5 +1,5 @@
-﻿using DiGi.Core.Classes;
-using DiGi.GIS.Interfaces;
+using DiGi.Core.Classes;
+using DiGi.Core.Interfaces;
 using DiGi.GIS.PostgreSQL.WebAPI.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,8 +9,8 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     /// <summary>
     /// Represents a base class for background tasks that handle the posting of serializable GIS objects to the PostgreSQL database.
     /// </summary>
-    /// <typeparam name="T">The type of serializable object being posted, which must implement <see cref="IGISSerializableObject"/>.</typeparam>
-    public abstract class SerializableObjectsPostTask<T> : ReportableBackgroundTask<long>, IGISPostgreSQLWebAPIObject where T : IGISSerializableObject
+    /// <typeparam name="T">The type of serializable object being posted, which must implement <see cref="ISerializableObject"/>.</typeparam>
+    public abstract class SerializableObjectsPostTask<T> : ReportableBackgroundTask<long>, IGISPostgreSQLWebAPIObject where T : ISerializableObject
     {
         protected readonly GISPostgreSQLWebAPIManager GISPostgreSQLWebAPIManager;
 

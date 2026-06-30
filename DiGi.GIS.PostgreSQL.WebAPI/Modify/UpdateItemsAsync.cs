@@ -1,4 +1,5 @@
-﻿using DiGi.Core.Classes;
+using DiGi.Core.Classes;
+using DiGi.EPW.Classes;
 using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.WebAPI.Classes;
 using DiGi.WebAPI.Classes;
@@ -58,6 +59,29 @@ namespace DiGi.GIS.PostgreSQL.WebAPI
             }
 
             return await UpdateItemsAsync(httpClient, path, Core.Convert.ToSystem_String(administrativeAreal2D), postOptions);
+        }
+
+        /// <summary>
+        /// Asynchronously updates a collection of EPW files.
+        /// </summary>
+        /// <param name="gISPostgreSQLWebAPIManager">The GIS PostgreSQL Web API manager instance.</param>
+        /// <param name="ePWFiles">A collection of EPW files to update.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<bool> UpdateItemsAsync(this GISPostgreSQLWebAPIManager? gISPostgreSQLWebAPIManager, IEnumerable<EPWFile>? ePWFiles, PostOptions? postOptions = null)
+        {
+            if (gISPostgreSQLWebAPIManager is null || ePWFiles is null)
+            {
+                return false;
+            }
+
+            HttpClient? httpClient = gISPostgreSQLWebAPIManager.CreateHttpClient<EPWFileController>(nameof(EPWFileController.UpdateItemsAsync), out string? path);
+            if (httpClient is null || string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            return await UpdateItemsAsync(httpClient, path, Core.Convert.ToSystem_String(ePWFiles), postOptions);
         }
 
         /// <summary>
