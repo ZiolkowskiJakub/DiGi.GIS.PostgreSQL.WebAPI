@@ -1,5 +1,4 @@
 using DiGi.Core.IO.Table.Classes;
-using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.PostgreSQL.Table;
 using Microsoft.AspNetCore.Http;
@@ -475,13 +474,13 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             Serilog.Modify.Log("Reference provided: {Id}", reference.ToString() ?? string.Empty);
             Serilog.Modify.Log("CountyId provided: {Id}", countyId?.ToString() ?? string.Empty);
 
-            if(string.IsNullOrWhiteSpace(reference))
+            if (string.IsNullOrWhiteSpace(reference))
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null");
                 return BadRequest();
             }
 
-            BuildingDataByReferencesParameter buildingDataByReferencesParameter = new ()
+            BuildingDataByReferencesParameter buildingDataByReferencesParameter = new()
             {
                 References = [reference],
                 CountyId = countyId
@@ -489,7 +488,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
 
             return await GetTableByBuildingDataByReferencesParameterAsync(buildingDataByReferencesParameter);
         }
-        
+
         /// <summary> Retrieves unique values for a specified column unique identifier and an optional county identifier. </summary>
         /// <param name="columnUniqueId">The unique identifier of the column from which to retrieve unique values.</param>
         /// <param name="countyId">The optional integer identifier of the county used to filter the results.</param>
