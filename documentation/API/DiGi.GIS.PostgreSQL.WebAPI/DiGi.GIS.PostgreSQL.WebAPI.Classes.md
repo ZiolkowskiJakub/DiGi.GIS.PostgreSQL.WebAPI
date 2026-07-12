@@ -2023,6 +2023,38 @@ The parameter containing the column unique identifier, optional county identifie
 [System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
 An [Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult') representing the result of the operation, typically a list of unique values or a not found status\.
 
+<a name='DiGi.GIS.PostgreSQL.WebAPI.Classes.BuildingModelController'></a>
+
+## BuildingModelController Class
+
+```csharp
+public class BuildingModelController : DiGi.WebAPI.Classes.WebAPIController
+```
+
+Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system.object 'System\.Object') → [Microsoft\.AspNetCore\.Mvc\.ControllerBase](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase 'Microsoft\.AspNetCore\.Mvc\.ControllerBase') → [DiGi\.WebAPI\.Classes\.WebAPIController](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.webapicontroller 'DiGi\.WebAPI\.Classes\.WebAPIController') → BuildingModelController
+### Constructors
+
+<a name='DiGi.GIS.PostgreSQL.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.PostgreSQL.WebAPI.Classes.GISPostgreSQLWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter)'></a>
+
+## BuildingModelController\(GISPostgreSQLWebAPIConfigurationFileWatcher, Building2DPostgreSQLConverter\) Constructor
+
+```csharp
+public BuildingModelController(DiGi.GIS.PostgreSQL.WebAPI.Classes.GISPostgreSQLWebAPIConfigurationFileWatcher gISPostgreSQLWebAPIConfigurationFileWatcher, DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter);
+```
+#### Parameters
+
+<a name='DiGi.GIS.PostgreSQL.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.PostgreSQL.WebAPI.Classes.GISPostgreSQLWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter).gISPostgreSQLWebAPIConfigurationFileWatcher'></a>
+
+`gISPostgreSQLWebAPIConfigurationFileWatcher` [GISPostgreSQLWebAPIConfigurationFileWatcher](DiGi.GIS.PostgreSQL.WebAPI.Classes.md#DiGi.GIS.PostgreSQL.WebAPI.Classes.GISPostgreSQLWebAPIConfigurationFileWatcher 'DiGi\.GIS\.PostgreSQL\.WebAPI\.Classes\.GISPostgreSQLWebAPIConfigurationFileWatcher')
+
+The configuration file watcher for the GIS PostgreSQL Web API\.
+
+<a name='DiGi.GIS.PostgreSQL.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.PostgreSQL.WebAPI.Classes.GISPostgreSQLWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter).building2DPostgreSQLConverter'></a>
+
+`building2DPostgreSQLConverter` [DiGi\.GIS\.PostgreSQL\.Classes\.Building2DPostgreSQLConverter](https://learn.microsoft.com/en-us/dotnet/api/digi.gis.postgresql.classes.building2dpostgresqlconverter 'DiGi\.GIS\.PostgreSQL\.Classes\.Building2DPostgreSQLConverter')
+
+The converter used for Building 2D data operations in PostgreSQL\.
+
 <a name='DiGi.GIS.PostgreSQL.WebAPI.Classes.ColumnsByCategoriesParameter'></a>
 
 ## ColumnsByCategoriesParameter Class

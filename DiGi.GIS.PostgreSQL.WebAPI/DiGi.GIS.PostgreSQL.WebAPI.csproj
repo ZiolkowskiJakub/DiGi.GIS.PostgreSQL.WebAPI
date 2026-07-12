@@ -41,11 +41,17 @@
 		<Reference Include="DiGi.BDL">
 		  <HintPath>..\..\DiGi.BDL\bin\DiGi.BDL.dll</HintPath>
 		</Reference>
+		<Reference Include="DiGi.CityGML">
+		  <HintPath>..\..\DiGi.CityGML\bin\DiGi.CityGML.dll</HintPath>
+		</Reference>
 		<Reference Include="DiGi.Core">
 			<HintPath>..\..\DiGi.Core\bin\DiGi.Core.dll</HintPath>
 		</Reference>
 		<Reference Include="DiGi.Core.IO">
 		  <HintPath>..\..\DiGi.Core\bin\DiGi.Core.IO.dll</HintPath>
+		</Reference>
+		<Reference Include="DiGi.Core.Parameter">
+		  <HintPath>..\..\DiGi.Core\bin\DiGi.Core.Parameter.dll</HintPath>
 		</Reference>
 		<Reference Include="DiGi.Core.Relation">
 			<HintPath>..\..\DiGi.Core\bin\DiGi.Core.Relation.dll</HintPath>
@@ -56,8 +62,14 @@
 		<Reference Include="DiGi.Geometry">
 			<HintPath>..\..\DiGi.Geometry\bin\DiGi.Geometry.dll</HintPath>
 		</Reference>
+		<Reference Include="DiGi.Geometry.Object">
+		  <HintPath>..\..\DiGi.Geometry\bin\DiGi.Geometry.Object.dll</HintPath>
+		</Reference>
 		<Reference Include="DiGi.GIS">
 			<HintPath>..\..\DiGi.GIS\bin\DiGi.GIS.dll</HintPath>
+		</Reference>
+		<Reference Include="DiGi.GIS.Analytical">
+		  <HintPath>..\..\DiGi.GIS.Analytical\bin\DiGi.GIS.Analytical.dll</HintPath>
 		</Reference>
 		<Reference Include="DiGi.GIS.IO">
 		  <HintPath>..\..\DiGi.GIS.IO\bin\DiGi.GIS.IO.dll</HintPath>

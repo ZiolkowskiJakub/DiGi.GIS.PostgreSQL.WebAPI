@@ -1,4 +1,4 @@
-﻿using DiGi.Analytical.Building.HVAC.Classes;
+using DiGi.Analytical.Building.HVAC.Classes;
 using DiGi.Analytical.Building.HVAC.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,7 +14,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
     [Route("gis/[controller]")]
     public class HeatTransferCoefficientController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private static readonly RegulatedHeatTransferCoefficientsManager regulatedHeatTransferCoefficientsManager = Analytical.Building.HVAC.Create.RegulatedHeatTransferCoefficientsManager();
+        private static readonly RegulatedHeatTransferCoefficientsManager regulatedHeatTransferCoefficientsManager = DiGi.Analytical.Building.HVAC.Create.RegulatedHeatTransferCoefficientsManager();
 
         /// <summary>
         /// Initializes a new instance of the HeatTransferCoefficientController class.
