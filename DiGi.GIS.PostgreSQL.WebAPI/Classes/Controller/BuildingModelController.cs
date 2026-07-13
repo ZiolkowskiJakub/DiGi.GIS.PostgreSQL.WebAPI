@@ -85,7 +85,7 @@ namespace DiGi.GIS.PostgreSQL.WebAPI.Classes
             List<DiGi.Analytical.Building.Classes.BuildingModel> buildingModels = [];
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
-                DiGi.Analytical.Building.Classes.BuildingModel? building2D = DiGi.GIS.Analytical.Create.BuildingModel(building2D_PostgreSQL?.ToDiGi());
+                DiGi.Analytical.Building.Classes.BuildingModel? building2D = Analytical.Create.BuildingModel(building2D_PostgreSQL?.ToDiGi());
                 if (building2D is null)
                 {
                     continue;
