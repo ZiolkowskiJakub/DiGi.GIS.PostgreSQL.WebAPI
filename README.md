@@ -1,13 +1,13 @@
-# DiGi.GIS.PostgreSQL.WebAPI
+# DiGi.GIS.WebAPI
 
-**DiGi.GIS.PostgreSQL.WebAPI** is a C# engineering and architectural software library suite designed for BIM and CAD integrations (such as Revit, RhinoCommon, Grasshopper, and Dynamo BIM).
+**DiGi.GIS.WebAPI** is a C# engineering and architectural software library suite designed for BIM and CAD integrations (such as Revit, RhinoCommon, Grasshopper, and Dynamo BIM).
 
 ---
 
 ## 🏗️ Project Architecture & Assemblies
 
 The repository contains the following core components and assemblies:
-* **[DiGi.GIS.PostgreSQL.WebAPI](DiGi.GIS.PostgreSQL.WebAPI)** (Path: `DiGi.GIS.PostgreSQL.WebAPI\DiGi.GIS.PostgreSQL.WebAPI`)
+* **[DiGi.GIS.WebAPI](DiGi.GIS.WebAPI)** (Path: `DiGi.GIS.WebAPI\DiGi.GIS.WebAPI`)
 
 ---
 
@@ -101,7 +101,7 @@ never in `files/`.** Both are copied to the build output by a `.csproj` target; 
 `[Uu]ser [Ff]iles/`. Verify with `git check-ignore -v "user files/<file>"` — git must report the rule
 as the reason the file is ignored. If a new solution needs runtime secrets and lacks this rule, add
 it before dropping any secret in. Reference implementations: `DiGi.GIS.PostgreSQL.UI`,
-`DiGi.GIS.PostgreSQL.WebAPI` (both hold `GIS_PostgreSQL_Main.conf` in an ignored `user files/`).
+`DiGi.GIS.WebAPI` (both hold `GIS_PostgreSQL_Main.conf` in an ignored `user files/`).
 
 **Decision rule when placing a runtime asset:** would committing it leak a secret, or break another
 developer's / the server's machine-specific setup? If yes → `user files/`; otherwise → `files/`.
@@ -314,3 +314,4 @@ When a test needs an on-disk input file (`.gmf`, `.json`, `.epw`, …), use the 
 3. **Branch off main** using that new version name.
 4. **Update `Directory.Build.props`** (if present): set `<Major>`/`<Minor>`/`<Build>` to the new version's components and commit on the new branch before pushing.
 5. **Push & track:** push both `main` and the new version branch to `origin`, using `-u` on the new branch so it tracks properly (`git push -u origin <version_branch>`).
+
