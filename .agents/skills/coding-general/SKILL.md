@@ -108,7 +108,7 @@ never in `files/`.** Both are copied to the build output by a `.csproj` target; 
 `[Uu]ser [Ff]iles/`. Verify with `git check-ignore -v "user files/<file>"` — git must report the rule
 as the reason the file is ignored. If a new solution needs runtime secrets and lacks this rule, add
 it before dropping any secret in. Reference implementations: `DiGi.GIS.PostgreSQL.UI`,
-`DiGi.GIS.WebAPI` (both hold `GIS_PostgreSQL_Main.conf` in an ignored `user files/`).
+`DiGi.GIS.PostgreSQL.WebAPI` (both hold `GIS_PostgreSQL_Main.conf` in an ignored `user files/`).
 
 **Decision rule when placing a runtime asset:** would committing it leak a secret, or break another
 developer's / the server's machine-specific setup? If yes → `user files/`; otherwise → `files/`.
@@ -392,5 +392,4 @@ namespace DiGi.Maintenance
     }
 }
 ```
-
 
