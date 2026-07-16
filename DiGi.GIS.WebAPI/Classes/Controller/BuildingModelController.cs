@@ -1,10 +1,7 @@
 using DiGi.Geometry.Planar.Classes;
-using DiGi.GIS.Classes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace DiGi.GIS.WebAPI.Classes

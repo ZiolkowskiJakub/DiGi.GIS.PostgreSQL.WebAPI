@@ -1,6 +1,6 @@
-using DiGi.GIS.PostgreSQL;
 using DiGi.Core.Classes;
 using DiGi.GIS.Classes;
+using DiGi.GIS.PostgreSQL;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.GIS.PostgreSQL.Interfaces;
 using System;
@@ -164,4 +164,3 @@ namespace DiGi.GIS.WebAPI.Classes
         }
     }
 }
-

@@ -1,4 +1,3 @@
-using DiGi.GIS.PostgreSQL;
 using DiGi.GIS.PostgreSQL.Classes;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -183,4 +182,3 @@ namespace DiGi.GIS.WebAPI.Classes
         }
     }
 }
-
