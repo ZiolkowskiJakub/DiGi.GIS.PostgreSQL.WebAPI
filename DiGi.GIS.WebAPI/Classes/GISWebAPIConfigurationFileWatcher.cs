@@ -16,6 +16,17 @@ namespace DiGi.GIS.WebAPI.Classes
         }
 
         /// <summary>
+        /// Gets a value indicating whether updates to administrative areal 2D data are permitted according to the configuration file.
+        /// </summary>
+        public bool AllowUpdateAdministrativeAreal2D
+        {
+            get
+            {
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateAdministrativeAreal2D));
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether updates to 2D buildings are permitted based on the configuration file settings.
         /// </summary>
         public bool AllowUpdateBuilding2D
@@ -27,13 +38,24 @@ namespace DiGi.GIS.WebAPI.Classes
         }
 
         /// <summary>
-        /// Gets a value indicating whether updates to administrative areal 2D data are permitted according to the configuration file.
+        /// Gets a value indicating whether updates to building models are permitted based on the configuration file settings.
         /// </summary>
-        public bool AllowUpdateAdministrativeAreal2D
+        public bool AllowUpdateBuildingModel
         {
             get
             {
-                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateAdministrativeAreal2D));
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateBuildingModel));
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether updating EPW file data is enabled in the configuration.
+        /// </summary>
+        public bool AllowUpdateEPWFile
+        {
+            get
+            {
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateEPWFile));
             }
         }
 
@@ -56,17 +78,6 @@ namespace DiGi.GIS.WebAPI.Classes
             get
             {
                 return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateYearBuiltData));
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether updating EPW file data is enabled in the configuration.
-        /// </summary>
-        public bool AllowUpdateEPWFile
-        {
-            get
-            {
-                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateEPWFile));
             }
         }
     }
