@@ -1,5 +1,6 @@
 using DiGi.Analytical.Building.Classes;
 using DiGi.Geometry.Planar.Classes;
+using DiGi.GIS.Analytical.Enums;
 using DiGi.PostgreSQL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace DiGi.GIS.WebAPI.Classes
     [Route("gis/[controller]")]
     public class BuildingModelController : DiGi.WebAPI.Classes.WebAPIController
     {
-        private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter;
+        private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter; //TODO: Remove building2DPostgreSQLConverter and GetItemsByCircleAsync from this controller. The workflow shall use Building2DController Buu
         private readonly PostgreSQL.Classes.BuildingModelPostgreSQLConverter buildingModelPostgreSQLConverter;
         private readonly GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher;
 
@@ -91,13 +92,19 @@ namespace DiGi.GIS.WebAPI.Classes
             List<BuildingModel> buildingModels = [];
             foreach (PostgreSQL.Classes.Building2D building2D_PostgreSQL in building2Ds_PostgreSQL)
             {
-                BuildingModel? building2D = Analytical.Create.BuildingModel(building2D_PostgreSQL?.ToDiGi());
-                if (building2D is null)
+                BuildingModel? buildingModel = Analytical.Create.BuildingModel(building2D_PostgreSQL?.ToDiGi());
+                if (buildingModel is null)
                 {
                     continue;
                 }
 
-                buildingModels.Add(building2D);
+                Core.Interfaces.IReference? reference = PostgreSQL.Create.Reference(buildingModel, null, building2D_PostgreSQL?.CountyId);
+                if(reference is not null)
+                {
+                    buildingModel.SetValue(BuildingModelParameter.Reference, reference.ToString(), new Core.Parameter.Classes.SetValueSettings(true, false));
+                }
+
+                buildingModels.Add(buildingModel);
             }
 
             if (buildingModels is null || buildingModels.Count == 0)
