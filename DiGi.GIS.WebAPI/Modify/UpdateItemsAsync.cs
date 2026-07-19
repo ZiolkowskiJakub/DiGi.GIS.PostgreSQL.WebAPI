@@ -1,3 +1,5 @@
+using DiGi.Analytical.Building.Classes;
+using DiGi.CityGML.Classes;
 using DiGi.Core.Classes;
 using DiGi.EPW.Classes;
 using DiGi.GIS.Classes;
@@ -259,7 +261,7 @@ namespace DiGi.GIS.WebAPI
                 return false;
             }
 
-            HttpClient? httpClient = GISWebAPIManager.CreateHttpClient<AdministrativeAreal2DController>(nameof(Building2DController.UpdateItemAsync), out string? path);
+            HttpClient? httpClient = GISWebAPIManager.CreateHttpClient<Building2DController>(nameof(Building2DController.UpdateItemAsync), out string? path);
             if (httpClient is null || string.IsNullOrWhiteSpace(path))
             {
                 return false;
@@ -463,6 +465,57 @@ namespace DiGi.GIS.WebAPI
                 Serilog.Modify.Log(exception, "Post request could not be completed.");
                 throw;
             }
+        }
+
+
+        /// <summary>
+        /// Asynchronously updates multiple building models via the PostgreSQL Web API.
+        /// </summary>
+        /// <param name="GISWebAPIManager">The <see cref="GISWebAPIManager"/> instance used to perform the update operation.</param>
+        /// <param name="buildingModels">A collection of <see cref="DiGi.Analytical.Building.Classes.BuildingModel"/> items to be updated.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<bool> UpdateItemsAsync(this GISWebAPIManager? GISWebAPIManager, IEnumerable<BuildingModel>? buildingModels, PostOptions? postOptions = null)
+        {
+            if (GISWebAPIManager is null || buildingModels is null)
+            {
+                return false;
+            }
+
+            HttpClient? httpClient = GISWebAPIManager.CreateHttpClient<BuildingModelController>(nameof(BuildingModelController.UpdateItemsAsync), out string? path);
+            if (httpClient is null || string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            return await UpdateItemsAsync(httpClient, path, Core.Convert.ToSystem_String(buildingModels), postOptions);
+        }
+
+        /// <summary>
+        /// Asynchronously updates multiple building items via the PostgreSQL Web API.
+        /// </summary>
+        /// <param name="GISWebAPIManager">The <see cref="GISWebAPIManager"/> instance used to perform the update operation.</param>
+        /// <param name="buildings">A collection of <see cref="DiGi.CityGML.Classes.Building"/> items to be updated.</param>
+        /// <param name="code">An optional code used for the update operation.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<bool> UpdateItemsAsync(this GISWebAPIManager? GISWebAPIManager, IEnumerable<Building>? buildings, string? code = null, PostOptions? postOptions = null)
+        {
+            if (GISWebAPIManager is null || buildings is null)
+            {
+                return false;
+            }
+
+            HttpClient? httpClient = GISWebAPIManager.CreateHttpClient<BuildingController>(nameof(BuildingController.UpdateItemsAsync), out string? path);
+            if (httpClient is null || string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            UrlBuilder urlBuilder = new(path);
+            urlBuilder.AddParameter("code", code);
+
+            return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(buildings), postOptions);
         }
     }
 }

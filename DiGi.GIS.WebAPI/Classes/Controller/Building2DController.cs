@@ -377,6 +377,39 @@ namespace DiGi.GIS.WebAPI.Classes
             return Content(json, "application/json");
         }
 
+        /// <summary>
+        /// Retrieves building 2D items for a specified county identifier.
+        /// </summary>
+        /// <param name="countyId">The unique identifier of the county.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the building 2D items as a JSON response, or a 404 status if no items are found.</returns>
+        [HttpGet("itemsbycountyid", Name = $"{nameof(Building2DController)}_{nameof(GetItemsByCountyIdAsync)}")]
+        [ProducesResponseType(typeof(List<PostgreSQL.Classes.Building2D>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetItemsByCountyIdAsync([FromQuery(Name = "countyid")] int countyId)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByCountyIdAsync));
+
+            List<PostgreSQL.Classes.Building2D>? building2Ds = await building2DPostgreSQLConverter.GetBuilding2DsByCountyIdAsync(countyId);
+            if (building2Ds is null)
+            {
+                return NotFound();
+            }
+
+            List<Building2D>? building2D_DiGi = building2Ds.ToDiGi();
+            if (building2D_DiGi is null)
+            {
+                return NotFound();
+            }
+
+            string? json = Core.Convert.ToSystem_String(building2D_DiGi);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return NotFound();
+            }
+
+            return Content(json, "application/json");
+        }
+
         /// <summary> Retrieves building 2D items within a specified circle. </summary>
         /// <param name="x">The X-coordinate of the center of the circle.</param>
         /// <param name="y">The Y-coordinate of the center of the circle.</param>

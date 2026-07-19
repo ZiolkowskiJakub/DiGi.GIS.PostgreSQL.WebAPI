@@ -80,5 +80,16 @@ namespace DiGi.GIS.WebAPI.Classes
                 return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateYearBuiltData));
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether updates to buildings are permitted based on the configuration file settings.
+        /// </summary>
+        public bool AllowUpdateBuilding
+        {
+            get
+            {
+                return ConfigurationFile.GetValue<bool>(nameof(AllowUpdateBuilding));
+            }
+        }
     }
 }

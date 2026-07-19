@@ -1028,6 +1028,27 @@ The tolerance value to be applied to the search area\.
 [System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
 A task that represents the asynchronous operation\.
 
+<a name='DiGi.GIS.WebAPI.Classes.Building2DController.GetItemsByCountyIdAsync(int)'></a>
+
+## Building2DController\.GetItemsByCountyIdAsync\(int\) Method
+
+Retrieves building 2D items for a specified county identifier\.
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> GetItemsByCountyIdAsync(int countyId);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.Building2DController.GetItemsByCountyIdAsync(int).countyId'></a>
+
+`countyId` [System\.Int32](https://learn.microsoft.com/en-us/dotnet/api/system.int32 'System\.Int32')
+
+The unique identifier of the county\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\. The task result contains the building 2D items as a JSON response, or a 404 status if no items are found\.
+
 <a name='DiGi.GIS.WebAPI.Classes.Building2DController.GetPoint2DsByReferencesAsync(System.Collections.Generic.IEnumerable_string_,System.Nullable_int_)'></a>
 
 ## Building2DController\.GetPoint2DsByReferencesAsync\(IEnumerable\<string\>, Nullable\<int\>\) Method
@@ -1301,6 +1322,109 @@ public string? Code { get; set; }
 
 #### Property Value
 [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController'></a>
+
+## BuildingController Class
+
+Provides API endpoints for managing and updating Building data stored in a PostgreSQL database\.
+
+```csharp
+public class BuildingController : DiGi.WebAPI.Classes.WebAPIController
+```
+
+Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system.object 'System\.Object') → [Microsoft\.AspNetCore\.Mvc\.ControllerBase](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase 'Microsoft\.AspNetCore\.Mvc\.ControllerBase') → [DiGi\.WebAPI\.Classes\.WebAPIController](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.webapicontroller 'DiGi\.WebAPI\.Classes\.WebAPIController') → BuildingController
+### Constructors
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.BuildingController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter)'></a>
+
+## BuildingController\(GISWebAPIConfigurationFileWatcher, BuildingPostgreSQLConverter, AdministrativeAreal2DPostgreSQLConverter\) Constructor
+
+Initializes a new instance of the BuildingController class\.
+
+```csharp
+public BuildingController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher, DiGi.GIS.PostgreSQL.Classes.BuildingPostgreSQLConverter buildingPostgreSQLConverter, DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.BuildingController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).GISWebAPIConfigurationFileWatcher'></a>
+
+`GISWebAPIConfigurationFileWatcher` [GISWebAPIConfigurationFileWatcher](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIConfigurationFileWatcher')
+
+The configuration file watcher used to monitor changes to the PostgreSQL Web API configuration\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.BuildingController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).buildingPostgreSQLConverter'></a>
+
+`buildingPostgreSQLConverter` [DiGi\.GIS\.PostgreSQL\.Classes\.BuildingPostgreSQLConverter](https://learn.microsoft.com/en-us/dotnet/api/digi.gis.postgresql.classes.buildingpostgresqlconverter 'DiGi\.GIS\.PostgreSQL\.Classes\.BuildingPostgreSQLConverter')
+
+The converter for Building objects when interacting with a PostgreSQL database\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.BuildingController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).administrativeAreal2DPostgreSQLConverter'></a>
+
+`administrativeAreal2DPostgreSQLConverter` [DiGi\.GIS\.PostgreSQL\.Classes\.AdministrativeAreal2DPostgreSQLConverter](https://learn.microsoft.com/en-us/dotnet/api/digi.gis.postgresql.classes.administrativeareal2dpostgresqlconverter 'DiGi\.GIS\.PostgreSQL\.Classes\.AdministrativeAreal2DPostgreSQLConverter')
+
+The converter for administrative areal 2D data when interacting with a PostgreSQL database\.
+### Methods
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemsByReferenceAsync(string,System.Nullable_int_,System.Threading.CancellationToken)'></a>
+
+## BuildingController\.GetItemsByReferenceAsync\(string, Nullable\<int\>, CancellationToken\) Method
+
+Asynchronously retrieves buildings based on a provided reference and an optional county identifier\.
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> GetItemsByReferenceAsync(string reference, System.Nullable<int> countyId, System.Threading.CancellationToken cancellationToken=default(System.Threading.CancellationToken));
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemsByReferenceAsync(string,System.Nullable_int_,System.Threading.CancellationToken).reference'></a>
+
+`reference` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+The unique reference string used to identify the buildings\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemsByReferenceAsync(string,System.Nullable_int_,System.Threading.CancellationToken).countyId'></a>
+
+`countyId` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Int32](https://learn.microsoft.com/en-us/dotnet/api/system.int32 'System\.Int32')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+An optional integer representing the county ID to filter the results\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemsByReferenceAsync(string,System.Nullable_int_,System.Threading.CancellationToken).cancellationToken'></a>
+
+`cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
+
+The [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken') to observe for cancellation requests\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray,string)'></a>
+
+## BuildingController\.UpdateItemsAsync\(JsonArray, string\) Method
+
+Updates multiple building items based on the provided JSON array and identification code\.
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> UpdateItemsAsync(System.Text.Json.Nodes.JsonArray? jsonArray, string? code);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray,string).jsonArray'></a>
+
+`jsonArray` [System\.Text\.Json\.Nodes\.JsonArray](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.nodes.jsonarray 'System\.Text\.Json\.Nodes\.JsonArray')
+
+The JSON array containing the building items to be updated\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray,string).code'></a>
+
+`code` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+The identification code required for the update operation\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+An [Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult') representing the result of the update operation\.
 
 <a name='DiGi.GIS.WebAPI.Classes.BuildingDataByFilterGroupParameter'></a>
 
@@ -2177,6 +2301,145 @@ The JSON array containing the building models to be updated\. This value can be 
 [System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
 A task that represents the asynchronous operation\.
 
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask'></a>
+
+## BuildingModelsPostTask Class
+
+Provides functionality to handle the asynchronous posting of [DiGi\.Analytical\.Building\.Classes\.BuildingModel](https://learn.microsoft.com/en-us/dotnet/api/digi.analytical.building.classes.buildingmodel 'DiGi\.Analytical\.Building\.Classes\.BuildingModel') collections to the PostgreSQL database\.
+
+```csharp
+public class BuildingModelsPostTask : DiGi.GIS.WebAPI.Classes.SerializableObjectsPostTask<DiGi.Analytical.Building.Classes.BuildingModel>
+```
+
+Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system.object 'System\.Object') → [DiGi\.Core\.Classes\.BackgroundTask](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.backgroundtask 'DiGi\.Core\.Classes\.BackgroundTask') → [DiGi\.Core\.Classes\.CancelableBackgroundTask](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.cancelablebackgroundtask 'DiGi\.Core\.Classes\.CancelableBackgroundTask') → [DiGi\.Core\.Classes\.ReportableBackgroundTask&lt;](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.reportablebackgroundtask-1 'DiGi\.Core\.Classes\.ReportableBackgroundTask\`1')[System\.Int64](https://learn.microsoft.com/en-us/dotnet/api/system.int64 'System\.Int64')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.reportablebackgroundtask-1 'DiGi\.Core\.Classes\.ReportableBackgroundTask\`1') → [DiGi\.GIS\.WebAPI\.Classes\.SerializableObjectsPostTask&lt;](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.SerializableObjectsPostTask_T_ 'DiGi\.GIS\.WebAPI\.Classes\.SerializableObjectsPostTask\<T\>')[DiGi\.Analytical\.Building\.Classes\.BuildingModel](https://learn.microsoft.com/en-us/dotnet/api/digi.analytical.building.classes.buildingmodel 'DiGi\.Analytical\.Building\.Classes\.BuildingModel')[&gt;](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.SerializableObjectsPostTask_T_ 'DiGi\.GIS\.WebAPI\.Classes\.SerializableObjectsPostTask\<T\>') → BuildingModelsPostTask
+### Constructors
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.BuildingModelsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager)'></a>
+
+## BuildingModelsPostTask\(GISWebAPIManager\) Constructor
+
+Initializes a new instance of the [BuildingModelsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.BuildingModelsPostTask') class\.
+
+```csharp
+public BuildingModelsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager GISWebAPIManager);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.BuildingModelsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager).GISWebAPIManager'></a>
+
+`GISWebAPIManager` [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager')
+
+The [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager') instance used to communicate with the server\.
+### Methods
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken)'></a>
+
+## BuildingModelsPostTask\.ExecuteAsync\(IEnumerable\<BuildingModel\>, LongProgressWrapper, CancellationToken\) Method
+
+Asynchronously executes the task of posting building models to the database in memory\-size\-split batches\.
+
+```csharp
+protected System.Threading.Tasks.Task<bool> ExecuteAsync(System.Collections.Generic.IEnumerable<DiGi.Analytical.Building.Classes.BuildingModel>? buildingModels, DiGi.Core.Classes.LongProgressWrapper? longProgressWrapper, System.Threading.CancellationToken cancellationToken=default(System.Threading.CancellationToken));
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).buildingModels'></a>
+
+`buildingModels` [System\.Collections\.Generic\.IEnumerable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1 'System\.Collections\.Generic\.IEnumerable\`1')[DiGi\.Analytical\.Building\.Classes\.BuildingModel](https://learn.microsoft.com/en-us/dotnet/api/digi.analytical.building.classes.buildingmodel 'DiGi\.Analytical\.Building\.Classes\.BuildingModel')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1 'System\.Collections\.Generic\.IEnumerable\`1')
+
+The collection of [DiGi\.Analytical\.Building\.Classes\.BuildingModel](https://learn.microsoft.com/en-us/dotnet/api/digi.analytical.building.classes.buildingmodel 'DiGi\.Analytical\.Building\.Classes\.BuildingModel') instances to post\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).longProgressWrapper'></a>
+
+`longProgressWrapper` [DiGi\.Core\.Classes\.LongProgressWrapper](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.longprogresswrapper 'DiGi\.Core\.Classes\.LongProgressWrapper')
+
+A [DiGi\.Core\.Classes\.LongProgressWrapper](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.longprogresswrapper 'DiGi\.Core\.Classes\.LongProgressWrapper') tracking the progress of the operation\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).cancellationToken'></a>
+
+`cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
+
+The [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken') to observe for cancellation requests\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[System\.Boolean](https://learn.microsoft.com/en-us/dotnet/api/system.boolean 'System\.Boolean')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\. The task result is true if all batches were posted successfully; otherwise, false\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask'></a>
+
+## BuildingsPostTask Class
+
+Provides functionality to handle the asynchronous posting of [DiGi\.CityGML\.Classes\.Building](https://learn.microsoft.com/en-us/dotnet/api/digi.citygml.classes.building 'DiGi\.CityGML\.Classes\.Building') collections to the PostgreSQL database\.
+
+```csharp
+public class BuildingsPostTask : DiGi.GIS.WebAPI.Classes.SerializableObjectsPostTask<DiGi.CityGML.Classes.Building>
+```
+
+Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system.object 'System\.Object') → [DiGi\.Core\.Classes\.BackgroundTask](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.backgroundtask 'DiGi\.Core\.Classes\.BackgroundTask') → [DiGi\.Core\.Classes\.CancelableBackgroundTask](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.cancelablebackgroundtask 'DiGi\.Core\.Classes\.CancelableBackgroundTask') → [DiGi\.Core\.Classes\.ReportableBackgroundTask&lt;](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.reportablebackgroundtask-1 'DiGi\.Core\.Classes\.ReportableBackgroundTask\`1')[System\.Int64](https://learn.microsoft.com/en-us/dotnet/api/system.int64 'System\.Int64')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.reportablebackgroundtask-1 'DiGi\.Core\.Classes\.ReportableBackgroundTask\`1') → [DiGi\.GIS\.WebAPI\.Classes\.SerializableObjectsPostTask&lt;](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.SerializableObjectsPostTask_T_ 'DiGi\.GIS\.WebAPI\.Classes\.SerializableObjectsPostTask\<T\>')[DiGi\.CityGML\.Classes\.Building](https://learn.microsoft.com/en-us/dotnet/api/digi.citygml.classes.building 'DiGi\.CityGML\.Classes\.Building')[&gt;](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.SerializableObjectsPostTask_T_ 'DiGi\.GIS\.WebAPI\.Classes\.SerializableObjectsPostTask\<T\>') → BuildingsPostTask
+### Constructors
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.BuildingsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager)'></a>
+
+## BuildingsPostTask\(GISWebAPIManager\) Constructor
+
+Initializes a new instance of the [BuildingsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.BuildingsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.BuildingsPostTask') class\.
+
+```csharp
+public BuildingsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager GISWebAPIManager);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.BuildingsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager).GISWebAPIManager'></a>
+
+`GISWebAPIManager` [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager')
+
+The GIS PostgreSQL Web API manager used to handle data persistence\.
+### Properties
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.Code'></a>
+
+## BuildingsPostTask\.Code Property
+
+Gets or sets the code associated with the buildings post task\.
+
+```csharp
+public string? Code { get; set; }
+```
+
+#### Property Value
+[System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+### Methods
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.CityGML.Classes.Building_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken)'></a>
+
+## BuildingsPostTask\.ExecuteAsync\(IEnumerable\<Building\>, string, LongProgressWrapper, CancellationToken\) Method
+
+Asynchronously executes the task of posting building objects to the database\.
+
+```csharp
+protected System.Threading.Tasks.Task<bool> ExecuteAsync(System.Collections.Generic.IEnumerable<DiGi.CityGML.Classes.Building>? values, string? code, DiGi.Core.Classes.LongProgressWrapper? longProgressWrapper, System.Threading.CancellationToken cancellationToken);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.CityGML.Classes.Building_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).values'></a>
+
+`values` [System\.Collections\.Generic\.IEnumerable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1 'System\.Collections\.Generic\.IEnumerable\`1')[DiGi\.CityGML\.Classes\.Building](https://learn.microsoft.com/en-us/dotnet/api/digi.citygml.classes.building 'DiGi\.CityGML\.Classes\.Building')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1 'System\.Collections\.Generic\.IEnumerable\`1')
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.CityGML.Classes.Building_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).code'></a>
+
+`code` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.CityGML.Classes.Building_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).longProgressWrapper'></a>
+
+`longProgressWrapper` [DiGi\.Core\.Classes\.LongProgressWrapper](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.longprogresswrapper 'DiGi\.Core\.Classes\.LongProgressWrapper')
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.CityGML.Classes.Building_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).cancellationToken'></a>
+
+`cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[System\.Boolean](https://learn.microsoft.com/en-us/dotnet/api/system.boolean 'System\.Boolean')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')
+
 <a name='DiGi.GIS.WebAPI.Classes.ColumnsByCategoriesParameter'></a>
 
 ## ColumnsByCategoriesParameter Class
@@ -2552,6 +2815,19 @@ Gets a value indicating whether updates to administrative areal 2D data are perm
 
 ```csharp
 public bool AllowUpdateAdministrativeAreal2D { get; }
+```
+
+#### Property Value
+[System\.Boolean](https://learn.microsoft.com/en-us/dotnet/api/system.boolean 'System\.Boolean')
+
+<a name='DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher.AllowUpdateBuilding'></a>
+
+## GISWebAPIConfigurationFileWatcher\.AllowUpdateBuilding Property
+
+Gets a value indicating whether updates to buildings are permitted based on the configuration file settings\.
+
+```csharp
+public bool AllowUpdateBuilding { get; }
 ```
 
 #### Property Value
@@ -3697,6 +3973,8 @@ Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system
 Derived  
 ↳ [AdministrativeAreal2DsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.AdministrativeAreal2DsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.AdministrativeAreal2DsPostTask')  
 ↳ [Building2DsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.Building2DsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.Building2DsPostTask')  
+↳ [BuildingModelsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.BuildingModelsPostTask')  
+↳ [BuildingsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.BuildingsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.BuildingsPostTask')  
 ↳ [EPWFilesPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.EPWFilesPostTask 'DiGi\.GIS\.WebAPI\.Classes\.EPWFilesPostTask')  
 ↳ [OccupancyDatasPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.OccupancyDatasPostTask 'DiGi\.GIS\.WebAPI\.Classes\.OccupancyDatasPostTask')  
 ↳ [OrtoDatasPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.OrtoDatasPostTask 'DiGi\.GIS\.WebAPI\.Classes\.OrtoDatasPostTask')  
