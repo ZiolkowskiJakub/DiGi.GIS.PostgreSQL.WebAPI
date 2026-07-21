@@ -1267,14 +1267,14 @@ public int PageSize { get; set; }
 
 ## Building2DReferencesByPagingParameter\.SubdivisionId Property
 
-Gets or sets the target subdivision identifier \(Subdivision ID\)\.
+Gets or sets the target subdivision identifier \(Subdivision ID\)\. Leave null to return references for the whole county\.
 
 ```csharp
-public int SubdivisionId { get; set; }
+public System.Nullable<int> SubdivisionId { get; set; }
 ```
 
 #### Property Value
-[System\.Int32](https://learn.microsoft.com/en-us/dotnet/api/system.int32 'System\.Int32')
+[System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Int32](https://learn.microsoft.com/en-us/dotnet/api/system.int32 'System\.Int32')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
 
 ### Example
 1035

@@ -148,9 +148,15 @@ namespace DiGi.GIS.WebAPI.Classes
                 building2DReferencesByPagingParameter.Cursor,
                 building2DReferencesByPagingParameter.PageSize);
 
-            if (building2DReferences is null || building2DReferences.Count == 0)
+            if (building2DReferences is null)
             {
                 return NotFound();
+            }
+
+            // An exhausted page is a valid paging result, not a missing resource - return an empty array so callers can terminate the cursor loop without handling a 404.
+            if (building2DReferences.Count == 0)
+            {
+                return Content(new JsonArray().ToJsonString(), "application/json");
             }
 
             string? json = Core.Convert.ToSystem_String(building2DReferences);
