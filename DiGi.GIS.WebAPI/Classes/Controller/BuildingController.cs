@@ -260,5 +260,87 @@ namespace DiGi.GIS.WebAPI.Classes
             return Content(Core.Convert.ToSystem_String(building) ?? string.Empty, "application/json");
         }
 
+        /// <summary>
+        /// Asynchronously retrieves the single most relevant building for each of the provided references.
+        /// <para>Several rows can share one reference (different level of detail or year); each reference is reduced to one building ranked by level of detail and then by year, matching the behaviour of <see cref="GetItemByReferenceAsync"/> when no coordinates are supplied.</para>
+        /// <para>References without a matching building are omitted, so an empty array is a valid response and does not indicate an error.</para>
+        /// </summary>
+        /// <param name="references">The collection of unique reference strings used to identify the buildings.</param>
+        /// <param name="countyId">An optional integer representing the county ID to filter the results.</param>
+        /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to observe for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [HttpPost("itemsbyreferences", Name = $"{nameof(BuildingController)}_{nameof(GetItemsByReferencesAsync)}")]
+        [ProducesResponseType(typeof(List<CityGML.Classes.Building>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetItemsByReferencesAsync([FromBody] IEnumerable<string>? references, [FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingController), nameof(GetItemsByReferencesAsync));
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
+
+            if (references is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "References cannot be null");
+                return BadRequest();
+            }
+
+            if (buildingPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "BuildingPostgreSQLConverter is null");
+                return BadRequest();
+            }
+
+            List<Building>? buildings_PostgreSQL = await buildingPostgreSQLConverter.GetBuildingsByReferencesAsync(references, countyId, cancellationToken);
+
+            List<CityGML.Classes.Building> buildings = [];
+
+            if (buildings_PostgreSQL is not null && buildings_PostgreSQL.Count != 0)
+            {
+                Dictionary<string, List<Building>> dictionary = [];
+                foreach (Building building_PostgreSQL in buildings_PostgreSQL)
+                {
+                    string? reference = building_PostgreSQL?.Reference;
+                    if (string.IsNullOrWhiteSpace(reference))
+                    {
+                        continue;
+                    }
+
+                    if (!dictionary.TryGetValue(reference, out List<Building>? buildings_Reference))
+                    {
+                        buildings_Reference = [];
+                        dictionary[reference] = buildings_Reference;
+                    }
+
+                    buildings_Reference.Add(building_PostgreSQL!);
+                }
+
+                foreach (KeyValuePair<string, List<Building>> keyValuePair in dictionary)
+                {
+                    // No point is available in a batch request, so ranking falls back to level of detail and year.
+                    Building? building_PostgreSQL = PostgreSQL.Query.Building(keyValuePair.Value, null);
+                    if (building_PostgreSQL is null)
+                    {
+                        continue;
+                    }
+
+                    CityGML.Classes.Building? building = building_PostgreSQL.ToDiGi();
+                    if (building is null)
+                    {
+                        continue;
+                    }
+
+                    buildings.Add(building);
+                }
+            }
+
+            Serilog.Modify.Log("Buildings returned: {After}/{Before}", buildings.Count, buildings_PostgreSQL?.Count ?? 0);
+
+            // An empty result is a valid outcome - callers page through references and must not treat it as a failure.
+            if (buildings.Count == 0)
+            {
+                return Content(new JsonArray().ToJsonString(), "application/json");
+            }
+
+            return Content(Core.Convert.ToSystem_String(buildings) ?? string.Empty, "application/json");
+        }
     }
 }

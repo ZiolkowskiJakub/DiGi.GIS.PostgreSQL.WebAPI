@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +25,24 @@ namespace DiGi.GIS.WebAPI
             string? json = Core.Convert.ToSystem_String(serializableObjects);
 
             return await HttpContent(json ?? string.Empty, cancellationToken);
+        }
+
+        /// <summary>
+        /// Converts a collection of strings into an <see cref="System.Net.Http.HttpContent"/> object holding a JSON array.
+        /// </summary>
+        /// <param name="values">The collection of strings to be serialized and converted to HTTP content.</param>
+        /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<HttpContent?> HttpContent(this IEnumerable<string>? values, CancellationToken cancellationToken)
+        {
+            if (values is null)
+            {
+                return null;
+            }
+
+            JsonArray jsonArray = [.. values];
+
+            return await HttpContent(jsonArray.ToJsonString(), cancellationToken);
         }
 
         /// <summary>
