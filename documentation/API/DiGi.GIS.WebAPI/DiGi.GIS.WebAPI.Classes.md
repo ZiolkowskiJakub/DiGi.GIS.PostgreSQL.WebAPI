@@ -1366,6 +1366,67 @@ The converter for Building objects when interacting with a PostgreSQL database\.
 The converter for administrative areal 2D data when interacting with a PostgreSQL database\.
 ### Methods
 
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken)'></a>
+
+## BuildingController\.GetItemByReferenceAsync\(string, Nullable\<int\>, Nullable\<double\>, Nullable\<double\>, Nullable\<double\>, Nullable\<double\>, CancellationToken\) Method
+
+Asynchronously retrieves the single most relevant building for the provided reference and an optional county identifier\.
+
+When the X, Y or Z coordinates are provided they are used to break ties between candidates resolved from the reference.
+
+When the reference cannot be resolved and a point is provided, a spatial fallback search limited in X and Y by the maximum distance is performed.
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> GetItemByReferenceAsync(string reference, System.Nullable<int> countyId, System.Nullable<double> x=null, System.Nullable<double> y=null, System.Nullable<double> z=null, System.Nullable<double> maxDistance=null, System.Threading.CancellationToken cancellationToken=default(System.Threading.CancellationToken));
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).reference'></a>
+
+`reference` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+The unique reference string used to identify the building\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).countyId'></a>
+
+`countyId` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Int32](https://learn.microsoft.com/en-us/dotnet/api/system.int32 'System\.Int32')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+An optional integer representing the county ID to filter the results\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).x'></a>
+
+`x` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Double](https://learn.microsoft.com/en-us/dotnet/api/system.double 'System\.Double')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+The optional X coordinate of the point used to break ties and to locate the building when the reference cannot be resolved\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).y'></a>
+
+`y` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Double](https://learn.microsoft.com/en-us/dotnet/api/system.double 'System\.Double')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+The optional Y coordinate of the point used to break ties and to locate the building when the reference cannot be resolved\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).z'></a>
+
+`z` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Double](https://learn.microsoft.com/en-us/dotnet/api/system.double 'System\.Double')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+The optional Z coordinate of the point used to break ties and to locate the building when the reference cannot be resolved\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).maxDistance'></a>
+
+`maxDistance` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Double](https://learn.microsoft.com/en-us/dotnet/api/system.double 'System\.Double')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+The optional distance used to inflate the point in X and Y into the bounding box of the spatial fallback search\. Defaults to 1\.0 when not provided or invalid\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken).cancellationToken'></a>
+
+`cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
+
+The [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken') to observe for cancellation requests\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\.
+
 <a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemsByReferenceAsync(string,System.Nullable_int_,System.Threading.CancellationToken)'></a>
 
 ## BuildingController\.GetItemsByReferenceAsync\(string, Nullable\<int\>, CancellationToken\) Method

@@ -1,3 +1,4 @@
+using DiGi.Geometry.Spatial.Classes;
 using DiGi.GIS.PostgreSQL;
 using DiGi.GIS.PostgreSQL.Classes;
 using Microsoft.AspNetCore.Http;
@@ -184,5 +185,80 @@ namespace DiGi.GIS.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(buildings) ?? string.Empty, "application/json");
         }
+
+        /// <summary>
+        /// Asynchronously retrieves the single most relevant building for the provided reference and an optional county identifier.
+        /// <para>When the X, Y or Z coordinates are provided they are used to break ties between candidates resolved from the reference.</para>
+        /// <para>When the reference cannot be resolved and a point is provided, a spatial fallback search limited in X and Y by the maximum distance is performed.</para>
+        /// </summary>
+        /// <param name="reference">The unique reference string used to identify the building.</param>
+        /// <param name="countyId">An optional integer representing the county ID to filter the results.</param>
+        /// <param name="x">The optional X coordinate of the point used to break ties and to locate the building when the reference cannot be resolved.</param>
+        /// <param name="y">The optional Y coordinate of the point used to break ties and to locate the building when the reference cannot be resolved.</param>
+        /// <param name="z">The optional Z coordinate of the point used to break ties and to locate the building when the reference cannot be resolved.</param>
+        /// <param name="maxDistance">The optional distance used to inflate the point in X and Y into the bounding box of the spatial fallback search. Defaults to 1.0 when not provided or invalid.</param>
+        /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to observe for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [HttpGet("itembyreference", Name = $"{nameof(BuildingController)}_{nameof(GetItemByReferenceAsync)}")]
+        [ProducesResponseType(typeof(CityGML.Classes.Building), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId, [FromQuery(Name = "x")] double? x = null, [FromQuery(Name = "y")] double? y = null, [FromQuery(Name = "z")] double? z = null, [FromQuery(Name = "maxdistance")] double? maxDistance = null, CancellationToken cancellationToken = default)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingController), nameof(GetItemByReferenceAsync));
+
+            Serilog.Modify.Log("Reference provided: {Reference}", reference ?? string.Empty);
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
+            Serilog.Modify.Log("Point provided: X {X}, Y {Y}, Z {Z}", x?.ToString() ?? string.Empty, y?.ToString() ?? string.Empty, z?.ToString() ?? string.Empty);
+            Serilog.Modify.Log("MaxDistance provided: {MaxDistance}", maxDistance?.ToString() ?? string.Empty);
+
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Reference cannot be null or empty");
+                return BadRequest();
+            }
+
+            if (buildingPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "BuildingPostgreSQLConverter is null");
+                return BadRequest();
+            }
+
+            if ((x is not null && double.IsNaN(x.Value)) || (y is not null && double.IsNaN(y.Value)) || (z is not null && double.IsNaN(z.Value)))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Point coordinates cannot be NaN");
+                return BadRequest();
+            }
+
+            double maxDistance_Temp = maxDistance ?? 1.0;
+            if (double.IsNaN(maxDistance_Temp) || maxDistance_Temp <= 0)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "MaxDistance is invalid. Default value will be used");
+                maxDistance_Temp = 1.0;
+            }
+
+            Point3D? point3D = null;
+            if (x is not null || y is not null || z is not null)
+            {
+                point3D = new(x ?? 0, y ?? 0, z ?? 0);
+            }
+
+            Building? building_PostgreSQL = await buildingPostgreSQLConverter.GetBuildingByReferenceAsync(reference, countyId, point3D, maxDistance_Temp, cancellationToken: cancellationToken);
+            if (building_PostgreSQL is null)
+            {
+                Serilog.Modify.Log("No Building found for provided reference");
+                return NoContent();
+            }
+
+            CityGML.Classes.Building? building = building_PostgreSQL.ToDiGi();
+            if (building is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building could not be converted from PostgreSQL");
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building) ?? string.Empty, "application/json");
+        }
+
     }
 }
