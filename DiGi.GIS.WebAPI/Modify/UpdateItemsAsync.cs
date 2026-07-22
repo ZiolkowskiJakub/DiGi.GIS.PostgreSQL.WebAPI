@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -419,7 +420,26 @@ namespace DiGi.GIS.WebAPI
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this HttpClient httpClient, string? requestUri, string? json, PostOptions? postOptions = null)
         {
-            if (httpClient is null || string.IsNullOrWhiteSpace(requestUri) || json is null)
+            if (json is null)
+            {
+                return false;
+            }
+
+            return await UpdateItemsAsync(httpClient, requestUri, Encoding.UTF8.GetBytes(json), postOptions);
+        }
+
+        /// <summary>
+        /// Asynchronously updates items by sending an already-serialized UTF-8 JSON payload to the specified request URI.
+        /// <para>Preferred over the string overload on bulk paths: the payload never has to be materialized as a UTF-16 string and re-encoded back to UTF-8.</para>
+        /// </summary>
+        /// <param name="httpClient">The <see cref="System.Net.Http.HttpClient"/> used to perform the network request.</param>
+        /// <param name="requestUri">The target URI where the update request is sent.</param>
+        /// <param name="utf8Json">The UTF-8 encoded JSON payload containing the data to be updated.</param>
+        /// <param name="postOptions">Optional <see cref="DiGi.WebAPI.Classes.PostOptions"/> used to configure the operation, such as specifying a delay.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<bool> UpdateItemsAsync(this HttpClient httpClient, string? requestUri, byte[]? utf8Json, PostOptions? postOptions = null)
+        {
+            if (httpClient is null || string.IsNullOrWhiteSpace(requestUri) || utf8Json is null)
             {
                 return false;
             }
@@ -430,7 +450,7 @@ namespace DiGi.GIS.WebAPI
 
             try
             {
-                HttpContent? httpContent = await Create.HttpContent(json, cancellationTokenSource.Token);
+                HttpContent? httpContent = await Create.HttpContent(utf8Json, cancellationTokenSource.Token);
                 if (httpContent is null)
                 {
                     Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Content could not be created.");
@@ -500,7 +520,26 @@ namespace DiGi.GIS.WebAPI
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<bool> UpdateItemsAsync(this GISWebAPIManager? GISWebAPIManager, IEnumerable<Building>? buildings, string? code = null, PostOptions? postOptions = null)
         {
-            if (GISWebAPIManager is null || buildings is null)
+            if (buildings is null)
+            {
+                return false;
+            }
+
+            return await UpdateItemsAsync(GISWebAPIManager, Core.Convert.ToSystem_Bytes(buildings), code, postOptions);
+        }
+
+        /// <summary>
+        /// Asynchronously updates building items from an already-serialized UTF-8 JSON payload via the PostgreSQL Web API.
+        /// <para>Used by <see cref="Classes.BuildingsPostTask"/>, where the batch was serialized once while being sized, so it must not be serialized again here.</para>
+        /// </summary>
+        /// <param name="GISWebAPIManager">The <see cref="GISWebAPIManager"/> instance used to perform the update operation.</param>
+        /// <param name="utf8Json">The UTF-8 encoded JSON array of <see cref="DiGi.CityGML.Classes.Building"/> items to be updated.</param>
+        /// <param name="code">An optional code used for the update operation.</param>
+        /// <param name="postOptions">Optional configuration options for the POST request.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<bool> UpdateItemsAsync(this GISWebAPIManager? GISWebAPIManager, byte[]? utf8Json, string? code = null, PostOptions? postOptions = null)
+        {
+            if (GISWebAPIManager is null || utf8Json is null)
             {
                 return false;
             }
@@ -514,7 +553,7 @@ namespace DiGi.GIS.WebAPI
             UrlBuilder urlBuilder = new(path);
             urlBuilder.AddParameter("code", code);
 
-            return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(buildings), postOptions);
+            return await UpdateItemsAsync(httpClient, urlBuilder, utf8Json, postOptions);
         }
     }
 }

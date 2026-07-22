@@ -3,6 +3,34 @@
 ## DiGi\.GIS\.WebAPI\.Constants Namespace
 ### Classes
 
+<a name='DiGi.GIS.WebAPI.Constants.Compression'></a>
+
+## Compression Class
+
+Provides the compression settings applied to request payloads sent to the GIS PostgreSQL Web API\.
+
+```csharp
+public static class Compression
+```
+
+Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system.object 'System\.Object') → Compression
+### Fields
+
+<a name='DiGi.GIS.WebAPI.Constants.Compression.Level'></a>
+
+## Compression\.Level Field
+
+The GZip compression level used for request payloads\.
+
+[System\.IO\.Compression\.CompressionLevel\.Fastest](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.compressionlevel.fastest 'System\.IO\.Compression\.CompressionLevel\.Fastest') rather than [System\.IO\.Compression\.CompressionLevel\.Optimal](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.compressionlevel.optimal 'System\.IO\.Compression\.CompressionLevel\.Optimal'): on the bulk import path the client is CPU bound, and compressing a multi-megabyte JSON batch at [System\.IO\.Compression\.CompressionLevel\.Optimal](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.compressionlevel.optimal 'System\.IO\.Compression\.CompressionLevel\.Optimal') costs several times more than it saves in transfer. Revisit if the link to the host becomes the bottleneck.
+
+```csharp
+public static readonly CompressionLevel Level;
+```
+
+#### Field Value
+[System\.IO\.Compression\.CompressionLevel](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.compressionlevel 'System\.IO\.Compression\.CompressionLevel')
+
 <a name='DiGi.GIS.WebAPI.Constants.FileName'></a>
 
 ## FileName Class

@@ -37,18 +37,20 @@ namespace DiGi.GIS.WebAPI.Classes
                 return false;
             }
 
-            List<Building>? buildings_Batch;
+            Utf8JsonBatch<Building>? utf8JsonBatch;
 
             bool result = true;
 
-            MemorySizeSplitter<Building> memorySizeSplitter = new(values);
-            while ((buildings_Batch = memorySizeSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
+            // Utf8JsonSplitter serializes each building exactly once and hands the bytes over, so the
+            // batch is not serialized a second time on the way into the request body.
+            Utf8JsonSplitter<Building> utf8JsonSplitter = new(values);
+            while ((utf8JsonBatch = utf8JsonSplitter.Next(SerializableObjectsPostOptions.BatchMemorySize)) is not null)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                longProgressWrapper?.Increment(buildings_Batch.Count);
+                longProgressWrapper?.Increment(utf8JsonBatch.SerializableObjects.Count);
 
-                result = await GISWebAPIManager.UpdateItemsAsync(buildings_Batch, code, SerializableObjectsPostOptions);
+                result = await GISWebAPIManager.UpdateItemsAsync(utf8JsonBatch.Utf8Json, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;

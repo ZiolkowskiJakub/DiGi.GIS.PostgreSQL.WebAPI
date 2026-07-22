@@ -1366,6 +1366,33 @@ The converter for Building objects when interacting with a PostgreSQL database\.
 The converter for administrative areal 2D data when interacting with a PostgreSQL database\.
 ### Methods
 
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByLatestCreatedAtAsync(System.Nullable_int_,System.Threading.CancellationToken)'></a>
+
+## BuildingController\.GetItemByLatestCreatedAtAsync\(Nullable\<int\>, CancellationToken\) Method
+
+Asynchronously retrieves the building with the latest created date for an optional county identifier\.
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> GetItemByLatestCreatedAtAsync(System.Nullable<int> countyId, System.Threading.CancellationToken cancellationToken=default(System.Threading.CancellationToken));
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByLatestCreatedAtAsync(System.Nullable_int_,System.Threading.CancellationToken).countyId'></a>
+
+`countyId` [System\.Nullable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')[System\.Int32](https://learn.microsoft.com/en-us/dotnet/api/system.int32 'System\.Int32')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.nullable-1 'System\.Nullable\`1')
+
+An optional integer representing the county ID to filter the results\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByLatestCreatedAtAsync(System.Nullable_int_,System.Threading.CancellationToken).cancellationToken'></a>
+
+`cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
+
+The [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken') to observe for cancellation requests\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\.
+
 <a name='DiGi.GIS.WebAPI.Classes.BuildingController.GetItemByReferenceAsync(string,System.Nullable_int_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Threading.CancellationToken)'></a>
 
 ## BuildingController\.GetItemByReferenceAsync\(string, Nullable\<int\>, Nullable\<double\>, Nullable\<double\>, Nullable\<double\>, Nullable\<double\>, CancellationToken\) Method

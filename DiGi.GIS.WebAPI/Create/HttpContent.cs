@@ -72,6 +72,18 @@ namespace DiGi.GIS.WebAPI
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<HttpContent?> HttpContent(this byte[] bytes, CancellationToken cancellationToken)
         {
+            return await HttpContent(bytes, Constants.Compression.Level, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously creates GZip-compressed HttpContent from the provided byte array using the specified compression level.
+        /// </summary>
+        /// <param name="bytes">The raw byte array to be compressed.</param>
+        /// <param name="compressionLevel">The compression level applied to the payload.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<HttpContent?> HttpContent(this byte[] bytes, CompressionLevel compressionLevel, CancellationToken cancellationToken)
+        {
             if (bytes == null || bytes.Length == 0)
             {
                 return null;
@@ -82,7 +94,7 @@ namespace DiGi.GIS.WebAPI
 
             try
             {
-                using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal, leaveOpen: true))
+                using (GZipStream gzipStream = new(memoryStream, compressionLevel, leaveOpen: true))
                 {
                     // If cancellationToken is already cancelled, this throws OperationCanceledException
                     await gzipStream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);

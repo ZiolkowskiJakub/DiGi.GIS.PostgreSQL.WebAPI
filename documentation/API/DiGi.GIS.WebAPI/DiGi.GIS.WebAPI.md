@@ -63,6 +63,39 @@ The manager used to create the HTTP client instance\.
 [System\.Net\.Http\.HttpClient](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient 'System\.Net\.Http\.HttpClient')  
 A task that represents the asynchronous operation\.
 
+<a name='DiGi.GIS.WebAPI.Create.HttpContent(thisbyte[],System.IO.Compression.CompressionLevel,System.Threading.CancellationToken)'></a>
+
+## Create\.HttpContent\(this byte\[\], CompressionLevel, CancellationToken\) Method
+
+Asynchronously creates GZip\-compressed HttpContent from the provided byte array using the specified compression level\.
+
+```csharp
+public static System.Threading.Tasks.Task<System.Net.Http.HttpContent?> HttpContent(this byte[] bytes, System.IO.Compression.CompressionLevel compressionLevel, System.Threading.CancellationToken cancellationToken);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Create.HttpContent(thisbyte[],System.IO.Compression.CompressionLevel,System.Threading.CancellationToken).bytes'></a>
+
+`bytes` [System\.Byte](https://learn.microsoft.com/en-us/dotnet/api/system.byte 'System\.Byte')[\[\]](https://learn.microsoft.com/en-us/dotnet/api/system.array 'System\.Array')
+
+The raw byte array to be compressed\.
+
+<a name='DiGi.GIS.WebAPI.Create.HttpContent(thisbyte[],System.IO.Compression.CompressionLevel,System.Threading.CancellationToken).compressionLevel'></a>
+
+`compressionLevel` [System\.IO\.Compression\.CompressionLevel](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.compressionlevel 'System\.IO\.Compression\.CompressionLevel')
+
+The compression level applied to the payload\.
+
+<a name='DiGi.GIS.WebAPI.Create.HttpContent(thisbyte[],System.IO.Compression.CompressionLevel,System.Threading.CancellationToken).cancellationToken'></a>
+
+`cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
+
+A token to monitor for cancellation requests\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[System\.Net\.Http\.HttpContent](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpcontent 'System\.Net\.Http\.HttpContent')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\.
+
 <a name='DiGi.GIS.WebAPI.Create.HttpContent(thisbyte[],System.Threading.CancellationToken)'></a>
 
 ## Create\.HttpContent\(this byte\[\], CancellationToken\) Method
@@ -224,6 +257,47 @@ The [Microsoft\.Extensions\.DependencyInjection\.IServiceCollection](https://lea
 #### Returns
 [System\.Threading\.Tasks\.Task](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task 'System\.Threading\.Tasks\.Task')  
 A [System\.Threading\.Tasks\.Task](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task 'System\.Threading\.Tasks\.Task') representing the asynchronous operation\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisDiGi.GIS.WebAPI.Classes.GISWebAPIManager,byte[],string,DiGi.WebAPI.Classes.PostOptions)'></a>
+
+## Modify\.UpdateItemsAsync\(this GISWebAPIManager, byte\[\], string, PostOptions\) Method
+
+Asynchronously updates building items from an already\-serialized UTF\-8 JSON payload via the PostgreSQL Web API\.
+
+Used by [BuildingsPostTask](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.BuildingsPostTask 'DiGi\.GIS\.WebAPI\.Classes\.BuildingsPostTask'), where the batch was serialized once while being sized, so it must not be serialized again here.
+
+```csharp
+public static System.Threading.Tasks.Task<bool> UpdateItemsAsync(this DiGi.GIS.WebAPI.Classes.GISWebAPIManager? GISWebAPIManager, byte[]? utf8Json, string? code=null, DiGi.WebAPI.Classes.PostOptions? postOptions=null);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisDiGi.GIS.WebAPI.Classes.GISWebAPIManager,byte[],string,DiGi.WebAPI.Classes.PostOptions).GISWebAPIManager'></a>
+
+`GISWebAPIManager` [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager')
+
+The [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager') instance used to perform the update operation\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisDiGi.GIS.WebAPI.Classes.GISWebAPIManager,byte[],string,DiGi.WebAPI.Classes.PostOptions).utf8Json'></a>
+
+`utf8Json` [System\.Byte](https://learn.microsoft.com/en-us/dotnet/api/system.byte 'System\.Byte')[\[\]](https://learn.microsoft.com/en-us/dotnet/api/system.array 'System\.Array')
+
+The UTF\-8 encoded JSON array of [DiGi\.CityGML\.Classes\.Building](https://learn.microsoft.com/en-us/dotnet/api/digi.citygml.classes.building 'DiGi\.CityGML\.Classes\.Building') items to be updated\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisDiGi.GIS.WebAPI.Classes.GISWebAPIManager,byte[],string,DiGi.WebAPI.Classes.PostOptions).code'></a>
+
+`code` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+An optional code used for the update operation\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisDiGi.GIS.WebAPI.Classes.GISWebAPIManager,byte[],string,DiGi.WebAPI.Classes.PostOptions).postOptions'></a>
+
+`postOptions` [DiGi\.WebAPI\.Classes\.PostOptions](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.postoptions 'DiGi\.WebAPI\.Classes\.PostOptions')
+
+Optional configuration options for the POST request\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[System\.Boolean](https://learn.microsoft.com/en-us/dotnet/api/system.boolean 'System\.Boolean')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\.
 
 <a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisDiGi.GIS.WebAPI.Classes.GISWebAPIManager,DiGi.GIS.Classes.AdministrativeAreal2D,DiGi.WebAPI.Classes.PostOptions)'></a>
 
@@ -721,6 +795,47 @@ An optional code identifier for the update request\.
 `postOptions` [DiGi\.WebAPI\.Classes\.PostOptions](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.postoptions 'DiGi\.WebAPI\.Classes\.PostOptions')
 
 Optional configuration options for the POST request\.
+
+#### Returns
+[System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[System\.Boolean](https://learn.microsoft.com/en-us/dotnet/api/system.boolean 'System\.Boolean')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
+A task that represents the asynchronous operation\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisSystem.Net.Http.HttpClient,string,byte[],DiGi.WebAPI.Classes.PostOptions)'></a>
+
+## Modify\.UpdateItemsAsync\(this HttpClient, string, byte\[\], PostOptions\) Method
+
+Asynchronously updates items by sending an already\-serialized UTF\-8 JSON payload to the specified request URI\.
+
+Preferred over the string overload on bulk paths: the payload never has to be materialized as a UTF-16 string and re-encoded back to UTF-8.
+
+```csharp
+public static System.Threading.Tasks.Task<bool> UpdateItemsAsync(this System.Net.Http.HttpClient httpClient, string? requestUri, byte[]? utf8Json, DiGi.WebAPI.Classes.PostOptions? postOptions=null);
+```
+#### Parameters
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisSystem.Net.Http.HttpClient,string,byte[],DiGi.WebAPI.Classes.PostOptions).httpClient'></a>
+
+`httpClient` [System\.Net\.Http\.HttpClient](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient 'System\.Net\.Http\.HttpClient')
+
+The [System\.Net\.Http\.HttpClient](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient 'System\.Net\.Http\.HttpClient') used to perform the network request\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisSystem.Net.Http.HttpClient,string,byte[],DiGi.WebAPI.Classes.PostOptions).requestUri'></a>
+
+`requestUri` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+The target URI where the update request is sent\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisSystem.Net.Http.HttpClient,string,byte[],DiGi.WebAPI.Classes.PostOptions).utf8Json'></a>
+
+`utf8Json` [System\.Byte](https://learn.microsoft.com/en-us/dotnet/api/system.byte 'System\.Byte')[\[\]](https://learn.microsoft.com/en-us/dotnet/api/system.array 'System\.Array')
+
+The UTF\-8 encoded JSON payload containing the data to be updated\.
+
+<a name='DiGi.GIS.WebAPI.Modify.UpdateItemsAsync(thisSystem.Net.Http.HttpClient,string,byte[],DiGi.WebAPI.Classes.PostOptions).postOptions'></a>
+
+`postOptions` [DiGi\.WebAPI\.Classes\.PostOptions](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.postoptions 'DiGi\.WebAPI\.Classes\.PostOptions')
+
+Optional [DiGi\.WebAPI\.Classes\.PostOptions](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.postoptions 'DiGi\.WebAPI\.Classes\.PostOptions') used to configure the operation, such as specifying a delay\.
 
 #### Returns
 [System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[System\.Boolean](https://learn.microsoft.com/en-us/dotnet/api/system.boolean 'System\.Boolean')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  

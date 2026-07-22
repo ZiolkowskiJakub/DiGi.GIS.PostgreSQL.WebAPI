@@ -342,5 +342,44 @@ namespace DiGi.GIS.WebAPI.Classes
 
             return Content(Core.Convert.ToSystem_String(buildings) ?? string.Empty, "application/json");
         }
+
+
+        /// <summary>
+        /// Asynchronously retrieves the building with the latest created date for an optional county identifier.
+        /// </summary>
+        /// <param name="countyId">An optional integer representing the county ID to filter the results.</param>
+        /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to observe for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [HttpGet("itembylatestcreatedat", Name = $"{nameof(BuildingController)}_{nameof(GetItemByLatestCreatedAtAsync)}")]
+        [ProducesResponseType(typeof(CityGML.Classes.Building), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetItemByLatestCreatedAtAsync([FromQuery(Name = "countyid")] int? countyId, CancellationToken cancellationToken = default)
+        {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingController), nameof(GetItemByLatestCreatedAtAsync));
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
+
+            if (buildingPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "BuildingPostgreSQLConverter is null");
+                return BadRequest();
+            }
+
+            Building? building_PostgreSQL = await buildingPostgreSQLConverter.GetBuildingByLatestCreatedAtAsync(countyId, cancellationToken);
+            if (building_PostgreSQL is null)
+            {
+                Serilog.Modify.Log("No Building found for latest created at");
+                return NoContent();
+            }
+
+            CityGML.Classes.Building? building = building_PostgreSQL.ToDiGi();
+            if (building is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building could not be converted from PostgreSQL");
+                return NoContent();
+            }
+
+            return Content(Core.Convert.ToSystem_String(building) ?? string.Empty, "application/json");
+        }
     }
 }
