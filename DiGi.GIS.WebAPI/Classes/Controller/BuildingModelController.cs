@@ -1,7 +1,6 @@
 using DiGi.Analytical.Building.Classes;
 using DiGi.Geometry.Planar.Classes;
 using DiGi.GIS.Analytical.Enums;
-using DiGi.PostgreSQL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -99,7 +98,7 @@ namespace DiGi.GIS.WebAPI.Classes
                 }
 
                 Core.Interfaces.IReference? reference = PostgreSQL.Create.Reference(buildingModel, null, building2D_PostgreSQL?.CountyId);
-                if(reference is not null)
+                if (reference is not null)
                 {
                     buildingModel.SetValue(BuildingModelParameter.Reference, reference.ToString(), new Core.Parameter.Classes.SetValueSettings(true, false));
                 }

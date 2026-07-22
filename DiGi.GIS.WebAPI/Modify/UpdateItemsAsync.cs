@@ -467,7 +467,6 @@ namespace DiGi.GIS.WebAPI
             }
         }
 
-
         /// <summary>
         /// Asynchronously updates multiple building models via the PostgreSQL Web API.
         /// </summary>
