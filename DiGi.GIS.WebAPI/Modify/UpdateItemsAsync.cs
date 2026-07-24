@@ -446,38 +446,21 @@ namespace DiGi.GIS.WebAPI
 
             postOptions ??= new PostOptions();
 
-            using CancellationTokenSource cancellationTokenSource = new(postOptions.Delay);
-
             try
             {
-                HttpContent? httpContent = await Create.HttpContent(utf8Json, cancellationTokenSource.Token);
-                if (httpContent is null)
-                {
-                    Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Content could not be created.");
-                    return false;
-                }
+                Serilog.Modify.Log("Executing request started");
 
-                using (httpContent)
-                {
-                    Serilog.Modify.Log("Executing request started");
+                // Passed as a factory, not an instance: sending consumes and disposes the content, so a
+                // retry has to gzip the payload again rather than resend an already-drained stream.
+                PostResponse postResponse = await DiGi.WebAPI.Modify.PostAsync(httpClient, requestUri, async () => await Create.HttpContent(utf8Json, CancellationToken.None), postOptions);
 
-                    PostResponse postResponse = await DiGi.WebAPI.Modify.PostAsync(httpClient, requestUri, httpContent, postOptions);
+                Serilog.Modify.Log("Executing request ended. Response result {result}", postResponse.Succeeded);
 
-                    Serilog.Modify.Log("Executing request ended. Response result {result}", postResponse.Succeeded);
-
-                    return postResponse.Succeeded;
-                }
+                return postResponse.Succeeded;
             }
             catch (OperationCanceledException operationCanceledException)
             {
-                if (cancellationTokenSource.IsCancellationRequested)
-                {
-                    Serilog.Modify.Log(operationCanceledException, string.Format("Timeout: Manual {0}s limit reached.", postOptions.Delay.TotalSeconds));
-                }
-                else
-                {
-                    Serilog.Modify.Log(operationCanceledException, "Request cancelled by HttpClient (potential internal timeout or connection reset)");
-                }
+                Serilog.Modify.Log(operationCanceledException, string.Format("Timeout: {0}s limit reached, or the request was cancelled.", postOptions.Delay.TotalSeconds));
                 throw;
             }
             catch (Exception exception)

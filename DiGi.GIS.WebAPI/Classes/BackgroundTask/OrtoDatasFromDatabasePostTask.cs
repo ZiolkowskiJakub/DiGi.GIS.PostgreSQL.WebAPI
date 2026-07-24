@@ -1,4 +1,4 @@
-using DiGi.Core.Classes;
+﻿using DiGi.Core.Classes;
 using DiGi.GIS.Classes;
 using DiGi.GIS.PostgreSQL.Classes;
 using DiGi.WebAPI.Classes;
@@ -50,7 +50,7 @@ namespace DiGi.GIS.WebAPI.Classes
 
             PostOptions postOptions = new() { RequestResult = true };
 
-            PostResponse<List<Building2DReference>?> postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
+            PostResponse<List<Building2DReference>?> postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, (HttpContent?)null, postOptions);
             if (postResponse_Building2DReferences is null || !postResponse_Building2DReferences.Succeeded)
             {
                 return false;
@@ -133,7 +133,7 @@ namespace DiGi.GIS.WebAPI.Classes
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, null, postOptions);
+                postResponse_Building2DReferences = await DiGi.WebAPI.Modify.PostAsync<List<Building2DReference>>(httpClient_OrtoDatas, requestUri_OrtoDatas, (HttpContent?)null, postOptions);
             }
 
             return true;

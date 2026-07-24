@@ -4068,6 +4068,8 @@ The [System\.Text\.Json\.Nodes\.JsonObject](https://learn.microsoft.com/en-us/do
 
 Gets or sets the memory size threshold in bytes used for processing batches of serializable objects\.
 
+This bounds the uncompressed JSON of one request. The receiving controller materializes a batch several times over - request DOM, domain objects with full geometry, database rows each re-serialized to JSONB, then one batch command per row - so the server's peak allocation is a large multiple of this value. Kept small deliberately; raising it trades server memory for fewer requests.
+
 ```csharp
 public int BatchMemorySize { get; set; }
 ```
