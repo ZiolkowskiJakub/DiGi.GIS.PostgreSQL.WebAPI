@@ -2285,34 +2285,40 @@ public class BuildingModelController : DiGi.WebAPI.Classes.WebAPIController
 Inheritance [System\.Object](https://learn.microsoft.com/en-us/dotnet/api/system.object 'System\.Object') → [Microsoft\.AspNetCore\.Mvc\.ControllerBase](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase 'Microsoft\.AspNetCore\.Mvc\.ControllerBase') → [DiGi\.WebAPI\.Classes\.WebAPIController](https://learn.microsoft.com/en-us/dotnet/api/digi.webapi.classes.webapicontroller 'DiGi\.WebAPI\.Classes\.WebAPIController') → BuildingModelController
 ### Constructors
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter)'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter)'></a>
 
-## BuildingModelController\(GISWebAPIConfigurationFileWatcher, BuildingModelPostgreSQLConverter, Building2DPostgreSQLConverter\) Constructor
+## BuildingModelController\(GISWebAPIConfigurationFileWatcher, BuildingModelPostgreSQLConverter, Building2DPostgreSQLConverter, AdministrativeAreal2DPostgreSQLConverter\) Constructor
 
 Initializes a new instance of the [BuildingModelController](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.BuildingModelController 'DiGi\.GIS\.WebAPI\.Classes\.BuildingModelController') class\.
 
 ```csharp
-public BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher, DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter buildingModelPostgreSQLConverter, DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter);
+public BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher, DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter buildingModelPostgreSQLConverter, DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter, DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter);
 ```
 #### Parameters
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter).GISWebAPIConfigurationFileWatcher'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).GISWebAPIConfigurationFileWatcher'></a>
 
 `GISWebAPIConfigurationFileWatcher` [GISWebAPIConfigurationFileWatcher](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIConfigurationFileWatcher')
 
 The configuration file watcher for the GIS PostgreSQL Web API\.
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter).buildingModelPostgreSQLConverter'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).buildingModelPostgreSQLConverter'></a>
 
 `buildingModelPostgreSQLConverter` [DiGi\.GIS\.PostgreSQL\.Classes\.BuildingModelPostgreSQLConverter](https://learn.microsoft.com/en-us/dotnet/api/digi.gis.postgresql.classes.buildingmodelpostgresqlconverter 'DiGi\.GIS\.PostgreSQL\.Classes\.BuildingModelPostgreSQLConverter')
 
 The converter used for building model data operations in PostgreSQL\.
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter).building2DPostgreSQLConverter'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).building2DPostgreSQLConverter'></a>
 
 `building2DPostgreSQLConverter` [DiGi\.GIS\.PostgreSQL\.Classes\.Building2DPostgreSQLConverter](https://learn.microsoft.com/en-us/dotnet/api/digi.gis.postgresql.classes.building2dpostgresqlconverter 'DiGi\.GIS\.PostgreSQL\.Classes\.Building2DPostgreSQLConverter')
 
 The converter used for Building 2D data operations in PostgreSQL\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.BuildingModelController(DiGi.GIS.WebAPI.Classes.GISWebAPIConfigurationFileWatcher,DiGi.GIS.PostgreSQL.Classes.BuildingModelPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.Building2DPostgreSQLConverter,DiGi.GIS.PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter).administrativeAreal2DPostgreSQLConverter'></a>
+
+`administrativeAreal2DPostgreSQLConverter` [DiGi\.GIS\.PostgreSQL\.Classes\.AdministrativeAreal2DPostgreSQLConverter](https://learn.microsoft.com/en-us/dotnet/api/digi.gis.postgresql.classes.administrativeareal2dpostgresqlconverter 'DiGi\.GIS\.PostgreSQL\.Classes\.AdministrativeAreal2DPostgreSQLConverter')
+
+The converter used to resolve an administrative area code to its county identifier\.
 ### Methods
 
 <a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.GetItemsByCircleAsync(double,double,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_,System.Nullable_double_)'></a>
@@ -2405,22 +2411,28 @@ A cancellation token that can be used by the caller to cancel the asynchronous o
 [System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
 A task that represents the asynchronous operation\.
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray)'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray,string)'></a>
 
-## BuildingModelController\.UpdateItemsAsync\(JsonArray\) Method
+## BuildingModelController\.UpdateItemsAsync\(JsonArray, string\) Method
 
 Updates multiple building model items in the database\.
 
 ```csharp
-public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> UpdateItemsAsync(System.Text.Json.Nodes.JsonArray? jsonArray);
+public System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> UpdateItemsAsync(System.Text.Json.Nodes.JsonArray? jsonArray, string? code);
 ```
 #### Parameters
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray).jsonArray'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray,string).jsonArray'></a>
 
 `jsonArray` [System\.Text\.Json\.Nodes\.JsonArray](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.nodes.jsonarray 'System\.Text\.Json\.Nodes\.JsonArray')
 
 The JSON array containing the building models to be updated\. This value can be null\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelController.UpdateItemsAsync(System.Text.Json.Nodes.JsonArray,string).code'></a>
+
+`code` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+The administrative area code the building models belong to, resolved server\-side to a county identifier\.
 
 #### Returns
 [System\.Threading\.Tasks\.Task&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')[Microsoft\.AspNetCore\.Mvc\.IActionResult](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult 'Microsoft\.AspNetCore\.Mvc\.IActionResult')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1 'System\.Threading\.Tasks\.Task\`1')  
@@ -2455,32 +2467,52 @@ public BuildingModelsPostTask(DiGi.GIS.WebAPI.Classes.GISWebAPIManager GISWebAPI
 `GISWebAPIManager` [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager')
 
 The [GISWebAPIManager](DiGi.GIS.WebAPI.Classes.md#DiGi.GIS.WebAPI.Classes.GISWebAPIManager 'DiGi\.GIS\.WebAPI\.Classes\.GISWebAPIManager') instance used to communicate with the server\.
+### Properties
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.Code'></a>
+
+## BuildingModelsPostTask\.Code Property
+
+Gets or sets the administrative area code the building models belong to\. It is resolved server\-side to a county identifier\.
+
+```csharp
+public string? Code { get; set; }
+```
+
+#### Property Value
+[System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
 ### Methods
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken)'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken)'></a>
 
-## BuildingModelsPostTask\.ExecuteAsync\(IEnumerable\<BuildingModel\>, LongProgressWrapper, CancellationToken\) Method
+## BuildingModelsPostTask\.ExecuteAsync\(IEnumerable\<BuildingModel\>, string, LongProgressWrapper, CancellationToken\) Method
 
 Asynchronously executes the task of posting building models to the database in memory\-size\-split batches\.
 
 ```csharp
-protected System.Threading.Tasks.Task<bool> ExecuteAsync(System.Collections.Generic.IEnumerable<DiGi.Analytical.Building.Classes.BuildingModel>? buildingModels, DiGi.Core.Classes.LongProgressWrapper? longProgressWrapper, System.Threading.CancellationToken cancellationToken=default(System.Threading.CancellationToken));
+protected System.Threading.Tasks.Task<bool> ExecuteAsync(System.Collections.Generic.IEnumerable<DiGi.Analytical.Building.Classes.BuildingModel>? buildingModels, string? code, DiGi.Core.Classes.LongProgressWrapper? longProgressWrapper, System.Threading.CancellationToken cancellationToken=default(System.Threading.CancellationToken));
 ```
 #### Parameters
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).buildingModels'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).buildingModels'></a>
 
 `buildingModels` [System\.Collections\.Generic\.IEnumerable&lt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1 'System\.Collections\.Generic\.IEnumerable\`1')[DiGi\.Analytical\.Building\.Classes\.BuildingModel](https://learn.microsoft.com/en-us/dotnet/api/digi.analytical.building.classes.buildingmodel 'DiGi\.Analytical\.Building\.Classes\.BuildingModel')[&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1 'System\.Collections\.Generic\.IEnumerable\`1')
 
 The collection of [DiGi\.Analytical\.Building\.Classes\.BuildingModel](https://learn.microsoft.com/en-us/dotnet/api/digi.analytical.building.classes.buildingmodel 'DiGi\.Analytical\.Building\.Classes\.BuildingModel') instances to post\.
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).longProgressWrapper'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).code'></a>
+
+`code` [System\.String](https://learn.microsoft.com/en-us/dotnet/api/system.string 'System\.String')
+
+The administrative area code the building models belong to\.
+
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).longProgressWrapper'></a>
 
 `longProgressWrapper` [DiGi\.Core\.Classes\.LongProgressWrapper](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.longprogresswrapper 'DiGi\.Core\.Classes\.LongProgressWrapper')
 
 A [DiGi\.Core\.Classes\.LongProgressWrapper](https://learn.microsoft.com/en-us/dotnet/api/digi.core.classes.longprogresswrapper 'DiGi\.Core\.Classes\.LongProgressWrapper') tracking the progress of the operation\.
 
-<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).cancellationToken'></a>
+<a name='DiGi.GIS.WebAPI.Classes.BuildingModelsPostTask.ExecuteAsync(System.Collections.Generic.IEnumerable_DiGi.Analytical.Building.Classes.BuildingModel_,string,DiGi.Core.Classes.LongProgressWrapper,System.Threading.CancellationToken).cancellationToken'></a>
 
 `cancellationToken` [System\.Threading\.CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken 'System\.Threading\.CancellationToken')
 

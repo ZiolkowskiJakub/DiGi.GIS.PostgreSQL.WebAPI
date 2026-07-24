@@ -475,9 +475,10 @@ namespace DiGi.GIS.WebAPI
         /// </summary>
         /// <param name="GISWebAPIManager">The <see cref="GISWebAPIManager"/> instance used to perform the update operation.</param>
         /// <param name="buildingModels">A collection of <see cref="DiGi.Analytical.Building.Classes.BuildingModel"/> items to be updated.</param>
+        /// <param name="code">The administrative area code the building models belong to, resolved server-side to a county identifier.</param>
         /// <param name="postOptions">Optional configuration options for the POST request.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static async Task<bool> UpdateItemsAsync(this GISWebAPIManager? GISWebAPIManager, IEnumerable<BuildingModel>? buildingModels, PostOptions? postOptions = null)
+        public static async Task<bool> UpdateItemsAsync(this GISWebAPIManager? GISWebAPIManager, IEnumerable<BuildingModel>? buildingModels, string? code = null, PostOptions? postOptions = null)
         {
             if (GISWebAPIManager is null || buildingModels is null)
             {
@@ -490,7 +491,10 @@ namespace DiGi.GIS.WebAPI
                 return false;
             }
 
-            return await UpdateItemsAsync(httpClient, path, Core.Convert.ToSystem_String(buildingModels), postOptions);
+            UrlBuilder urlBuilder = new(path);
+            urlBuilder.AddParameter("code", code);
+
+            return await UpdateItemsAsync(httpClient, urlBuilder, Core.Convert.ToSystem_String(buildingModels), postOptions);
         }
 
         /// <summary>

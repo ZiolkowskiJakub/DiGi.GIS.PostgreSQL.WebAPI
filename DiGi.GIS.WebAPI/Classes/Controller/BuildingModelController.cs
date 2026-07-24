@@ -19,6 +19,7 @@ namespace DiGi.GIS.WebAPI.Classes
     [Route("gis/[controller]")]
     public class BuildingModelController : DiGi.WebAPI.Classes.WebAPIController
     {
+        private readonly PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter;
         private readonly PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter; //TODO: Remove building2DPostgreSQLConverter and GetItemsByCircleAsync from this controller. The workflow shall use Building2DController Buu
         private readonly PostgreSQL.Classes.BuildingModelPostgreSQLConverter buildingModelPostgreSQLConverter;
         private readonly GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher;
@@ -27,11 +28,13 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <param name="GISWebAPIConfigurationFileWatcher">The configuration file watcher for the GIS PostgreSQL Web API.</param>
         /// <param name="buildingModelPostgreSQLConverter">The converter used for building model data operations in PostgreSQL.</param>
         /// <param name="building2DPostgreSQLConverter">The converter used for Building 2D data operations in PostgreSQL.</param>
-        public BuildingModelController(GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher, PostgreSQL.Classes.BuildingModelPostgreSQLConverter buildingModelPostgreSQLConverter, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter)
+        /// <param name="administrativeAreal2DPostgreSQLConverter">The converter used to resolve an administrative area code to its county identifier.</param>
+        public BuildingModelController(GISWebAPIConfigurationFileWatcher GISWebAPIConfigurationFileWatcher, PostgreSQL.Classes.BuildingModelPostgreSQLConverter buildingModelPostgreSQLConverter, PostgreSQL.Classes.Building2DPostgreSQLConverter building2DPostgreSQLConverter, PostgreSQL.Classes.AdministrativeAreal2DPostgreSQLConverter administrativeAreal2DPostgreSQLConverter)
         {
             this.GISWebAPIConfigurationFileWatcher = GISWebAPIConfigurationFileWatcher;
             this.building2DPostgreSQLConverter = building2DPostgreSQLConverter;
             this.buildingModelPostgreSQLConverter = buildingModelPostgreSQLConverter;
+            this.administrativeAreal2DPostgreSQLConverter = administrativeAreal2DPostgreSQLConverter;
         }
 
         /// <summary> Retrieves building models within a specified circle. </summary>
@@ -181,15 +184,17 @@ namespace DiGi.GIS.WebAPI.Classes
 
         /// <summary> Updates multiple building model items in the database. </summary>
         /// <param name="jsonArray">The JSON array containing the building models to be updated. This value can be null.</param>
+        /// <param name="code">The administrative area code the building models belong to, resolved server-side to a county identifier.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpPost("updateitems", Name = $"{nameof(BuildingModelController)}_{nameof(UpdateItemsAsync)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray)
+        public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray, [FromQuery(Name = "code")] string? code)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingModelController), nameof(UpdateItemsAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
 
             if (!GISWebAPIConfigurationFileWatcher.AllowUpdateBuildingModel)
             {
@@ -197,10 +202,29 @@ namespace DiGi.GIS.WebAPI.Classes
                 return Unauthorized();
             }
 
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Code cannot be null or empty");
+                return BadRequest();
+            }
+
+            if (administrativeAreal2DPostgreSQLConverter is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "AdministrativeAreal2DPostgreSQLConverter is null");
+                return BadRequest();
+            }
+
             if (jsonArray is null || jsonArray.Count == 0)
             {
                 Serilog.Modify.Log("No BuildingModels to update");
                 return NoContent();
+            }
+
+            int? countyId = await administrativeAreal2DPostgreSQLConverter.GetIdByCodeAsync(code, PostgreSQL.Enums.AdministrativeArealType.County);
+            if (countyId is null)
+            {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "County code '{Code}' was not found in database", code);
+                return BadRequest();
             }
 
             List<BuildingModel>? buildingModels = Core.Create.SerializableObjects<BuildingModel>(jsonArray);
@@ -215,7 +239,7 @@ namespace DiGi.GIS.WebAPI.Classes
             List<PostgreSQL.Classes.BuildingModel> buildingModels_PostgreSQL = [];
             foreach (BuildingModel buildingModel in buildingModels)
             {
-                PostgreSQL.Classes.BuildingModel? buildingModel_PostgreSQL = PostgreSQL.Convert.ToPostgreSQL(buildingModel);
+                PostgreSQL.Classes.BuildingModel? buildingModel_PostgreSQL = PostgreSQL.Convert.ToPostgreSQL(buildingModel, countyId);
                 if (buildingModel_PostgreSQL is null)
                 {
                     continue;

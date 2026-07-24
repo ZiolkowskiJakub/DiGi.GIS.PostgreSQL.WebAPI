@@ -22,13 +22,19 @@ namespace DiGi.GIS.WebAPI.Classes
         }
 
         /// <summary>
+        /// Gets or sets the administrative area code the building models belong to. It is resolved server-side to a county identifier.
+        /// </summary>
+        public string? Code { get; set; }
+
+        /// <summary>
         /// Asynchronously executes the task of posting building models to the database in memory-size-split batches.
         /// </summary>
         /// <param name="buildingModels">The collection of <see cref="DiGi.Analytical.Building.Classes.BuildingModel"/> instances to post.</param>
+        /// <param name="code">The administrative area code the building models belong to.</param>
         /// <param name="longProgressWrapper">A <see cref="LongProgressWrapper"/> tracking the progress of the operation.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> to observe for cancellation requests.</param>
         /// <returns>A task that represents the asynchronous operation. The task result is true if all batches were posted successfully; otherwise, false.</returns>
-        protected async Task<bool> ExecuteAsync(IEnumerable<DiGi.Analytical.Building.Classes.BuildingModel>? buildingModels, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken = default)
+        protected async Task<bool> ExecuteAsync(IEnumerable<DiGi.Analytical.Building.Classes.BuildingModel>? buildingModels, string? code, LongProgressWrapper? longProgressWrapper, CancellationToken cancellationToken = default)
         {
             if (buildingModels is null || !buildingModels.Any())
             {
@@ -46,7 +52,7 @@ namespace DiGi.GIS.WebAPI.Classes
 
                 longProgressWrapper?.Increment(buildingModels_Batch.Count);
 
-                result = await GISWebAPIManager.UpdateItemsAsync(buildingModels_Batch, SerializableObjectsPostOptions);
+                result = await GISWebAPIManager.UpdateItemsAsync(buildingModels_Batch, code, SerializableObjectsPostOptions);
                 if (!result)
                 {
                     break;
@@ -59,7 +65,7 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <inheritdoc />
         protected override async Task<bool> ExecuteAsync(IProgress<long> progress, CancellationToken cancellationToken)
         {
-            return await ExecuteAsync(Values, Core.Create.LongProgressWrapper(progress), cancellationToken);
+            return await ExecuteAsync(Values, Code, Core.Create.LongProgressWrapper(progress), cancellationToken);
         }
     }
 }
