@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
 
@@ -42,6 +43,7 @@ namespace DiGi.GIS.WebAPI.Classes
         /// Gets or sets the maximum count of rows per page. Defaults to 250.
         /// </summary>
         /// <example>100</example>
+        [DefaultValue(250)]
         public int PageSize { get; set; } = 250;
 
         /// <summary>

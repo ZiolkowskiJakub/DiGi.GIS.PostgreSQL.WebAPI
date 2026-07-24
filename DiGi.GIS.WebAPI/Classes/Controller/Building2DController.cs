@@ -211,6 +211,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemByPointAsync));
             if (double.IsNaN(x) || double.IsNaN(y))
             {
                 return BadRequest();
@@ -280,6 +281,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByBoundingBoxAsync));
             if (double.IsNaN(x_1) || double.IsNaN(y_1) || double.IsNaN(x_2) || double.IsNaN(y_2))
             {
                 return BadRequest();
@@ -429,6 +431,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(GetItemsByCircleAsync));
             if (double.IsNaN(x) || double.IsNaN(y))
             {
                 return BadRequest();
@@ -573,8 +576,12 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject, [FromQuery(Name = "code")] string? code)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(Building2DController), nameof(UpdateItemAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
+
             if (!GISWebAPIConfigurationFileWatcher.AllowUpdateBuilding2D)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "Building2D update not allowed");
                 return Unauthorized();
             }
 

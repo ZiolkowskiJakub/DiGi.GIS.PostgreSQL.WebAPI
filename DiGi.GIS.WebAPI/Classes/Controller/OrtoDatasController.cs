@@ -90,6 +90,7 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <param name="administrativeAreal2DId">The unique identifier of the administrative area 2D.</param>
         /// <returns>An <see cref="IActionResult"/> containing the estimated coverage factor or an error status code.</returns>
         [HttpGet("estimatedcoveragefactor")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         public async Task<IActionResult> GetEstimatedCoverageFactorAsync([FromQuery(Name = "administrativeareal2Did")] int administrativeAreal2DId)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetEstimatedCoverageFactorAsync));
@@ -379,6 +380,7 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <param name="countyId">The optional identifier of the county associated with the orthodata item.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itembyreference")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         public async Task<IActionResult> GetItemByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "countyid")] int? countyId = null)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetItemByReferenceAsync));
@@ -627,6 +629,11 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <param name="countyId">The optional identifier of the county associated with the orthophoto data.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("imagebyreference")]
+        [ApiExplorerSettings(IgnoreApi = false)]
+        [Produces("image/jpeg")]
+        [ProducesResponseType(typeof(FileContentResult), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> GetImageByReferenceAsync([FromQuery(Name = "reference")] string reference, [FromQuery(Name = "year")] short year, [FromQuery(Name = "countyid")] int? countyId = null)
         {
             Serilog.Modify.Log("{Type}:{Name} started", nameof(OrtoDatasController), nameof(GetImageByReferenceAsync));

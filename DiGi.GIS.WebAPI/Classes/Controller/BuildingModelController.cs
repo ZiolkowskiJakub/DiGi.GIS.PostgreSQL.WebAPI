@@ -43,11 +43,13 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <param name="tolerance">An optional tolerance value for the spatial query. If not provided, the default distance tolerance is used.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbycircle", Name = $"{nameof(BuildingModelController)}_{nameof(GetItemsByCircleAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<BuildingModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "storeyheight")] double? storeyHeight = 3.0, [FromQuery(Name = "tolerance")] double? tolerance = Core.Constants.Tolerance.Distance)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingModelController), nameof(GetItemsByCircleAsync));
             if (double.IsNaN(x) || double.IsNaN(y))
             {
                 return BadRequest();
@@ -127,11 +129,14 @@ namespace DiGi.GIS.WebAPI.Classes
         /// <param name="cancellationToken">A cancellation token that can be used by the caller to cancel the asynchronous operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [HttpGet("itemsbyreferences", Name = $"{nameof(BuildingModelController)}_{nameof(GetItemsByReferencesAsync)}")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         [ProducesResponseType(typeof(List<BuildingModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByReferencesAsync([FromQuery(Name = "references")] IEnumerable<string>? references, [FromQuery(Name = "countyid")] int? countyId, [FromQuery(Name = "limit")] long? limit = null, CancellationToken cancellationToken = default)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingModelController), nameof(GetItemsByReferencesAsync));
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
             if (references is null)
             {
                 return BadRequest();

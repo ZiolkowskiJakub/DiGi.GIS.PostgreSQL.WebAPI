@@ -243,14 +243,24 @@ namespace DiGi.GIS.WebAPI.Classes
                 point3D = new(x ?? 0, y ?? 0, z ?? 0);
             }
 
-            Building? building_PostgreSQL = await buildingPostgreSQLConverter.GetBuildingByReferenceAsync(reference, countyId, point3D, maxDistance_Temp, cancellationToken: cancellationToken);
-            if (building_PostgreSQL is null)
+            CityGML.Classes.Building? building;
+            try
             {
-                Serilog.Modify.Log("No Building found for provided reference");
-                return NoContent();
+                Building? building_PostgreSQL = await buildingPostgreSQLConverter.GetBuildingByReferenceAsync(reference, countyId, point3D, maxDistance_Temp, cancellationToken: cancellationToken);
+                if (building_PostgreSQL is null)
+                {
+                    Serilog.Modify.Log("No Building found for provided reference");
+                    return NoContent();
+                }
+
+                building = building_PostgreSQL.ToDiGi();
+            }
+            catch (Exception exception)
+            {
+                Serilog.Modify.Log(exception, "Failed to retrieve Building for reference {Reference} (countyId {CountyId})", reference, countyId?.ToString() ?? string.Empty);
+                return Problem(detail: "Failed to retrieve the building for the provided reference.", statusCode: StatusCodes.Status500InternalServerError);
             }
 
-            CityGML.Classes.Building? building = building_PostgreSQL.ToDiGi();
             if (building is null)
             {
                 Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Error, "Building could not be converted from PostgreSQL");

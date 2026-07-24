@@ -38,6 +38,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCategoriesAsync()
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetCategoriesAsync));
             HashSet<string>? categories = await buildingDataPostgreSQLConverter.GetCategoriesAsync();
             if (categories is null || categories.Count == 0)
             {
@@ -66,6 +67,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnReferencesAsync([FromQuery(Name = "categories")] List<string>? categories = null)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetColumnReferencesAsync));
             List<DiGi.PostgreSQL.Table.Classes.ColumnReference>? columnReferences = await buildingDataPostgreSQLConverter.GetColumnReferencesByCategoriesAsync(categories);
             if (columnReferences is null || columnReferences.Count == 0)
             {
@@ -91,6 +93,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnsAsync()
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetColumnsAsync));
             List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync();
             if (columns is null || columns.Count == 0)
             {
@@ -127,6 +130,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnsByCategoriesAsync([FromBody] List<string>? categories = null)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetColumnsByCategoriesAsync));
             List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync(categories);
             if (columns is null || columns.Count == 0)
             {
@@ -163,6 +167,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnsByCategoriesParameterAsync([FromBody] ColumnsByCategoriesParameter columnsByCategoriesParameter)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetColumnsByCategoriesParameterAsync));
             List<Column>? columns = await buildingDataPostgreSQLConverter.GetColumnsByCategoriesAsync(columnsByCategoriesParameter.Categories);
             if (columns is null || columns.Count == 0)
             {
@@ -199,6 +204,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetColumnUniqueIdsAsync([FromBody] List<string>? categories = null)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetColumnUniqueIdsAsync));
             List<DiGi.PostgreSQL.Table.Classes.ColumnReference>? columnReferences = await buildingDataPostgreSQLConverter.GetColumnReferencesByCategoriesAsync(categories);
             if (columnReferences is null || columnReferences.Count == 0)
             {
@@ -499,6 +505,9 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUniqueValuesAsync([FromQuery(Name = "columnuniqueid")] string columnUniqueId, [FromQuery(Name = "countyid")] int? countyId = null)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetUniqueValuesAsync));
+            Serilog.Modify.Log("ColumnUniqueId provided: {ColumnUniqueId}", columnUniqueId ?? string.Empty);
+            Serilog.Modify.Log("CountyId provided: {CountyId}", countyId?.ToString() ?? string.Empty);
             IEnumerable<object?>? values;
             if (countyId is null)
             {
@@ -538,6 +547,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUniqueValuesByColumnUniqueIdParameterAsync([FromBody] UniqueValuesByColumnUniqueIdParameter uniqueValuesByColumnUniqueIdParameter)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(BuildingDataController), nameof(GetUniqueValuesByColumnUniqueIdParameterAsync));
             IEnumerable<object?>? values;
             if (uniqueValuesByColumnUniqueIdParameter.CountyId is null)
             {

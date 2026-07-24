@@ -72,7 +72,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferenceByIdAsync([FromQuery(Name = "id")] int id)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByIdAsync));
             Serilog.Modify.Log("Id provided: {Id}", id);
 
             AdministrativeAreal2DReference? administrativeAreal2DReference = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferenceByIdAsync(id);
@@ -95,6 +95,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathByIdAsync([FromQuery(Name = "id")] int id)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferencePathByIdAsync));
+            Serilog.Modify.Log("Id provided: {Id}", id);
             AdministrativeAreal2DReferencePath? administrativeAreal2DReferencePath = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencePathAsync(id);
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReferencePath);
             if (string.IsNullOrWhiteSpace(json))
@@ -116,6 +118,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathsByNameAsync([FromBody] string text, CancellationToken cancellationToken = default)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferencePathsByNameAsync));
+
             try
             {
                 // Explicit typing as requested. Passing CancellationToken to the DLL logic.
@@ -136,9 +140,9 @@ namespace DiGi.GIS.WebAPI.Classes
                 // Returning the string directly as application/json avoids double serialization.
                 return Content(json, "application/json");
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                // Log the exception details here using a logging provider (e.g., Serilog)
+                Serilog.Modify.Log(exception, "Error in GetAdministrativeAreal2DReferencePathsByNameAsync");
                 return StatusCode(500, "An error occurred while processing the geospatial data.");
             }
         }
@@ -156,6 +160,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencePathsByNameParameterAsync([FromBody] AdministrativeAreal2DReferencePathsByNameParameter administrativeAreal2DReferencePathsByNameParameter, CancellationToken cancellationToken = default)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferencePathsByNameParameterAsync));
+
             if (string.IsNullOrWhiteSpace(administrativeAreal2DReferencePathsByNameParameter?.Text))
             {
                 return NotFound();
@@ -181,9 +187,9 @@ namespace DiGi.GIS.WebAPI.Classes
                 // Returning the string directly as application/json avoids double serialization.
                 return Content(json, "application/json");
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                // Log the exception details here using a logging provider (e.g., Serilog)
+                Serilog.Modify.Log(exception, "Error in GetAdministrativeAreal2DReferencePathsByNameParameterAsync");
                 return StatusCode(500, "An error occurred while processing the geospatial data.");
             }
         }
@@ -199,6 +205,9 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] AdministrativeArealType administrativeArealType, [FromQuery(Name = "parentId")] int? parentId, [FromQuery(Name = "uniquecode")] bool? uniqueCode)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync));
+            Serilog.Modify.Log("AdministrativeArealType provided: {AdministrativeArealType}", administrativeArealType.ToString());
+            Serilog.Modify.Log("ParentId provided: {ParentId}", parentId?.ToString() ?? string.Empty);
             List<AdministrativeAreal2DReference>? administrativeAreal2DReferences = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DReferencesByAdministrativeArealTypeAsync(administrativeArealType, parentId, uniqueCode ?? false);
             string? json = Core.Convert.ToSystem_String(administrativeAreal2DReferences);
             if (string.IsNullOrWhiteSpace(json))
@@ -259,6 +268,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCodesAsync()
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetCodesAsync));
             HashSet<string>? codes = await administrativeAreal2DPostgreSQLConverter.GetCodesAsync();
             if (codes is null || codes.Count == 0)
             {
@@ -286,6 +296,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetIdByCodeAsync([FromQuery(Name = "code")] string code, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetIdByCodeAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
             if (string.IsNullOrWhiteSpace(code))
             {
                 return BadRequest();
@@ -309,6 +321,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemByCodeAsync([FromQuery(Name = "code")] string code)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemByCodeAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
             if (string.IsNullOrWhiteSpace(code))
             {
                 return BadRequest();
@@ -339,6 +353,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemByIdAsync([FromQuery(Name = "id")] int id)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemByIdAsync));
+            Serilog.Modify.Log("Id provided: {Id}", id);
             AdministrativeAreal2D? administrativeAreal2D_PostgreSQL = await administrativeAreal2DPostgreSQLConverter.GetAdministrativeAreal2DByIdAsync(id);
             if (administrativeAreal2D_PostgreSQL is null)
             {
@@ -364,7 +380,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByAdministrativeArealTypeAsync([FromQuery(Name = "administrativearealtype")] AdministrativeArealType administrativeArealType)
         {
-            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetAdministrativeAreal2DReferenceByCodeAsync));
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemsByAdministrativeArealTypeAsync));
             Serilog.Modify.Log("AdministrativeArealType provided: {AdministrativeArealType}", administrativeArealType.ToString() ?? string.Empty);
 
             if (administrativeArealType == AdministrativeArealType.Undefined)
@@ -425,6 +441,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByBoundingBoxAsync([FromQuery(Name = "x_1")] double x_1, [FromQuery(Name = "y_1")] double y_1, [FromQuery(Name = "x_2")] double x_2, [FromQuery(Name = "y_2")] double y_2, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemsByBoundingBoxAsync));
             if (double.IsNaN(x_1) || double.IsNaN(y_1) || double.IsNaN(x_2) || double.IsNaN(y_2))
             {
                 return BadRequest();
@@ -488,6 +505,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCircleAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "radius")] double? radius, [FromQuery(Name = "diameter")] double? diameter, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemsByCircleAsync));
             if (double.IsNaN(x) || double.IsNaN(y))
             {
                 return BadRequest();
@@ -571,6 +589,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCodeAsync([FromQuery(Name = "code")] string code, [FromQuery(Name = "administrativearealtype")] AdministrativeArealType? administrativeArealType)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemsByCodeAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
             if (string.IsNullOrWhiteSpace(code))
             {
                 return BadRequest();
@@ -618,6 +638,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByCodesAsync([FromBody] List<string> codes)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemsByCodesAsync));
             if (codes == null || codes.Count == 0)
             {
                 return BadRequest();
@@ -668,6 +689,7 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetItemsByPointAsync([FromQuery(Name = "x")] double x, [FromQuery(Name = "y")] double y, [FromQuery(Name = "tolerance")] double? tolerance, [FromQuery(Name = "type")] AdministrativeArealType? administrativeArealType)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetItemsByPointAsync));
             if (double.IsNaN(x) || double.IsNaN(y))
             {
                 return BadRequest();
@@ -727,6 +749,8 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetSubCodesAsync([FromQuery(Name = "code")] string code)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(GetSubCodesAsync));
+            Serilog.Modify.Log("Code provided: {Code}", code ?? string.Empty);
             if (string.IsNullOrWhiteSpace(code))
             {
                 return BadRequest();
@@ -760,8 +784,11 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateItemAsync([FromBody] JsonObject? jsonObject)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(UpdateItemAsync));
+
             if (!GISWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "AdministrativeAreal2D update not allowed");
                 return ValidationProblem();
             }
 
@@ -802,8 +829,11 @@ namespace DiGi.GIS.WebAPI.Classes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateItemsAsync([FromBody] JsonArray? jsonArray)
         {
+            Serilog.Modify.Log("{Type}:{Name} started", nameof(AdministrativeAreal2DController), nameof(UpdateItemsAsync));
+
             if (!GISWebAPIConfigurationFileWatcher.AllowUpdateAdministrativeAreal2D)
             {
+                Serilog.Modify.Log(Serilog.Enums.LogEventLevel.Warning, "AdministrativeAreal2D update not allowed");
                 return Unauthorized();
             }
 
